@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Links Estilo Netflix</title>
+    <style>
+        /* CONFIGURAÇÕES GERAIS */
+        body {
+            background-color: #141414; /* Preto Netflix */
+            color: white;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 { color: #E50914; margin-bottom: 30px; } /* Vermelho Netflix */
+
+        .categoria-titulo {
+            font-size: 20px;
+            margin-top: 30px;
+            margin-left: 10px;
+        }
+
+        /* CONTAINER DOS LINKS */
+        .fileira {
+            display: flex;
+            overflow-x: auto; /* Scroll horizontal se tiver muitos links */
+            padding: 20px 10px;
+            gap: 10px;
+        }
+
+        /* Estilo para esconder a barra de scroll feia */
+        .fileira::-webkit-scrollbar { display: none; }
+
+        /* CARD DO LINK */
+        .card {
+            min-width: 200px;
+            height: 110px;
+            background-color: #2f2f2f;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.3s ease; /* Efeito de animação */
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #444;
+        }
+
+        /* EFEITO AO PASSAR O MOUSE (HOVER) */
+        .card:hover {
+            transform: scale(1.15); /* Aumenta o tamanho igual na Netflix */
+            z-index: 1;
+            border: 1px solid white;
+            background-color: #E50914; /* Muda para vermelho ao focar */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Meus Favoritos</h1>
+
+    <div class="categoria-titulo">CISL</div>
+    <div class="fileira">
+        <a href="https://google.com" target="_blank" class="card">Google</a>
+        <a href="https://github.com" target="_blank" class="card">GitHub</a>
+        <a href="https://stackoverflow.com" target="_blank" class="card">Stack Overflow</a>
+        <a href="#" class="card">Meu Curso</a>
+    </div>
+
+    <div class="categoria-titulo">Entretenimento</div>
+    <div class="fileira">
+        <a href="https://youtube.com" target="_blank" class="card">YouTube</a>
+        <a href="https://twitch.tv" target="_blank" class="card">Twitch</a>
+        <a href="#" class="card">Música</a>
+    </div>
+
+</body>
+</html>
