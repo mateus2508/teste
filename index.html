@@ -14,20 +14,42 @@
             padding: 20px 4%;
         }
 
+        /* Topo com Título e Botão de Cadastro */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
         h1 {
             color: #E50914;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-align: left;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .btn-cadastro {
+            background-color: #E50914;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn-cadastro:hover {
+            background-color: #b20710;
         }
 
         .categoria-titulo {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            margin: 35px 0 10px 0;
+            margin: 25px 0 10px 0;
             color: #e5e5e5;
             border-left: 4px solid #E50914;
-            padding-left: 12px;
+            padding-left: 10px;
         }
 
         /* --- GRID SEM ROLAGEM HORIZONTAL --- */
@@ -38,7 +60,7 @@
             padding: 10px 0;
         }
 
-        /* --- O CARD (DESIGN NETFLIX) --- */
+        /* --- O CARD --- */
         .card {
             flex: 1 1 calc(20% - 15px); 
             min-width: 200px;
@@ -83,46 +105,39 @@
             background: rgba(229, 9, 20, 0.85);
         }
 
+        /* Responsividade para Celular */
         @media (max-width: 600px) {
             .card {
                 flex: 1 1 calc(45% - 10px);
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
             }
         }
     </style>
 </head>
 <body>
 
-    <h1>NetLinks Gestão</h1>
+    <div class="header">
+        <h1>NetLinks Gestão</h1>
+        <a href="cadastro.html" class="btn-cadastro">+ CADASTRAR NOVO</a>
+    </div>
 
     <div class="categoria-titulo">SISTEMAS</div>
     <div class="fileira">
-        
-        <a href="https://plataforma.avato.com.br/" target="_blank" rel="noopener noreferrer" class="card" 
-           style="background-image: url('https://lh3.googleusercontent.com/u/0/d/1QD3Q3wIqLX7NMckMSmjNFAV7EA9ZEtZ0');">
+        <a href="https://plataforma.avato.com.br/" target="_blank" class="card" style="background-image: url('https://lh3.googleusercontent.com/u/0/d/1QD3Q3wIqLX7NMckMSmjNFAV7EA9ZEtZ0');">
             <div class="card-info">AVATO</div>
         </a>
-
-        <a href="https://docpro.brasiltecpar.com.br/gmud/usuario" target="_blank" rel="noopener noreferrer" class="card"
-           style="background-image: url('https://lh3.googleusercontent.com/u/0/d/10FFnKjiJI165SYx-uUhGNeMEKnPHUG4B');">
+        <a href="https://docpro.brasiltecpar.com.br/gmud/usuario" target="_blank" class="card" style="background-image: url('https://lh3.googleusercontent.com/u/0/d/10FFnKjiJI165SYx-uUhGNeMEKnPHUG4B');">
             <div class="card-info">DOCPRO</div>
         </a>
-
-        <a href="https://servicedesk.brasiltecpar.com.br/attendance#/waiting-attendance" target="_blank" rel="noopener noreferrer" class="card"
-           style="background-image: url('https://lh3.googleusercontent.com/u/0/d/14hsCAN4zh_EaMixrgoIl5dssQsubuL-y');">
-            <div class="card-info">VOALLE</div>
+        <a href="https://servicedesk.brasiltecpar.com.br/attendance#/waiting-attendance" target="_blank" class="card" style="background-image: url('https://lh3.googleusercontent.com/u/0/d/14hsCAN4zh_EaMixrgoIl5dssQsubuL-y'); background-color: white;">
+            <div class="card-info" style="color: black; background: rgba(255,255,255,0.3);">VOALLE</div>
         </a>
-
-        <a href="https://platform.senior.com.br/login/?redirectTo=https%3A%2F%2Fplatform.senior.com.br%2Fsenior-x%2F&tenant=brasiltec" target="_blank" rel="noopener noreferrer" class="card"
-           style="background-image: url('https://lh3.googleusercontent.com/u/0/d/1OH5lMbGTc3zJMx1fkyfFbynzFIw11Vqq');">
+        <a href="https://platform.senior.com.br/login/?redirectTo=https%3A%2F%2Fplatform.senior.com.br%2Fsenior-x%2F&tenant=brasiltec" target="_blank" class="card" style="background-image: url('https://lh3.googleusercontent.com/u/0/d/1OH5lMbGTc3zJMx1fkyfFbynzFIw11Vqq');">
             <div class="card-info">SENNIOR</div>
-        </a>
-
-        <a href="https://autoisp.brasiltecpar.com.br/contracted_services/513692" target="_blank" rel="noopener noreferrer" class="card">
-            <div class="card-info">AUTO ISP</div>
-        </a>
-
-        <a href="https://servicos-seg.brasiltecpar.com.br/terceiros/login.php" target="_blank" rel="noopener noreferrer" class="card">
-            <div class="card-info">SGT</div>
         </a>
     </div>
 
@@ -135,7 +150,6 @@
     <div class="categoria-titulo">CISL</div>
     <div class="fileira">
         <a href="#" class="card"><div class="card-info">Link CISL 1</div></a>
-        <a href="#" class="card"><div class="card-info">Link CISL 2</div></a>
     </div>
 
     <div class="categoria-titulo">PAGAMENTOS</div>
