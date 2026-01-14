@@ -5,21 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar - NetLinks</title>
     <style>
-        body { background-color: #141414; color: #fff; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .form-container { background: #2f2f2f; padding: 30px; border-radius: 8px; width: 100%; max-width: 400px; }
-        h2 { color: #E50914; text-align: center; }
+        body { background-color: #141414; color: #fff; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .form-container { background: #2f2f2f; padding: 30px; border-radius: 8px; width: 100%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h2 { color: #E50914; text-align: center; margin-top: 0; }
         .campo { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-size: 13px; color: #aaa; }
-        select, input { width: 100%; padding: 12px; border-radius: 4px; border: 1px solid #444; background: #444; color: white; box-sizing: border-box; }
-        .btn-salvar { background: #E50914; color: white; border: none; padding: 14px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; }
-        .btn-voltar { display: block; text-align: center; color: #fff; text-decoration: none; background: #444; padding: 12px; border-radius: 4px; margin-top: 10px; }
+        select, input { width: 100%; padding: 12px; border-radius: 4px; border: 1px solid #444; background: #444; color: white; box-sizing: border-box; outline: none; }
+        input:focus { border-color: #E50914; }
+        .btn-salvar { background: #E50914; color: white; border: none; padding: 14px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; }
+        .btn-salvar:disabled { background: #555; cursor: not-allowed; }
+        .btn-voltar { display: block; text-align: center; color: #fff; text-decoration: none; background: #444; padding: 12px; border-radius: 4px; margin-top: 10px; font-size: 14px; }
+        #status { margin-top: 15px; text-align: center; display: none; padding: 10px; border-radius: 4px; }
     </style>
 </head>
 <body>
     <div class="form-container">
         <h2>Novo Banner</h2>
         <div class="campo">
-            <label>Segmento:</label>
+            <label>Segmento (Categoria):</label>
             <select id="categoria">
                 <option value="sistemas">SISTEMAS</option>
                 <option value="citr">CITR</option>
@@ -31,7 +34,7 @@
         </div>
         <div class="campo">
             <label>Nome do Banner:</label>
-            <input type="text" id="nome" placeholder="Ex: Voalle">
+            <input type="text" id="nome" placeholder="Ex: Service Desk">
         </div>
         <div class="campo">
             <label>Link do Google Drive (Imagem):</label>
@@ -41,39 +44,53 @@
             <label>URL do Sistema:</label>
             <input type="url" id="urlDestino" placeholder="https://...">
         </div>
-        <button class="btn-salvar" onclick="enviar()">PROSSEGUIR</button>
-        <a href="index.html" class="btn-voltar">VOLTAR</a>
+        <button class="btn-salvar" id="btnProsseguir" onclick="enviar()">PROSSEGUIR</button>
+        <a href="index.html" class="btn-voltar">VOLTAR À PÁGINA INICIAL</a>
+        <div id="status"></div>
     </div>
 
     <script>
         async function enviar() {
-            // LINK DA WEB ATUALIZADO
             const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
-            
             const linkDrive = document.getElementById('linkDrive').value;
             const nome = document.getElementById('nome').value;
             const url = document.getElementById('urlDestino').value;
             const categoria = document.getElementById('categoria').value;
-            
+            const btn = document.getElementById('btnProsseguir');
+            const status = document.getElementById('status');
+
             const regex = /\/d\/([a-zA-Z0-9_-]+)|id=([a-zA-Z0-9_-]+)/;
             const match = linkDrive.match(regex);
 
             if (match && nome && url) {
                 const fileId = match[1] || match[2];
-                const linkFinalImg = `https://drive.google.com/uc?export=view&id=${fileId}`;
+                // Formato de link de imagem mais estável do Google
+                const linkFinalImg = `https://lh3.googleusercontent.com/u/0/d/${fileId}`;
                 
                 const dados = { categoria, nome, imagem: linkFinalImg, link: url };
 
-                await fetch(urlApp, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify(dados)
-                });
+                btn.disabled = true;
+                btn.innerText = "SALVANDO...";
+                status.style.display = "block";
+                status.style.backgroundColor = "#444";
+                status.innerText = "Enviando para a planilha...";
 
-                alert("Cadastrado com sucesso!");
-                window.location.href = "index.html";
+                try {
+                    await fetch(urlApp, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify(dados)
+                    });
+                    status.style.backgroundColor = "#27ae60";
+                    status.innerText = "Cadastrado com sucesso!";
+                    setTimeout(() => { window.location.href = "index.html"; }, 1500);
+                } catch (e) {
+                    alert("Erro ao salvar dados.");
+                    btn.disabled = false;
+                    btn.innerText = "PROSSEGUIR";
+                }
             } else {
-                alert("Preencha todos os campos corretamente.");
+                alert("Por favor, preencha todos os campos corretamente.");
             }
         }
     </script>
