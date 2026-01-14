@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre o Autor - NetLinks</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { 
+            background-color: #141414; 
+            color: #fff; 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            margin: 0; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .bio-container {
+            background: #2f2f2f;
+            width: 90%;
+            max-width: 600px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .foto-perfil {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid #E50914;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        h1 { color: #E50914; margin-bottom: 5px; }
+        h3 { color: #aaa; font-weight: 300; margin-bottom: 25px; }
+        p { 
+            line-height: 1.6; 
+            color: #ccc; 
+            text-align: justify; 
+            margin-bottom: 30px;
+        }
+        .redes-sociais {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .rede-link {
+            color: #fff;
+            font-size: 24px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .rede-link:hover { color: #E50914; transform: translateY(-3px); }
+        
+        .btn-voltar {
+            display: inline-block;
+            background: #E50914;
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-voltar:hover { background: #b20710; }
+    </style>
+</head>
+<body>
+
+    <div class="bio-container">
+        <img src="https://via.placeholder.com/150" alt="Mateus Padilha" class="foto-perfil">
+        
+        <h1>Mateus Padilha</h1>
+        <h3>Desenvolvedor & Gestor de Sistemas</h3>
+        
+        <p>
+            Olá! Sou o criador do NetLinks Gestão. Desenvolvi este projeto com o objetivo de centralizar e facilitar o acesso aos sistemas corporativos de forma ágil e organizada. 
+            Tenho foco em automação utilizando Google Apps Script e desenvolvimento web moderno, sempre buscando criar ferramentas que otimizem o dia a dia de equipes técnicas e operacionais.
+        </p>
+
+        <div class="redes-sociais">
+            <a href="https://wa.me/5566992267535" target="_blank" class="rede-link"><i class="fab fa-whatsapp"></i></a>
+            <a href="mailto:mateus.padilhasantos@gmail.com" class="rede-link"><i class="far fa-envelope"></i></a>
+            <a href="#" target="_blank" class="rede-link"><i class="fab fa-linkedin"></i></a>
+            <a href="#" target="_blank" class="rede-link"><i class="fab fa-github"></i></a>
+        </div>
+
+        <a href="index.html" class="btn-voltar">VOLTAR AO SITE</a>
+    </div>
+
+</body>
+</html>
