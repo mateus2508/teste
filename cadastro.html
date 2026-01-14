@@ -36,8 +36,6 @@
             box-sizing: border-box;
             outline: none;
         }
-        select:focus, input:focus { border-color: #E50914; }
-        
         .btn-salvar {
             background: #E50914;
             color: white;
@@ -49,11 +47,8 @@
             cursor: pointer;
             font-size: 16px;
             margin-top: 10px;
-            transition: background 0.3s;
         }
-        .btn-salvar:hover { background: #b20710; }
-        .btn-salvar:disabled { background: #555; cursor: not-allowed; }
-
+        .btn-salvar:disabled { background: #555; }
         .btn-voltar {
             display: block;
             text-align: center;
@@ -66,10 +61,7 @@
             margin-top: 10px;
             width: 100%;
             box-sizing: border-box;
-            transition: background 0.3s;
         }
-        .btn-voltar:hover { background: #555; }
-
         #status {
             margin-top: 15px;
             font-size: 14px;
@@ -127,19 +119,19 @@
             const linkSistema = document.getElementById('urlDestino').value;
             const categoria = document.getElementById('categoria').value;
 
-            // 1. Extrair ID do Google Drive
             const regex = /\/d\/([a-zA-Z0-9_-]+)|id=([a-zA-Z0-9_-]+)/;
             const match = linkDrive.match(regex);
 
             if (!match || !nome || !linkSistema) {
-                alert("Por favor, preencha todos os campos e use um link válido do Drive.");
+                alert("Preencha todos os campos corretamente.");
                 return;
             }
 
             const fileId = match[1] || match[2];
-            const linkFinalImg = `http://googleusercontent.com/profile/picture/7{fileId}`;
+            const linkFinalImg = `https://drive.google.com/uc?export=view&id=${fileId}`;
 
-            // 2. Preparar dados para a planilha
+            const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
+
             const dados = {
                 categoria: categoria,
                 nome: nome,
@@ -147,41 +139,28 @@
                 link: linkSistema
             };
 
-            // 3. Enviar para a Planilha (URL do Apps Script)
-            const urlPlanilha = "SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI";
-
             btn.disabled = true;
             btn.innerText = "ENVIANDO...";
             status.style.display = "block";
             status.style.backgroundColor = "#444";
-            status.innerText = "Processando cadastro...";
+            status.innerText = "Salvando na planilha...";
 
-            try {
-                // Usamos o modo 'no-cors' se houver problemas de permissão, 
-                // mas para planilhas o fetch padrão costuma funcionar com o script doPost
-                await fetch(urlPlanilha, {
-                    method: 'POST',
-                    mode: 'no-cors', // Importante para evitar erros de política de domínio
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dados)
-                });
-
+            // Enviando via formulário oculto para evitar erros de CORS
+            fetch(urlApp, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            }).then(() => {
                 status.style.backgroundColor = "#27ae60";
-                status.innerText = "Cadastrado com sucesso na planilha!";
-                
-                setTimeout(() => {
-                    window.location.href = "index.html";
-                }, 2000);
-
-            } catch (error) {
-                console.error(error);
-                status.style.backgroundColor = "#c0392b";
-                status.innerText = "Erro ao enviar. Verifique a URL do Script.";
+                status.innerText = "Cadastrado com sucesso!";
+                setTimeout(() => { window.location.href = "index.html"; }, 1500);
+            }).catch(err => {
+                alert("Erro ao salvar. Verifique sua conexão.");
                 btn.disabled = false;
                 btn.innerText = "PROSSEGUIR";
-            }
+            });
         }
     </script>
-
 </body>
 </html>
