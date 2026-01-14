@@ -21,15 +21,10 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-        .header-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
         h1 { color: #E50914; margin: 0; font-size: 26px; text-transform: uppercase; letter-spacing: 2px; }
         
-        /* Botões de Ação */
-        .btn-acao { 
+        /* Botão de Configurações */
+        .btn-config { 
             color: white; 
             text-decoration: none; 
             padding: 10px 18px; 
@@ -40,15 +35,12 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            background: #333;
+            border: 1px solid #444;
         }
-        .btn-cadastro { background: #E50914; border: 1px solid #E50914; }
-        .btn-cadastro:hover { background: #b20710; }
-        .btn-excluir { background: #333; border: 1px solid #444; }
-        .btn-excluir:hover { background: #444; }
-        .btn-cats { background: #27ae60; border: 1px solid #27ae60; }
-        .btn-cats:hover { background: #219150; }
+        .btn-config:hover { background: #444; border-color: #666; }
 
-        /* Categorias Dinâmicas */
+        /* Estilo Dinâmico das Categorias */
         .categoria-titulo { 
             font-size: 1.2rem; 
             margin: 40px 0 20px 0; 
@@ -57,6 +49,7 @@
             text-transform: uppercase; 
             color: #eee; 
             font-weight: bold;
+            letter-spacing: 1px;
         }
         .fileira { 
             display: flex; 
@@ -88,6 +81,7 @@
             font-weight: bold; text-align: center; padding: 10px; box-sizing: border-box; 
             font-size: 14px; transition: 0.3s;
         }
+        .card:hover .card-info { background: rgba(0,0,0,0.4); }
 
         /* Rodapé de Contato */
         .footer {
@@ -106,18 +100,8 @@
         .footer-links { display: flex; gap: 25px; }
         .contact-link { color: #fff; text-decoration: none; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .contact-link:hover { color: #E50914; }
-        
-        /* Link da Bio no Rodapé */
-        .bio-link {
-            color: #E50914;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .bio-link:hover {
-            text-decoration: underline;
-            color: #ff1f29;
-        }
+        .bio-link { color: #E50914; text-decoration: none; font-weight: bold; }
+        .bio-link:hover { text-decoration: underline; }
 
         #loading { text-align: center; color: #E50914; padding: 50px; font-weight: bold; font-size: 1.2rem; }
         
@@ -134,9 +118,9 @@
     <div class="header">
         <h1>NetLinks Gestão</h1>
         <div class="header-buttons">
-            <a href="gerenciar_categorias.html" class="btn-acao btn-cats"><i class="fas fa-folder-plus"></i> CATEGORIAS</a>
-            <a href="excluir.html" class="btn-acao btn-excluir"><i class="fas fa-trash-alt"></i> EXCLUIR</a>
-            <a href="cadastro.html" class="btn-acao btn-cadastro"><i class="fas fa-plus"></i> NOVO BANNER</a>
+            <a href="settings.html" class="btn-config">
+                <i class="fas fa-cog"></i> CONFIGURAÇÕES
+            </a>
         </div>
     </div>
 
@@ -153,6 +137,9 @@
                 <a href="mailto:mateus.padilhasantos@gmail.com" class="contact-link">
                     <i class="far fa-envelope"></i> E-mail
                 </a>
+                <a href="https://br.linkedin.com/in/padilhamateus" target="_blank" class="contact-link">
+                    <i class="fab fa-linkedin-in"></i> LinkedIn
+                </a>
             </div>
             <span>&reg; 2024 Todos os direitos reservados - 
                 <a href="sobre.html" class="bio-link">Mateus Padilha</a>
@@ -162,6 +149,7 @@
 
     <script>
         async function carregarTudo() {
+            // URL DO SEU APPS SCRIPT
             const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
             
             try {
@@ -171,7 +159,7 @@
                 document.getElementById('loading').style.display = 'none';
                 const containerPrincipal = document.getElementById('categorias-container');
 
-                // 1. Criar seções das categorias vindas da planilha
+                // 1. Criar seções das categorias
                 if (dados.categorias) {
                     dados.categorias.forEach(cat => {
                         if(!cat || cat === "") return;
