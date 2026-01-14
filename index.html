@@ -5,117 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NetLinks Gestão</title>
     <style>
-        /* --- ESTILOS GERAIS --- */
-        body {
-            background-color: #141414;
-            color: #fff;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 20px 4%;
-        }
-
-        /* Topo com Título e Botão de Cadastro */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            color: #E50914;
-            font-size: 2rem;
-            margin: 0;
-        }
-
-        .btn-cadastro {
-            background-color: #E50914;
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 14px;
-            transition: background 0.3s;
-        }
-
-        .btn-cadastro:hover {
-            background-color: #b20710;
-        }
-
-        .categoria-titulo {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin: 25px 0 10px 0;
-            color: #e5e5e5;
-            border-left: 4px solid #E50914;
-            padding-left: 10px;
-        }
-
-        /* --- GRID SEM ROLAGEM HORIZONTAL --- */
-        .fileira {
-            display: flex;
-            flex-wrap: wrap; 
-            gap: 15px;
-            padding: 10px 0;
-        }
-
-        /* --- O CARD --- */
-        .card {
-            flex: 1 1 calc(20% - 15px); 
-            min-width: 200px;
-            height: 125px;
-            background-color: #2f2f2f;
-            background-size: cover;
-            background-position: center;
-            border-radius: 4px;
-            position: relative;
-            text-decoration: none;
-            color: white;
-            transition: transform 0.3s ease, border 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            border: 2px solid transparent;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-            z-index: 10;
-            border: 2px solid white;
-        }
-
-        .card-info {
-            background: rgba(0,0,0,0.6);
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            text-align: center;
-            padding: 10px;
-            transition: background 0.3s;
-            text-transform: uppercase;
-        }
-
-        .card:hover .card-info {
-            background: rgba(229, 9, 20, 0.85);
-        }
-
-        /* Responsividade para Celular */
-        @media (max-width: 600px) {
-            .card {
-                flex: 1 1 calc(45% - 10px);
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-        }
+        body { background-color: #141414; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; padding: 20px 4%; margin: 0; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        h1 { color: #E50914; margin: 0; }
+        .btn-cadastro { background: #E50914; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; font-size: 14px; }
+        .categoria-titulo { font-size: 1.2rem; margin: 25px 0 10px 0; border-left: 4px solid #E50914; padding-left: 10px; text-transform: uppercase; color: #aaa; }
+        .fileira { display: flex; flex-wrap: wrap; gap: 15px; min-height: 50px; margin-bottom: 20px; }
+        .card { flex: 1 1 calc(20% - 15px); min-width: 200px; height: 120px; background-color: #2f2f2f; background-size: cover; background-position: center; border-radius: 4px; text-decoration: none; color: white; position: relative; border: 2px solid transparent; transition: 0.3s; overflow: hidden; }
+        .card:hover { transform: scale(1.05); border-color: white; z-index: 2; }
+        .card-info { background: rgba(0,0,0,0.7); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 5px; box-sizing: border-box; }
+        #loading { text-align: center; color: #E50914; font-weight: bold; padding: 20px; }
     </style>
 </head>
 <body>
@@ -125,49 +24,61 @@
         <a href="cadastro.html" class="btn-cadastro">+ CADASTRAR NOVO</a>
     </div>
 
+    <div id="loading">Carregando banners da planilha...</div>
+
     <div class="categoria-titulo">SISTEMAS</div>
-    <div class="fileira">
-        <a href="https://plataforma.avato.com.br/" target="_blank" class="card" style="background-image: url('https://lh3.googleusercontent.com/u/0/d/1QD3Q3wIqLX7NMckMSmjNFAV7EA9ZEtZ0');">
-            <div class="card-info">AVATO</div>
-        </a>
-        <a href="https://docpro.brasiltecpar.com.br/gmud/usuario" target="_blank" class="card" style="background-image: url('https://lh3.googleusercontent.com/u/0/d/10FFnKjiJI165SYx-uUhGNeMEKnPHUG4B');">
-            <div class="card-info">DOCPRO</div>
-        </a>
-        <a href="https://servicedesk.brasiltecpar.com.br/attendance#/waiting-attendance" target="_blank" class="card" style="background-image: url('https://lh3.googleusercontent.com/u/0/d/14hsCAN4zh_EaMixrgoIl5dssQsubuL-y'); background-color: white;">
-            <div class="card-info" style="color: black; background: rgba(255,255,255,0.3);">VOALLE</div>
-        </a>
-        <a href="https://platform.senior.com.br/login/?redirectTo=https%3A%2F%2Fplatform.senior.com.br%2Fsenior-x%2F&tenant=brasiltec" target="_blank" class="card" style="background-image: url('https://lh3.googleusercontent.com/u/0/d/1OH5lMbGTc3zJMx1fkyfFbynzFIw11Vqq');">
-            <div class="card-info">SENNIOR</div>
-        </a>
-    </div>
+    <div class="fileira" id="container-sistemas"></div>
 
     <div class="categoria-titulo">CITR</div>
-    <div class="fileira">
-        <a href="#" class="card"><div class="card-info">Link CITR 1</div></a>
-        <a href="#" class="card"><div class="card-info">Link CITR 2</div></a>
-    </div>
+    <div class="fileira" id="container-citr"></div>
 
     <div class="categoria-titulo">CISL</div>
-    <div class="fileira">
-        <a href="#" class="card"><div class="card-info">Link CISL 1</div></a>
-    </div>
+    <div class="fileira" id="container-cisl"></div>
 
     <div class="categoria-titulo">PAGAMENTOS</div>
-    <div class="fileira">
-        <a href="#" class="card"><div class="card-info">Sistema de Pagamento</div></a>
-    </div>
+    <div class="fileira" id="container-pagamentos"></div>
 
     <div class="categoria-titulo">MATERIAIS</div>
-    <div class="fileira">
-        <a href="#" class="card"><div class="card-info">Estoque</div></a>
-    </div>
+    <div class="fileira" id="container-materiais"></div>
 
     <div class="categoria-titulo">GESTÃO DE EQUIPE</div>
-    <div class="fileira">
-        <a href="#" class="card"><div class="card-info">Escalas</div></a>
-        <a href="#" class="card"><div class="card-info">Contatos</div></a>
-    </div>
+    <div class="fileira" id="container-gestao"></div>
 
+    <script>
+        async function carregarBanners() {
+            // URL DA SUA PLANILHA (A mesma do cadastro)
+            const urlApp = "https://script.google.com/macros/s/AKfycbzS04tpI2x7pSkWDDq-vVkZKk--yueuoK8f281O95Yojj94k4gqEMLFmQyiRJrliYXOkA/exec";
+            
+            try {
+                const resposta = await fetch(urlApp);
+                const dados = await resposta.json();
+                
+                // Esconde o aviso de carregando
+                document.getElementById('loading').style.display = 'none';
+
+                dados.forEach(item => {
+                    // Normaliza o nome da categoria para encontrar o ID correto
+                    let catFix = item.categoria.toLowerCase()
+                                 .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove acentos
+                                 .replace("gestao de equipe", "gestao");
+
+                    const container = document.getElementById(`container-${catFix}`);
+                    
+                    if (container) {
+                        container.innerHTML += `
+                            <a href="${item.link}" target="_blank" class="card" style="background-image: url('${item.imagem}');">
+                                <div class="card-info">${item.nome.toUpperCase()}</div>
+                            </a>`;
+                    }
+                });
+            } catch (erro) {
+                document.getElementById('loading').innerText = "Erro ao carregar banners. Verifique a planilha.";
+                console.error(erro);
+            }
+        }
+
+        // Inicia a busca assim que a página abre
+        carregarBanners();
+    </script>
 </body>
 </html>
-
