@@ -5,56 +5,146 @@
     <title>Configurações - NetLinks</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #141414; color: #fff; font-family: sans-serif; padding: 40px 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .config-card { background: #2f2f2f; padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #444; }
-        h1 { color: #E50914; text-align: center; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 4px; background: #444; color: white; border: 1px solid #555; box-sizing: border-box; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; text-decoration: none; display: block; text-align: center; }
+        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 40px 20px; margin: 0; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { color: var(--primary); text-align: center; text-transform: uppercase; letter-spacing: 2px; }
+        .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 30px; }
+        .config-card { background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid #444; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        h2 { font-size: 18px; border-bottom: 1px solid #444; padding-bottom: 10px; color: #eee; }
+        label { display: block; margin: 15px 0 5px; font-size: 13px; color: #aaa; }
+        input, select { width: 100%; padding: 12px; border-radius: 4px; background: #444; color: white; border: 1px solid #555; outline: none; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
         .btn-add { background: #27ae60; }
-        .btn-del { background: #E50914; }
+        .btn-add:hover { background: #219150; }
+        .btn-del { background: var(--primary); }
+        .btn-del:hover { background: #b20710; }
+        .btn-del:disabled { background: #555; cursor: not-allowed; }
+        .btn-nav { background: #444; width: 200px; margin: 40px auto; }
+        #status-msg { text-align: center; font-weight: bold; margin-bottom: 10px; min-height: 20px; }
+        hr { border: 0; border-top: 1px solid #444; margin: 25px 0; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Painel de Controle</h1>
-        <div class="config-card">
-            <h2>Categorias</h2>
-            <input type="text" id="novaCat" placeholder="Nome da Categoria">
-            <button class="btn btn-add" onclick="enviarAcao('addCategory', 'novaCat')">CRIAR CATEGORIA</button>
-            <hr style="margin:20px 0; border-color:#444;">
-            <select id="selectDelCat"><option>Carregando categorias...</option></select>
-            <button class="btn btn-del" onclick="deletarCat()">EXCLUIR CATEGORIA</button>
+        <div id="status-msg"></div>
+
+        <div class="section-grid">
+            <div class="config-card">
+                <h2><i class="fas fa-folder"></i> Categorias</h2>
+                <label>Nova Categoria:</label>
+                <input type="text" id="novaCat" placeholder="Ex: Engenharia">
+                <button class="btn btn-add" id="btnCriarCat" onclick="criarCategoria()">
+                    <i class="fas fa-plus"></i> CRIAR CATEGORIA
+                </button>
+                <hr>
+                <label>Excluir Categoria (e tudo nela):</label>
+                <select id="selectDelCat"><option value="">Carregando...</option></select>
+                <button class="btn btn-del" id="btnDelCat" onclick="deletarCat()">
+                    <i class="fas fa-trash"></i> EXCLUIR CATEGORIA
+                </button>
+            </div>
+
+            <div class="config-card">
+                <h2><i class="fas fa-image"></i> Banners</h2>
+                <a href="cadastro.html" class="btn btn-add"><i class="fas fa-plus-circle"></i> NOVO BANNER</a>
+                <hr>
+                <label>1. Filtrar por Categoria:</label>
+                <select id="selCatB" onchange="atualizarListaBanners()">
+                    <option value="">Selecione...</option>
+                </select>
+                <label>2. Selecionar Banner:</label>
+                <select id="selBanner" disabled>
+                    <option value="">Escolha a categoria</option>
+                </select>
+                <button class="btn btn-del" id="btnDelBanner" onclick="deletarBanner()" disabled>
+                    <i class="fas fa-eraser"></i> EXCLUIR APENAS BANNER
+                </button>
+            </div>
         </div>
-        <div class="config-card" style="text-align:center;">
-            <a href="cadastro.html" class="btn btn-add">ADICIONAR NOVO BANNER</a>
-            <br>
-            <a href="index.html" style="color:#aaa; text-decoration:none;">Voltar para o Início</a>
-        </div>
+        <a href="index.html" class="btn btn-nav">VOLTAR</a>
     </div>
+
     <script>
         const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
         const dono = localStorage.getItem("netlinks_user");
+        let dadosLocais = {};
+
         if(!dono) window.location.href = "index.html";
+
         async function carregar() {
-            const res = await fetch(`${urlApp}?dono=${dono}`);
-            const dados = await res.json();
-            const opts = '<option value="">Selecione...</option>' + dados.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
-            document.getElementById('selectDelCat').innerHTML = opts;
+            try {
+                const res = await fetch(`${urlApp}?dono=${dono}`);
+                dadosLocais = await res.json();
+                const opts = '<option value="">Selecione...</option>' + 
+                             dadosLocais.categorias.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
+                document.getElementById('selectDelCat').innerHTML = opts;
+                document.getElementById('selCatB').innerHTML = opts;
+            } catch (e) { console.error(e); }
         }
-        async function enviarAcao(acao, id) {
-            const val = document.getElementById(id).value;
-            if(!val) return;
-            await fetch(urlApp, { method: 'POST', body: JSON.stringify({ action: acao, nome: val, dono: dono }) });
+
+        function atualizarListaBanners() {
+            const cat = document.getElementById('selCatB').value;
+            const selB = document.getElementById('selBanner');
+            const btn = document.getElementById('btnDelBanner');
+            
+            if(!cat) {
+                selB.innerHTML = '<option value="">Escolha a categoria</option>';
+                selB.disabled = true;
+                btn.disabled = true;
+                return;
+            }
+
+            const filtrados = dadosLocais.banners.filter(b => b.categoria === cat);
+            selB.innerHTML = '<option value="">Selecione o banner</option>' + 
+                             filtrados.map(b => `<option value="${b.nome}">${b.nome}</option>`).join('');
+            selB.disabled = filtrados.length === 0;
+            btn.disabled = true;
+        }
+
+        document.getElementById('selBanner').addEventListener('change', function() {
+            document.getElementById('btnDelBanner').disabled = !this.value;
+        });
+
+        async function criarCategoria() {
+            const nome = document.getElementById('novaCat').value;
+            if(!nome) return alert("Digite o nome!");
+            
+            toggleBtn('btnCriarCat', true);
+            await fetch(urlApp, { method: 'POST', body: JSON.stringify({ action: "addCategory", nome: nome, dono: dono }) });
             location.reload();
         }
+
         async function deletarCat() {
             const val = document.getElementById('selectDelCat').value;
-            if(confirm(`Excluir ${val}?`)) {
+            if(!val) return;
+            if(confirm(`Isso excluirá a categoria "${val}" e TODOS os banners dela. Confirma?`)) {
+                toggleBtn('btnDelCat', true);
                 await fetch(urlApp, { method: 'POST', body: JSON.stringify({ action: "deleteCategory", nome: val, dono: dono }) });
                 location.reload();
             }
         }
+
+        async function deletarBanner() {
+            const cat = document.getElementById('selCatB').value;
+            const nome = document.getElementById('selBanner').value;
+            if(confirm(`Excluir o banner "${nome}"?`)) {
+                toggleBtn('btnDelBanner', true);
+                await fetch(urlApp, { method: 'POST', body: JSON.stringify({ action: "delete", categoria: cat, nome: nome, dono: dono }) });
+                location.reload();
+            }
+        }
+
+        function toggleBtn(id, loading) {
+            const btn = document.getElementById(id);
+            if(loading) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSANDO...';
+                document.getElementById('status-msg').innerHTML = "Sincronizando com a planilha, aguarde...";
+            }
+        }
+
         carregar();
     </script>
 </body>
