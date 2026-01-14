@@ -9,33 +9,31 @@
         :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; }
         body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 40px 20px; }
         
-        /* Estilo da Tela de Login */
-        #login-screen { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: var(--bg); display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; z-index: 1000;
-        }
-        .login-box { background: var(--card); padding: 40px; border-radius: 12px; text-align: center; border: 1px solid #444; }
-        
-        /* Esconde o conteúdo até logar */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .login-box { background: var(--card); padding: 40px; border-radius: 12px; text-align: center; border: 1px solid #444; width: 300px; }
         #main-content { display: none; }
 
-        .container { max-width: 800px; margin: 0 auto; }
+        .container { max-width: 900px; margin: 0 auto; }
         h1 { color: var(--primary); text-align: center; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px; }
         
         .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .config-card { background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid #444; }
-        h2 { font-size: 18px; margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px; color: #eee; }
+        .config-card { background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid #444; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        h2 { font-size: 18px; margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px; color: #eee; display: flex; align-items: center; gap: 10px; }
         
         label { display: block; margin: 15px 0 5px; font-size: 13px; color: #aaa; }
-        input, select { width: 100%; padding: 12px; border-radius: 4px; background: #444; color: white; border: 1px solid #555; box-sizing: border-box; }
+        input, select { width: 100%; padding: 12px; border-radius: 4px; background: #444; color: white; border: 1px solid #555; box-sizing: border-box; outline: none; }
+        input:focus { border-color: var(--primary); }
         
         .btn { width: 100%; padding: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 14px; }
         .btn-add { background: #27ae60; color: white; }
+        .btn-add:hover { background: #219150; }
         .btn-del { background: var(--primary); color: white; }
+        .btn-del:hover { background: #b20710; }
+        .btn-del:disabled { background: #555; opacity: 0.5; cursor: not-allowed; }
         .btn-nav { background: #444; color: white; margin-top: 20px; }
 
-        #status-msg { text-align: center; margin-bottom: 20px; font-weight: bold; min-height: 20px; }
+        #status-msg { text-align: center; margin-bottom: 20px; font-weight: bold; min-height: 20px; font-size: 14px; }
+        hr { border: 0; border-top: 1px solid #444; margin: 25px 0; }
 
         @media (max-width: 768px) { .section-grid { grid-template-columns: 1fr; } }
     </style>
@@ -44,123 +42,154 @@
 
     <div id="login-screen">
         <div class="login-box">
-            <h2 style="border:none; margin-bottom:20px;"><i class="fas fa-lock"></i> Acesso Restrito</h2>
-            <input type="password" id="passInput" placeholder="Digite a senha mestre">
+            <h2 style="border:none; justify-content:center;"><i class="fas fa-lock"></i> Acesso</h2>
+            <input type="password" id="passInput" placeholder="Senha Mestre">
             <button class="btn btn-add" onclick="checkPass()">ENTRAR</button>
-            <a href="index.html" style="color:#aaa; text-decoration:none; display:block; margin-top:20px; font-size:12px;">Voltar ao início</a>
+            <a href="index.html" style="color:#aaa; text-decoration:none; display:block; margin-top:20px; font-size:12px;">Voltar</a>
         </div>
     </div>
 
     <div id="main-content">
         <div class="container">
-            <h1><i class="fas fa-cog"></i> Configurações</h1>
+            <h1><i class="fas fa-tools"></i> Painel de Controle</h1>
             <div id="status-msg"></div>
 
             <div class="section-grid">
+                
                 <div class="config-card">
                     <h2><i class="fas fa-folder"></i> Categorias</h2>
+                    
                     <label>Nova Categoria:</label>
-                    <input type="text" id="novaCat" placeholder="Nome do segmento...">
-                    <button class="btn btn-add" onclick="enviarDados('addCategory', 'novaCat')">CRIAR CATEGORIA</button>
-                    <hr style="border: 0; border-top: 1px solid #444; margin: 25px 0 15px;">
-                    <label>Excluir Categoria (e banners):</label>
-                    <select id="selectDelCat"><option>Carregando...</option></select>
-                    <button class="btn btn-del" onclick="confirmarExclusaoCat()">EXCLUIR COMPLETA</button>
+                    <input type="text" id="novaCat" placeholder="Nome da categoria...">
+                    <button class="btn btn-add" onclick="enviarAcao('addCategory', 'novaCat')">CRIAR CATEGORIA</button>
+
+                    <hr>
+
+                    <label>Excluir Categoria (Apaga TUDO dentro dela):</label>
+                    <select id="selectDelCat"><option value="">Carregando...</option></select>
+                    <button class="btn btn-del" onclick="confirmarDelCat()">EXCLUIR CATEGORIA</button>
                 </div>
 
                 <div class="config-card">
                     <h2><i class="fas fa-image"></i> Banners</h2>
-                    <a href="cadastro.html" class="btn btn-add" style="margin-top: 15px;"><i class="fas fa-plus"></i> NOVO BANNER</a>
-                    <hr style="border: 0; border-top: 1px solid #444; margin: 25px 0 15px;">
-                    <label>Escolha a Categoria:</label>
-                    <select id="selectCatBanner" onchange="filtrarBanners()"><option value="">Selecione...</option></select>
-                    <label>Escolha o Banner:</label>
-                    <select id="selectBanner" disabled><option value="">Selecione...</option></select>
-                    <button class="btn btn-del" id="btnDelBanner" onclick="deletarBanner()" disabled>EXCLUIR BANNER</button>
+                    
+                    <a href="cadastro.html" class="btn btn-add"><i class="fas fa-plus-circle"></i> ADICIONAR NOVO BANNER</a>
+
+                    <hr>
+
+                    <label>1. Filtrar por Categoria:</label>
+                    <select id="selectCatParaBanner" onchange="atualizarListaBanners()">
+                        <option value="">Selecione...</option>
+                    </select>
+
+                    <label>2. Selecionar Banner para Exclusão:</label>
+                    <select id="selectBannerParaDel" disabled>
+                        <option value="">Escolha a categoria acima</option>
+                    </select>
+                    
+                    <button class="btn btn-del" id="btnDelBanner" onclick="confirmarDelBanner()" disabled>
+                        <i class="fas fa-trash"></i> EXCLUIR SOMENTE O BANNER
+                    </button>
                 </div>
+
             </div>
 
-            <div class="footer-nav">
-                <a href="index.html" class="btn btn-nav" style="max-width: 200px; margin: 0 auto;"><i class="fas fa-arrow-left"></i> VOLTAR</a>
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="index.html" class="btn btn-nav" style="display:inline-flex; width:auto; padding: 12px 40px;">
+                    <i class="fas fa-sign-out-alt"></i> SAIR E VOLTAR AO INÍCIO
+                </a>
             </div>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURAÇÃO DE ACESSO ---
-        const SENHA_MESTRE =1988; // <--- MUDE SUA SENHA AQUI!
+        const SENHA_MESTRE = "1234"; // Altere aqui
+        const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
+        let dadosLocais = {};
 
         function checkPass() {
-            const input = document.getElementById('passInput').value;
-            if(input === SENHA_MESTRE) {
+            if(document.getElementById('passInput').value === SENHA_MESTRE) {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('main-content').style.display = 'block';
-                carregarDados();
-            } else {
-                alert("Senha Incorreta!");
-            }
+                carregarInfo();
+            } else { alert("Senha incorreta!"); }
         }
 
-        // Permite apertar 'Enter' para entrar
-        document.getElementById('passInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') checkPass();
-        });
-
-        // --- RESTANTE DO SCRIPT ---
-        const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
-        let dadosGlobais = {};
-
-        async function carregarDados() {
+        async function carregarInfo() {
             try {
                 const res = await fetch(urlApp);
-                dadosGlobais = await res.json();
+                dadosLocais = await res.json();
+                
+                const cats = dadosLocais.categorias.filter(c => c && c !== "");
                 const options = '<option value="">Selecione...</option>' + 
-                    dadosGlobais.categorias.filter(c => c).map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
+                                cats.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
+
                 document.getElementById('selectDelCat').innerHTML = options;
-                document.getElementById('selectCatBanner').innerHTML = options;
+                document.getElementById('selectCatParaBanner').innerHTML = options;
             } catch (e) { console.error(e); }
         }
 
-        function filtrarBanners() {
-            const cat = document.getElementById('selectCatBanner').value;
-            const selectB = document.getElementById('selectBanner');
-            const filtrados = dadosGlobais.banners.filter(b => b.categoria === cat);
-            selectB.innerHTML = '<option value="">Selecione o banner</option>' + 
-                filtrados.map(b => `<option value="${b.nome}">${b.nome}</option>`).join('');
+        function atualizarListaBanners() {
+            const cat = document.getElementById('selectCatParaBanner').value;
+            const selectB = document.getElementById('selectBannerParaDel');
+            const btn = document.getElementById('btnDelBanner');
+            
+            if(!cat) {
+                selectB.innerHTML = '<option value="">Escolha a categoria acima</option>';
+                selectB.disabled = true;
+                btn.disabled = true;
+                return;
+            }
+
+            const filtrados = dadosLocais.banners.filter(b => b.categoria === cat);
+            selectB.innerHTML = '<option value="">Selecione o banner para remover</option>' + 
+                                filtrados.map(b => `<option value="${b.nome}">${b.nome}</option>`).join('');
+            
             selectB.disabled = filtrados.length === 0;
+            btn.disabled = true; // Só ativa ao selecionar o banner
         }
 
-        document.getElementById('selectBanner').addEventListener('change', function() {
+        document.getElementById('selectBannerParaDel').addEventListener('change', function() {
             document.getElementById('btnDelBanner').disabled = !this.value;
         });
 
-        async function enviarDados(acao, idCampo) {
+        async function enviarAcao(acao, idCampo) {
             const valor = document.getElementById(idCampo).value;
-            if(!valor) return alert("Preencha o campo!");
-            mostrarStatus("Processando...", "#aaa");
+            if(!valor) return;
+            msg("Processando...", "#aaa");
             await fetch(urlApp, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: acao, nome: valor }) });
-            mostrarStatus("Sucesso!", "#27ae60");
-            setTimeout(() => location.reload(), 1500);
+            msg("Sucesso!", "#27ae60");
+            setTimeout(() => location.reload(), 1200);
         }
 
-        async function confirmarExclusaoCat() {
+        async function confirmarDelCat() {
             const cat = document.getElementById('selectDelCat').value;
-            if(!cat || !confirm(`Apagar a categoria "${cat}" removerá TUDO. Confirma?`)) return;
-            await enviarDados('deleteCategory', 'selectDelCat');
+            if(!cat) return;
+            if(confirm(`CUIDADO: Isso apagará a categoria "${cat}" e TODOS os banners dela. Confirma?`)) {
+                await enviarAcao('deleteCategory', 'selectDelCat');
+            }
         }
 
-        async function deletarBanner() {
-            const cat = document.getElementById('selectCatBanner').value;
-            const nome = document.getElementById('selectBanner').value;
-            mostrarStatus("Excluindo...", "#aaa");
-            await fetch(urlApp, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", categoria: cat, nome: nome }) });
-            mostrarStatus("Removido!", "#27ae60");
-            setTimeout(() => location.reload(), 1500);
+        async function confirmarDelBanner() {
+            const cat = document.getElementById('selectCatParaBanner').value;
+            const nome = document.getElementById('selectBannerParaDel').value;
+            if(!nome) return;
+            
+            if(confirm(`Deseja excluir apenas o banner "${nome}"?`)) {
+                msg("Excluindo banner...", "#aaa");
+                await fetch(urlApp, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    body: JSON.stringify({ action: "delete", categoria: cat, nome: nome }) 
+                });
+                msg("Banner removido!", "#27ae60");
+                setTimeout(() => location.reload(), 1200);
+            }
         }
 
-        function mostrarStatus(txt, cor) {
-            const m = document.getElementById('status-msg');
-            m.innerText = txt; m.style.color = cor;
+        function msg(t, c) {
+            const s = document.getElementById('status-msg');
+            s.innerText = t; s.style.color = c;
         }
     </script>
 </body>
