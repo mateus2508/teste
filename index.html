@@ -5,25 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NetLinks Gestão</title>
     <style>
-        body { background-color: #141414; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; padding: 20px 4%; margin: 0; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        body { 
+            background-color: #141414; 
+            color: #fff; 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            padding: 20px 4%; 
+            margin: 0; 
+        }
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 30px; 
+        }
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
         h1 { color: #E50914; margin: 0; font-size: 26px; }
-        .btn-cadastro { background: #E50914; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; font-size: 14px; transition: 0.3s; }
+        
+        /* Estilo dos Botões */
+        .btn-acao { 
+            color: white; 
+            text-decoration: none; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            font-size: 14px; 
+            transition: 0.3s; 
+        }
+        .btn-cadastro { background: #E50914; }
         .btn-cadastro:hover { background: #b20710; }
-        .categoria-titulo { font-size: 1.1rem; margin: 30px 0 15px 0; border-left: 4px solid #E50914; padding-left: 10px; text-transform: uppercase; color: #aaa; letter-spacing: 1px; }
-        .fileira { display: flex; flex-wrap: wrap; gap: 15px; min-height: 50px; }
-        .card { flex: 0 1 calc(20% - 15px); min-width: 190px; height: 115px; background-color: #2f2f2f; background-size: cover; background-position: center; border-radius: 6px; text-decoration: none; color: white; position: relative; border: 2px solid transparent; transition: transform 0.3s; overflow: hidden; }
+        .btn-excluir { background: #444; }
+        .btn-excluir:hover { background: #666; }
+
+        .categoria-titulo { 
+            font-size: 1.1rem; 
+            margin: 30px 0 15px 0; 
+            border-left: 4px solid #E50914; 
+            padding-left: 10px; 
+            text-transform: uppercase; 
+            color: #aaa; 
+            letter-spacing: 1px; 
+        }
+        .fileira { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            min-height: 50px; 
+        }
+        .card { 
+            flex: 0 1 calc(20% - 15px); 
+            min-width: 190px; 
+            height: 115px; 
+            background-color: #2f2f2f; 
+            background-size: cover; 
+            background-position: center; 
+            border-radius: 6px; 
+            text-decoration: none; 
+            color: white; 
+            position: relative; 
+            border: 2px solid transparent; 
+            transition: transform 0.3s; 
+            overflow: hidden; 
+        }
         .card:hover { transform: scale(1.05); border-color: #fff; z-index: 10; }
-        .card-info { background: rgba(0,0,0,0.6); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 10px; box-sizing: border-box; font-size: 14px; }
+        .card-info { 
+            background: rgba(0,0,0,0.6); 
+            width: 100%; 
+            height: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold; 
+            text-align: center; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            font-size: 14px; 
+        }
         #loading { text-align: center; color: #E50914; padding: 30px; font-weight: bold; }
-        @media (max-width: 768px) { .card { flex: 1 1 calc(45% - 15px); } }
+        
+        @media (max-width: 768px) { 
+            .header { flex-direction: column; gap: 20px; text-align: center; }
+            .card { flex: 1 1 calc(45% - 15px); } 
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>NetLinks Gestão</h1>
-        <a href="cadastro.html" class="btn-cadastro">+ CADASTRAR NOVO</a>
+        <div class="header-buttons">
+            <a href="excluir.html" class="btn-acao btn-excluir">EXCLUIR BANNER</a>
+            <a href="cadastro.html" class="btn-acao btn-cadastro">+ NOVO BANNER</a>
+        </div>
     </div>
 
     <div id="loading">Sincronizando com a planilha...</div>
@@ -48,6 +123,7 @@
 
     <script>
         async function carregarBanners() {
+            // URL da sua API no Apps Script
             const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
             
             try {
@@ -57,7 +133,7 @@
                 document.getElementById('loading').style.display = 'none';
 
                 dados.forEach(item => {
-                    // Limpa o nome da categoria para o ID do container
+                    // Normaliza o nome da categoria para bater com o ID da div
                     let catFix = item.categoria.toLowerCase()
                                  .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
                                  .replace("gestao de equipe", "gestao")
@@ -73,9 +149,12 @@
                     }
                 });
             } catch (erro) {
-                document.getElementById('loading').innerText = "Erro ao conectar com o banco de dados.";
+                document.getElementById('loading').innerText = "Erro ao carregar dados da planilha.";
+                console.error(erro);
             }
         }
+
+        // Inicia o carregamento
         carregarBanners();
     </script>
 </body>
