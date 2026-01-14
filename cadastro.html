@@ -1,1 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar - NetLinks</title>
+    <style>
+        body { background-color: #141414; color: #fff; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .form-container { background: #2f2f2f; padding: 30px; border-radius: 8px; width: 100%; max-width: 400px; }
+        h2 { color: #E50914; text-align: center; }
+        .campo { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 13px; color: #aaa; }
+        select, input { width: 100%; padding: 12px; border-radius: 4px; border: 1px solid #444; background: #444; color: white; box-sizing: border-box; }
+        .btn-salvar { background: #E50914; color: white; border: none; padding: 14px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; }
+        .btn-voltar { display: block; text-align: center; color: #fff; text-decoration: none; background: #444; padding: 12px; border-radius: 4px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Novo Banner</h2>
+        <div class="campo">
+            <label>Segmento:</label>
+            <select id="categoria">
+                <option value="sistemas">SISTEMAS</option>
+                <option value="citr">CITR</option>
+                <option value="cisl">CISL</option>
+                <option value="pagamentos">PAGAMENTOS</option>
+                <option value="materiais">MATERIAIS</option>
+                <option value="gestao">GESTÃO DE EQUIPE</option>
+            </select>
+        </div>
+        <div class="campo">
+            <label>Nome do Banner:</label>
+            <input type="text" id="nome" placeholder="Ex: Voalle">
+        </div>
+        <div class="campo">
+            <label>Link do Google Drive (Imagem):</label>
+            <input type="text" id="linkDrive" placeholder="Cole o link de compartilhamento">
+        </div>
+        <div class="campo">
+            <label>URL do Sistema:</label>
+            <input type="url" id="urlDestino" placeholder="https://...">
+        </div>
+        <button class="btn-salvar" onclick="enviar()">PROSSEGUIR</button>
+        <a href="index.html" class="btn-voltar">VOLTAR</a>
+    </div>
 
+    <script>
+        async function enviar() {
+            const urlApp = "https://script.google.com/macros/s/AKfycbzS04tpI2x7pSkWDDq-vVkZKk--yueuoK8f281O95Yojj94k4gqEMLFmQyiRJrliYXOkA/exec";
+            const linkDrive = document.getElementById('linkDrive').value;
+            const nome = document.getElementById('nome').value;
+            const url = document.getElementById('urlDestino').value;
+            const categoria = document.getElementById('categoria').value;
+            
+            const regex = /\/d\/([a-zA-Z0-9_-]+)|id=([a-zA-Z0-9_-]+)/;
+            const match = linkDrive.match(regex);
+
+            if (match && nome && url) {
+                const fileId = match[1] || match[2];
+                const linkFinalImg = `https://drive.google.com/uc?export=view&id=${fileId}`;
+                
+                const dados = { categoria, nome, imagem: linkFinalImg, link: url };
+
+                await fetch(urlApp, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(dados)
+                });
+
+                alert("Cadastrado! Verifique a planilha.");
+                window.location.href = "index.html";
+            } else {
+                alert("Preencha todos os campos corretamente.");
+            }
+        }
+    </script>
+</body>
+</html>
