@@ -55,36 +55,19 @@
         }
 
         .foto-perfil {
-            width: 150px;
-            height: 150px;
+            width: 160px;
+            height: 160px;
             border-radius: 20px;
             border: 3px solid var(--primary);
             object-fit: cover;
             margin-bottom: 20px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            background-color: #333;
         }
 
-        h1 { 
-            margin: 0; 
-            font-size: 32px; 
-            letter-spacing: -0.5px;
-        }
-
-        .headline {
-            color: var(--primary);
-            font-size: 18px;
-            font-weight: 500;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .bio-text {
-            color: var(--text-dim);
-            line-height: 1.8;
-            font-size: 16px;
-            text-align: justify;
-            margin: 30px 0;
-        }
+        h1 { margin: 0; font-size: 32px; letter-spacing: -0.5px; }
+        .headline { color: var(--primary); font-size: 18px; font-weight: 500; margin-top: 5px; display: block; }
+        .bio-text { color: var(--text-dim); line-height: 1.8; font-size: 16px; text-align: justify; margin: 30px 0; }
 
         .skills-grid {
             display: grid;
@@ -105,10 +88,7 @@
             gap: 8px;
         }
 
-        .skill-item i {
-            color: var(--primary);
-            font-size: 14px;
-        }
+        .skill-item i { color: var(--primary); font-size: 14px; }
 
         .social-bar {
             display: flex;
@@ -118,27 +98,11 @@
             border-top: 1px solid #333;
         }
 
-        .social-icon {
-            color: var(--text-main);
-            font-size: 26px;
-            text-decoration: none;
-            transition: 0.3s;
-        }
+        .social-icon { color: var(--text-main); font-size: 26px; text-decoration: none; transition: 0.3s; }
+        .social-icon:hover { color: var(--primary); transform: translateY(-3px); }
+        .social-icon.linkedin:hover { color: var(--linkedin); }
 
-        .social-icon:hover {
-            color: var(--primary);
-            transform: translateY(-3px);
-        }
-
-        .social-icon.linkedin:hover {
-            color: var(--linkedin);
-        }
-
-        .footer-nav {
-            margin-top: 40px;
-            text-align: center;
-        }
-
+        .footer-nav { margin-top: 40px; text-align: center; }
         .btn-home {
             display: inline-block;
             color: var(--text-dim);
@@ -149,12 +113,7 @@
             border-radius: 4px;
             transition: 0.3s;
         }
-
-        .btn-home:hover {
-            color: var(--text-main);
-            background: #333;
-            border-color: var(--primary);
-        }
+        .btn-home:hover { color: var(--text-main); background: #333; border-color: var(--primary); }
 
         @media (max-width: 600px) {
             .content { padding: 30px 20px; }
@@ -170,7 +129,7 @@
         
         <div class="content">
             <div class="profile-header">
-                <img src="https://lh3.googleusercontent.com/u/0/d/1rIzY1x_BmiHReXxOYuPsK1GSbtd3h_00" alt="Mateus Padilha" class="foto-perfil">
+                <img src="https://drive.google.com/thumbnail?id=1qfXiUbBtZTe58p5TSIjd017HAdHZzsUx&sz=w1000" alt="Mateus Padilha" class="foto-perfil">
                 <h1>Mateus Padilha</h1>
                 <span class="headline">Tecnologia, Gestão & Engenharia Multidisciplinar</span>
             </div>
