@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GESTOR DE LINKS</title>
+    <title>NetLinks Gestão</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { 
             background-color: #141414; 
             color: #fff; 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
-            padding: 20px 4% 120px 4%; 
+            padding: 20px 4% 140px 4%; 
             margin: 0; 
         }
         .header { 
@@ -48,7 +48,7 @@
         .btn-cats { background: #27ae60; border: 1px solid #27ae60; }
         .btn-cats:hover { background: #219150; }
 
-        /* Estilo Dinâmico das Categorias */
+        /* Categorias Dinâmicas */
         .categoria-titulo { 
             font-size: 1.2rem; 
             margin: 40px 0 20px 0; 
@@ -56,7 +56,6 @@
             padding-left: 15px; 
             text-transform: uppercase; 
             color: #eee; 
-            letter-spacing: 1px;
             font-weight: bold;
         }
         .fileira { 
@@ -77,7 +76,6 @@
             border-radius: 6px; 
             text-decoration: none; 
             color: white; 
-            position: relative; 
             border: 2px solid transparent; 
             transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
             overflow: hidden; 
@@ -88,9 +86,8 @@
             width: 100%; height: 100%; 
             display: flex; align-items: center; justify-content: center; 
             font-weight: bold; text-align: center; padding: 10px; box-sizing: border-box; 
-            font-size: 14px; opacity: 0.9; transition: 0.3s;
+            font-size: 14px; transition: 0.3s;
         }
-        .card:hover .card-info { background: rgba(0,0,0,0.4); opacity: 1; }
 
         /* Rodapé de Contato */
         .footer {
@@ -109,6 +106,18 @@
         .footer-links { display: flex; gap: 25px; }
         .contact-link { color: #fff; text-decoration: none; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .contact-link:hover { color: #E50914; }
+        
+        /* Link da Bio no Rodapé */
+        .bio-link {
+            color: #E50914;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .bio-link:hover {
+            text-decoration: underline;
+            color: #ff1f29;
+        }
 
         #loading { text-align: center; color: #E50914; padding: 50px; font-weight: bold; font-size: 1.2rem; }
         
@@ -126,7 +135,7 @@
         <h1>NetLinks Gestão</h1>
         <div class="header-buttons">
             <a href="gerenciar_categorias.html" class="btn-acao btn-cats"><i class="fas fa-folder-plus"></i> CATEGORIAS</a>
-            <a href="excluir.html" class="btn-acao btn-excluir"><i class="fas fa-trash-alt"></i> EXCLUIR BANNER</a>
+            <a href="excluir.html" class="btn-acao btn-excluir"><i class="fas fa-trash-alt"></i> EXCLUIR</a>
             <a href="cadastro.html" class="btn-acao btn-cadastro"><i class="fas fa-plus"></i> NOVO BANNER</a>
         </div>
     </div>
@@ -138,14 +147,16 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-links">
-                <a href="https://wa.me/556699267535" target="_blank" class="contact-link">
-                    <i class="fab fa-whatsapp"></i> 66 99226-7535
+                <a href="https://wa.me/5566992267535" target="_blank" class="contact-link">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
                 </a>
                 <a href="mailto:mateus.padilhasantos@gmail.com" class="contact-link">
-                    <i class="far fa-envelope"></i> mateus.padilhasantos@gmail.com
+                    <i class="far fa-envelope"></i> E-mail
                 </a>
             </div>
-            <span>&reg; 2024 Todos os direitos reservados - Mateus Padilha</span>
+            <span>&reg; 2024 Todos os direitos reservados - 
+                <a href="sobre.html" class="bio-link">Mateus Padilha</a>
+            </span>
         </div>
     </footer>
 
@@ -160,44 +171,36 @@
                 document.getElementById('loading').style.display = 'none';
                 const containerPrincipal = document.getElementById('categorias-container');
 
-                // 1. Criar seções para cada categoria cadastrada na aba 'categorias'
-                dados.categorias.forEach(cat => {
-                    if(!cat || cat === "" || cat === "categorias") return; // Ignora células vazias ou título
-                    
-                    // Cria um ID limpo para a div (ex: "GESTÃO DE EQUIPE" vira "gestao-de-equipe")
-                    const idCat = cat.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
-                    
-                    containerPrincipal.innerHTML += `
-                        <div class="categoria-titulo">${cat.toUpperCase()}</div>
-                        <div class="fileira" id="container-${idCat}"></div>
-                    `;
-                });
+                // 1. Criar seções das categorias vindas da planilha
+                if (dados.categorias) {
+                    dados.categorias.forEach(cat => {
+                        if(!cat || cat === "") return;
+                        const idCat = cat.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+                        
+                        containerPrincipal.innerHTML += `
+                            <div class="categoria-titulo">${cat.toUpperCase()}</div>
+                            <div class="fileira" id="container-${idCat}"></div>
+                        `;
+                    });
+                }
 
-                // 2. Distribuir os banners nas suas fileiras correspondentes
-                dados.banners.forEach(item => {
-                    const idCat = item.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
-                    const fileira = document.getElementById(`container-${idCat}`);
-                    
-                    if (fileira) {
-                        fileira.innerHTML += `
-                            <a href="${item.link}" target="_blank" class="card" style="background-image: url('${item.imagem}');">
-                                <div class="card-info">${item.nome.toUpperCase()}</div>
-                            </a>`;
-                    }
-                });
-
-                // 3. Remover títulos de categorias que ficaram vazias (opcional)
-                dados.categorias.forEach(cat => {
-                    const idCat = cat.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
-                    const fileira = document.getElementById(`container-${idCat}`);
-                    if (fileira && fileira.innerHTML === "") {
-                        // Se quiser esconder a categoria se não houver banners, descomente a linha abaixo:
-                        // fileira.previousElementSibling.style.display = 'none';
-                    }
-                });
+                // 2. Distribuir os banners
+                if (dados.banners) {
+                    dados.banners.forEach(item => {
+                        const idCat = item.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+                        const fileira = document.getElementById(`container-${idCat}`);
+                        
+                        if (fileira) {
+                            fileira.innerHTML += `
+                                <a href="${item.link}" target="_blank" class="card" style="background-image: url('${item.imagem}');">
+                                    <div class="card-info">${item.nome.toUpperCase()}</div>
+                                </a>`;
+                        }
+                    });
+                }
 
             } catch (erro) {
-                document.getElementById('loading').innerHTML = "Erro ao carregar dados. Verifique a conexão com a planilha.";
+                document.getElementById('loading').innerHTML = "Erro ao carregar dados da planilha.";
                 console.error(erro);
             }
         }
@@ -206,4 +209,3 @@
     </script>
 </body>
 </html>
-
