@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - NetLinks</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 40px 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: var(--primary); text-align: center; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .config-card { background: var(--card); padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #444; }
+        h2 { font-size: 18px; margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px; color: #eee; }
+        
+        label { display: block; margin: 15px 0 5px; font-size: 13px; color: #aaa; }
+        input, select { width: 100%; padding: 10px; border-radius: 4px; background: #444; color: white; border: 1px solid #555; box-sizing: border-box; }
+        
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 14px; }
+        .btn-add { background: #27ae60; color: white; }
+        .btn-add:hover { background: #219150; }
+        .btn-del { background: var(--primary); color: white; }
+        .btn-del:hover { background: #b20710; }
+        .btn-nav { background: #444; color: white; margin-top: 20px; }
+        .btn-nav:hover { background: #555; }
+
+        .footer-nav { text-align: center; margin-top: 50px; }
+        #status-msg { text-align: center; margin-bottom: 20px; font-weight: bold; min-height: 20px; }
+
+        @media (max-width: 768px) { .section-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1><i class="fas fa-cog"></i> Configurações</h1>
+        <div id="status-msg"></div>
+
+        <div class="section-grid">
+            <div class="config-card">
+                <h2><i class="fas fa-folder"></i> Categorias</h2>
+                
+                <label>Nova Categoria:</label>
+                <input type="text" id="novaCat" placeholder="Nome do segmento...">
+                <button class="btn btn-add" onclick="enviarDados('addCategory', 'novaCat')">CRIAR NOIVA</button>
+
+                <hr style="border: 0; border-top: 1px solid #444; margin: 25px 0 15px;">
+
+                <label>Excluir Categoria (e seus banners):</label>
+                <select id="selectDelCat"><option>Carregando...</option></select>
+                <button class="btn btn-del" onclick="confirmarExclusaoCat()">EXCLUIR COMPLETA</button>
+            </div>
+
+            <div class="config-card">
+                <h2><i class="fas fa-image"></i> Banners</h2>
+                
+                <a href="cadastro.html" class="btn btn-add" style="margin-top: 15px;">
+                    <i class="fas fa-plus"></i> CADASTRAR NOVO BANNER
+                </a>
+
+                <hr style="border: 0; border-top: 1px solid #444; margin: 25px 0 15px;">
+
+                <label>1. Escolha a Categoria:</label>
+                <select id="selectCatBanner" onchange="filtrarBanners()">
+                    <option value="">Selecione...</option>
+                </select>
+
+                <label>2. Escolha o Banner:</label>
+                <select id="selectBanner" disabled>
+                    <option value="">Aguardando categoria...</option>
+                </select>
+                <button class="btn btn-del" id="btnDelBanner" onclick="deletarBanner()" disabled>EXCLUIR BANNER</button>
+            </div>
+        </div>
+
+        <div class="footer-nav">
+            <a href="index.html" class="btn btn-nav" style="max-width: 200px; margin: 0 auto;">
+                <i class="fas fa-arrow-left"></i> VOLTAR AO INÍCIO
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
+        let dadosGlobais = {};
+
+        async function carregarDados() {
+            try {
+                const res = await fetch(urlApp);
+                dadosGlobais = await res.json();
+                
+                const selectDelCat = document.getElementById('selectDelCat');
+                const selectCatBanner = document.getElementById('selectCatBanner');
+
+                const options = '<option value="">Selecione...</option>' + 
+                    dadosGlobais.categorias.filter(c => c).map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
+
+                selectDelCat.innerHTML = options;
+                selectCatBanner.innerHTML = options;
+            } catch (e) { console.error("Erro ao carregar", e); }
+        }
+
+        function filtrarBanners() {
+            const cat = document.getElementById('selectCatBanner').value;
+            const selectB = document.getElementById('selectBanner');
+            const btn = document.getElementById('btnDelBanner');
+            
+            const filtrados = dadosGlobais.banners.filter(b => b.categoria === cat);
+            selectB.innerHTML = '<option value="">Selecione o banner</option>' + 
+                filtrados.map(b => `<option value="${b.nome}">${b.nome}</option>`).join('');
+            
+            selectB.disabled = filtrados.length === 0;
+            btn.disabled = true;
+        }
+
+        document.getElementById('selectBanner').addEventListener('change', function() {
+            document.getElementById('btnDelBanner').disabled = !this.value;
+        });
+
+        async function enviarDados(acao, idCampo) {
+            const valor = document.getElementById(idCampo).value;
+            if(!valor) return alert("Preencha o campo!");
+            
+            mostrarStatus("Processando...", "#aaa");
+            await fetch(urlApp, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: acao, nome: valor }) });
+            
+            mostrarStatus("Sucesso!", "#27ae60");
+            setTimeout(() => location.reload(), 1500);
+        }
+
+        async function confirmarExclusaoCat() {
+            const cat = document.getElementById('selectDelCat').value;
+            if(!cat) return alert("Selecione uma categoria!");
+            if(!confirm(`ATENÇÃO: Apagar a categoria "${cat}" removerá TODOS os banners vinculados. Confirma?`)) return;
+            
+            await enviarDados('deleteCategory', 'selectDelCat');
+        }
+
+        async function deletarBanner() {
+            const cat = document.getElementById('selectCatBanner').value;
+            const nome = document.getElementById('selectBanner').value;
+            
+            mostrarStatus("Excluindo...", "#aaa");
+            await fetch(urlApp, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify({ action: "delete", categoria: cat, nome: nome }) 
+            });
+            
+            mostrarStatus("Banner removido!", "#27ae60");
+            setTimeout(() => location.reload(), 1500);
+        }
+
+        function mostrarStatus(txt, cor) {
+            const m = document.getElementById('status-msg');
+            m.innerText = txt;
+            m.style.color = cor;
+        }
+
+        window.onload = carregarDados;
+    </script>
+</body>
+</html>
