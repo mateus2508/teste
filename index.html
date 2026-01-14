@@ -6,193 +6,79 @@
     <title>NetLinks Gestão</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { 
-            background-color: #141414; 
-            color: #fff; 
-            font-family: 'Helvetica Neue', Arial, sans-serif; 
-            padding: 20px 4% 140px 4%; 
-            margin: 0; 
-        }
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 30px; 
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+        body { background-color: #141414; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; padding: 20px 4% 140px 4%; margin: 0; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
         h1 { color: #E50914; margin: 0; font-size: 26px; text-transform: uppercase; letter-spacing: 2px; }
-        
-        /* Botão de Configurações */
-        .btn-config { 
-            color: white; 
-            text-decoration: none; 
-            padding: 10px 18px; 
-            border-radius: 4px; 
-            font-weight: bold; 
-            font-size: 13px; 
-            transition: 0.3s; 
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #333;
-            border: 1px solid #444;
-        }
+        .btn-config { color: white; text-decoration: none; padding: 10px 18px; border-radius: 4px; font-weight: bold; font-size: 13px; transition: 0.3s; display: flex; align-items: center; gap: 8px; background: #333; border: 1px solid #444; }
         .btn-config:hover { background: #444; border-color: #666; }
-
-        /* Estilo Dinâmico das Categorias */
-        .categoria-titulo { 
-            font-size: 1.2rem; 
-            margin: 40px 0 20px 0; 
-            border-left: 5px solid #E50914; 
-            padding-left: 15px; 
-            text-transform: uppercase; 
-            color: #eee; 
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        .fileira { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 20px; 
-            min-height: 50px; 
-        }
-
-        /* Cards Estilo Netflix */
-        .card { 
-            flex: 0 1 calc(20% - 20px); 
-            min-width: 200px; 
-            height: 120px; 
-            background-color: #2f2f2f; 
-            background-size: cover; 
-            background-position: center; 
-            border-radius: 6px; 
-            text-decoration: none; 
-            color: white; 
-            border: 2px solid transparent; 
-            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
-            overflow: hidden; 
-        }
+        .categoria-titulo { font-size: 1.2rem; margin: 40px 0 20px 0; border-left: 5px solid #E50914; padding-left: 15px; text-transform: uppercase; color: #eee; font-weight: bold; letter-spacing: 1px; }
+        .fileira { display: flex; flex-wrap: wrap; gap: 20px; min-height: 50px; }
+        .card { flex: 0 1 calc(20% - 20px); min-width: 200px; height: 120px; background-color: #2f2f2f; background-size: cover; background-position: center; border-radius: 6px; text-decoration: none; color: white; border: 2px solid transparent; transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); overflow: hidden; }
         .card:hover { transform: scale(1.08); border-color: #fff; z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .card-info { 
-            background: rgba(0,0,0,0.7); 
-            width: 100%; height: 100%; 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: bold; text-align: center; padding: 10px; box-sizing: border-box; 
-            font-size: 14px; transition: 0.3s;
-        }
-        .card:hover .card-info { background: rgba(0,0,0,0.4); }
-
-        /* Rodapé de Contato */
-        .footer {
-            position: fixed;
-            bottom: 0; left: 0;
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
-            padding: 20px 0;
-            border-top: 1px solid #333;
-            text-align: center;
-            font-size: 13px;
-            color: #999;
-            z-index: 100;
-        }
+        .card-info { background: rgba(0,0,0,0.7); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 10px; box-sizing: border-box; font-size: 14px; transition: 0.3s; }
+        .footer { position: fixed; bottom: 0; left: 0; width: 100%; background-color: rgba(0, 0, 0, 0.95); padding: 20px 0; border-top: 1px solid #333; text-align: center; font-size: 13px; color: #999; z-index: 100; }
         .footer-content { display: flex; flex-direction: column; gap: 10px; align-items: center; }
         .footer-links { display: flex; gap: 25px; }
         .contact-link { color: #fff; text-decoration: none; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .contact-link:hover { color: #E50914; }
         .bio-link { color: #E50914; text-decoration: none; font-weight: bold; }
-        .bio-link:hover { text-decoration: underline; }
-
         #loading { text-align: center; color: #E50914; padding: 50px; font-weight: bold; font-size: 1.2rem; }
-        
         @media (max-width: 1024px) { .card { flex: 0 1 calc(33.33% - 20px); } }
-        @media (max-width: 768px) { 
-            .header { flex-direction: column; text-align: center; }
-            .card { flex: 1 1 calc(45% - 20px); } 
-            .footer-links { flex-direction: column; gap: 15px; }
-        }
+        @media (max-width: 768px) { .header { flex-direction: column; text-align: center; } .card { flex: 1 1 calc(45% - 20px); } .footer-links { flex-direction: column; gap: 15px; } }
     </style>
 </head>
 <body>
-
     <div class="header">
         <h1>NetLinks Gestão</h1>
         <div class="header-buttons">
-            <a href="settings.html" class="btn-config">
-                <i class="fas fa-cog"></i> CONFIGURAÇÕES
-            </a>
+            <a href="settings.html" class="btn-config"><i class="fas fa-cog"></i> CONFIGURAÇÕES</a>
         </div>
     </div>
-
-    <div id="loading"><i class="fas fa-spinner fa-spin"></i> Sincronizando com a Planilha...</div>
-
+    <div id="loading"><i class="fas fa-spinner fa-spin"></i> Sincronizando...</div>
     <div id="categorias-container"></div>
-
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-links">
-                <a href="https://wa.me/5566992267535" target="_blank" class="contact-link">
-                    <i class="fab fa-whatsapp"></i> WhatsApp
-                </a>
-                <a href="mailto:mateus.padilhasantos@gmail.com" class="contact-link">
-                    <i class="far fa-envelope"></i> E-mail
-                </a>
-                <a href="https://br.linkedin.com/in/padilhamateus" target="_blank" class="contact-link">
-                    <i class="fab fa-linkedin-in"></i> LinkedIn
-                </a>
+                <a href="https://wa.me/5566992267535" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                <a href="mailto:mateus.padilhasantos@gmail.com" class="contact-link"><i class="far fa-envelope"></i> E-mail</a>
+                <a href="https://br.linkedin.com/in/padilhamateus" target="_blank" class="contact-link"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
             </div>
-            <span>&reg; 2024 Todos os direitos reservados - 
-                <a href="sobre.html" class="bio-link">Mateus Padilha</a>
-            </span>
+            <span>&reg; 2024 - <a href="sobre.html" class="bio-link">Mateus Padilha</a></span>
         </div>
     </footer>
-
     <script>
+        const IMG_PADRAO = "https://drive.google.com/thumbnail?id=1OyRgCJqj0SASvlxkbPBWxh8SYRYJJc2N&sz=w1000";
+        function tratarImagem(url) {
+            if (!url || url.trim() === "") return IMG_PADRAO;
+            if (url.includes("drive.google.com")) {
+                let id = "";
+                if (url.includes("id=")) id = url.split("id=")[1].split("&")[0];
+                else if (url.includes("/d/")) id = url.split("/d/")[1].split("/")[0];
+                return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000` : IMG_PADRAO;
+            }
+            return url;
+        }
         async function carregarTudo() {
-            // URL DO SEU APPS SCRIPT
             const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
-            
             try {
                 const resposta = await fetch(urlApp);
                 const dados = await resposta.json();
-                
                 document.getElementById('loading').style.display = 'none';
                 const containerPrincipal = document.getElementById('categorias-container');
-
-                // 1. Criar seções das categorias
-                if (dados.categorias) {
-                    dados.categorias.forEach(cat => {
-                        if(!cat || cat === "") return;
-                        const idCat = cat.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
-                        
-                        containerPrincipal.innerHTML += `
-                            <div class="categoria-titulo">${cat.toUpperCase()}</div>
-                            <div class="fileira" id="container-${idCat}"></div>
-                        `;
-                    });
-                }
-
-                // 2. Distribuir os banners
-                if (dados.banners) {
-                    dados.banners.forEach(item => {
-                        const idCat = item.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
-                        const fileira = document.getElementById(`container-${idCat}`);
-                        
-                        if (fileira) {
-                            fileira.innerHTML += `
-                                <a href="${item.link}" target="_blank" class="card" style="background-image: url('${item.imagem}');">
-                                    <div class="card-info">${item.nome.toUpperCase()}</div>
-                                </a>`;
-                        }
-                    });
-                }
-
-            } catch (erro) {
-                document.getElementById('loading').innerHTML = "Erro ao carregar dados da planilha.";
-                console.error(erro);
-            }
+                dados.categorias.forEach(cat => {
+                    if(!cat) return;
+                    const idCat = cat.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+                    containerPrincipal.innerHTML += `<div class="categoria-titulo">${cat.toUpperCase()}</div><div class="fileira" id="container-${idCat}"></div>`;
+                });
+                dados.banners.forEach(item => {
+                    const idCat = item.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+                    const fileira = document.getElementById(`container-${idCat}`);
+                    if (fileira) {
+                        fileira.innerHTML += `<a href="${item.link}" target="_blank" class="card" style="background-image: url('${tratarImagem(item.imagem)}');"><div class="card-info">${item.nome.toUpperCase()}</div></a>`;
+                    }
+                });
+            } catch (erro) { console.error(erro); }
         }
-
         carregarTudo();
     </script>
 </body>
