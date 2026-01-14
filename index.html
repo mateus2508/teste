@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NetLinks Gestão</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { 
             background-color: #141414; 
             color: #fff; 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
-            padding: 20px 4%; 
+            padding: 20px 4% 100px 4%; /* Padding inferior maior para o footer não cobrir o conteúdo */
             margin: 0; 
         }
         .header { 
@@ -24,7 +25,6 @@
         }
         h1 { color: #E50914; margin: 0; font-size: 26px; }
         
-        /* Estilo dos Botões */
         .btn-acao { 
             color: white; 
             text-decoration: none; 
@@ -46,7 +46,6 @@
             padding-left: 10px; 
             text-transform: uppercase; 
             color: #aaa; 
-            letter-spacing: 1px; 
         }
         .fileira { 
             display: flex; 
@@ -64,7 +63,6 @@
             border-radius: 6px; 
             text-decoration: none; 
             color: white; 
-            position: relative; 
             border: 2px solid transparent; 
             transition: transform 0.3s; 
             overflow: hidden; 
@@ -72,22 +70,51 @@
         .card:hover { transform: scale(1.05); border-color: #fff; z-index: 10; }
         .card-info { 
             background: rgba(0,0,0,0.6); 
-            width: 100%; 
-            height: 100%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-weight: bold; 
-            text-align: center; 
-            padding: 10px; 
-            box-sizing: border-box; 
-            font-size: 14px; 
+            width: 100%; height: 100%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; text-align: center; padding: 10px; box-sizing: border-box; 
         }
+
+        /* ESTILOS DO RODAPÉ (FOOTER) */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 15px 0;
+            border-top: 1px solid #333;
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+        }
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+        .contact-link {
+            color: #fff;
+            text-decoration: none;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .contact-link:hover { color: #E50914; }
+        .contact-link i { font-size: 18px; }
+
         #loading { text-align: center; color: #E50914; padding: 30px; font-weight: bold; }
         
         @media (max-width: 768px) { 
-            .header { flex-direction: column; gap: 20px; text-align: center; }
+            .header { flex-direction: column; gap: 20px; }
             .card { flex: 1 1 calc(45% - 15px); } 
+            .footer-links { flex-direction: column; gap: 10px; }
         }
     </style>
 </head>
@@ -121,26 +148,36 @@
     <div class="categoria-titulo">GESTÃO DE EQUIPE</div>
     <div class="fileira" id="container-gestao"></div>
 
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://wa.me/556699267535" target="_blank" class="contact-link">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+                <a href="mailto:mateus.padilhasantos@gmail.com" class="contact-link">
+                    <i class="far fa-envelope"></i> mateus.padilhasantos@gmail.com
+                </a>
+            </div>
+            <span>&reg; Todos os direitos reservados - Criado por Mateus Padilha</span>
+        </div>
+    </footer>
+
     <script>
         async function carregarBanners() {
-            // URL da sua API no Apps Script
             const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
             
             try {
                 const resposta = await fetch(urlApp);
                 const dados = await resposta.json();
-                
                 document.getElementById('loading').style.display = 'none';
 
                 dados.forEach(item => {
-                    // Normaliza o nome da categoria para bater com o ID da div
                     let catFix = item.categoria.toLowerCase()
                                  .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
                                  .replace("gestao de equipe", "gestao")
                                  .trim();
 
                     const container = document.getElementById(`container-${catFix}`);
-                    
                     if (container) {
                         container.innerHTML += `
                             <a href="${item.link}" target="_blank" class="card" style="background-image: url('${item.imagem}');">
@@ -149,12 +186,9 @@
                     }
                 });
             } catch (erro) {
-                document.getElementById('loading').innerText = "Erro ao carregar dados da planilha.";
-                console.error(erro);
+                document.getElementById('loading').innerText = "Erro ao carregar dados.";
             }
         }
-
-        // Inicia o carregamento
         carregarBanners();
     </script>
 </body>
