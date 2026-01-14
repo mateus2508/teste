@@ -4,82 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NetLinks Gestão</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #141414; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; padding: 20px 4% 140px 4%; margin: 0; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
-        h1 { color: #E50914; margin: 0; font-size: 26px; text-transform: uppercase; letter-spacing: 2px; }
-        .btn-config { color: white; text-decoration: none; padding: 10px 18px; border-radius: 4px; font-weight: bold; font-size: 13px; transition: 0.3s; display: flex; align-items: center; gap: 8px; background: #333; border: 1px solid #444; }
-        .btn-config:hover { background: #444; border-color: #666; }
-        .categoria-titulo { font-size: 1.2rem; margin: 40px 0 20px 0; border-left: 5px solid #E50914; padding-left: 15px; text-transform: uppercase; color: #eee; font-weight: bold; letter-spacing: 1px; }
-        .fileira { display: flex; flex-wrap: wrap; gap: 20px; min-height: 50px; }
-        .card { flex: 0 1 calc(20% - 20px); min-width: 200px; height: 120px; background-color: #2f2f2f; background-size: cover; background-position: center; border-radius: 6px; text-decoration: none; color: white; border: 2px solid transparent; transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); overflow: hidden; }
-        .card:hover { transform: scale(1.08); border-color: #fff; z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .card-info { background: rgba(0,0,0,0.7); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 10px; box-sizing: border-box; font-size: 14px; transition: 0.3s; }
-        .footer { position: fixed; bottom: 0; left: 0; width: 100%; background-color: rgba(0, 0, 0, 0.95); padding: 20px 0; border-top: 1px solid #333; text-align: center; font-size: 13px; color: #999; z-index: 100; }
-        .footer-content { display: flex; flex-direction: column; gap: 10px; align-items: center; }
-        .footer-links { display: flex; gap: 25px; }
-        .contact-link { color: #fff; text-decoration: none; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-        .contact-link:hover { color: #E50914; }
+        body { background-color: #141414; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; }
+        #login-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        #painel-principal { display: none; padding: 20px 4% 140px 4%; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        h1 { color: #E50914; text-transform: uppercase; letter-spacing: 2px; }
+        .user-badge { display: flex; align-items: center; gap: 10px; background: #333; padding: 5px 15px; border-radius: 20px; font-size: 13px; }
+        .user-badge img { width: 25px; border-radius: 50%; }
+        .btn-config { color: white; text-decoration: none; padding: 10px 18px; border-radius: 4px; font-weight: bold; background: #333; border: 1px solid #444; margin-left: 10px; }
+        .categoria-titulo { font-size: 1.2rem; margin: 40px 0 20px 0; border-left: 5px solid #E50914; padding-left: 15px; text-transform: uppercase; font-weight: bold; }
+        .fileira { display: flex; flex-wrap: wrap; gap: 20px; }
+        .card { flex: 0 1 calc(20% - 20px); min-width: 200px; height: 120px; background-color: #2f2f2f; background-size: cover; background-position: center; border-radius: 6px; text-decoration: none; color: white; transition: 0.4s; overflow: hidden; position: relative; }
+        .card:hover { transform: scale(1.08); z-index: 10; }
+        .card-info { background: rgba(0,0,0,0.7); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; font-size: 14px; }
+        .footer { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.9); padding: 20px 0; text-align: center; font-size: 13px; color: #999; }
         .bio-link { color: #E50914; text-decoration: none; font-weight: bold; }
-        #loading { text-align: center; color: #E50914; padding: 50px; font-weight: bold; font-size: 1.2rem; }
-        @media (max-width: 1024px) { .card { flex: 0 1 calc(33.33% - 20px); } }
-        @media (max-width: 768px) { .header { flex-direction: column; text-align: center; } .card { flex: 1 1 calc(45% - 20px); } .footer-links { flex-direction: column; gap: 15px; } }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>NetLinks Gestão</h1>
-        <div class="header-buttons">
-            <a href="settings.html" class="btn-config"><i class="fas fa-cog"></i> CONFIGURAÇÕES</a>
-        </div>
+
+    <div id="login-container">
+        <h1 style="font-size: 3rem;">NetLinks</h1>
+        <p style="color: #aaa; margin-bottom: 20px;">Acesse seu painel personalizado</p>
+        <div id="buttonDiv"></div>
     </div>
-    <div id="loading"><i class="fas fa-spinner fa-spin"></i> Sincronizando...</div>
-    <div id="categorias-container"></div>
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-links">
-                <a href="https://wa.me/5566992267535" target="_blank" class="contact-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>
-                <a href="mailto:mateus.padilhasantos@gmail.com" class="contact-link"><i class="far fa-envelope"></i> E-mail</a>
-                <a href="https://br.linkedin.com/in/padilhamateus" target="_blank" class="contact-link"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+
+    <div id="painel-principal">
+        <div class="header">
+            <h1>NetLinks</h1>
+            <div style="display: flex; align-items: center;">
+                <div class="user-badge" id="userBadge"></div>
+                <a href="settings.html" class="btn-config"><i class="fas fa-cog"></i></a>
+                <button onclick="logout()" style="background:none; border:none; color:#E50914; cursor:pointer; margin-left:15px;"><i class="fas fa-sign-out-alt"></i></button>
             </div>
-            <span>&reg; 2024 - <a href="sobre.html" class="bio-link">Mateus Padilha</a></span>
         </div>
+        <div id="categorias-container"></div>
+    </div>
+
+    <footer class="footer">
+        &reg; 2024 - <a href="sobre.html" class="bio-link">Mateus Padilha</a>
     </footer>
+
     <script>
+        const CLIENT_ID = "SEU_ID_DO_CLIENTE_AQUI.apps.googleusercontent.com";
+        const urlApp = "SUA_URL_DO_APPS_SCRIPT_AQUI";
         const IMG_PADRAO = "https://drive.google.com/thumbnail?id=1OyRgCJqj0SASvlxkbPBWxh8SYRYJJc2N&sz=w1000";
-        function tratarImagem(url) {
-            if (!url || url.trim() === "") return IMG_PADRAO;
-            if (url.includes("drive.google.com")) {
-                let id = "";
-                if (url.includes("id=")) id = url.split("id=")[1].split("&")[0];
-                else if (url.includes("/d/")) id = url.split("/d/")[1].split("/")[0];
-                return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w1000` : IMG_PADRAO;
-            }
-            return url;
+
+        function handleCredentialResponse(response) {
+            const data = JSON.parse(atob(response.credential.split('.')[1]));
+            localStorage.setItem("netlinks_user", data.email);
+            localStorage.setItem("netlinks_name", data.name);
+            localStorage.setItem("netlinks_pic", data.picture);
+            location.reload();
         }
-        async function carregarTudo() {
-            const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
+
+        window.onload = function () {
+            const email = localStorage.getItem("netlinks_user");
+            if (email) {
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('painel-principal').style.display = 'block';
+                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> ${localStorage.getItem('netlinks_name')}`;
+                carregarDados(email);
+            } else {
+                google.accounts.id.initialize({ client_id: CLIENT_ID, callback: handleCredentialResponse });
+                google.accounts.id.renderButton(document.getElementById("buttonDiv"), { theme: "outline", size: "large" });
+            }
+        };
+
+        async function carregarDados(email) {
             try {
-                const resposta = await fetch(urlApp);
-                const dados = await resposta.json();
-                document.getElementById('loading').style.display = 'none';
-                const containerPrincipal = document.getElementById('categorias-container');
+                const res = await fetch(`${urlApp}?dono=${email}`);
+                const dados = await res.json();
+                const container = document.getElementById('categorias-container');
+                
                 dados.categorias.forEach(cat => {
-                    if(!cat) return;
-                    const idCat = cat.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
-                    containerPrincipal.innerHTML += `<div class="categoria-titulo">${cat.toUpperCase()}</div><div class="fileira" id="container-${idCat}"></div>`;
+                    const idCat = cat.toLowerCase().replace(/\s+/g, '-');
+                    container.innerHTML += `<div class="categoria-titulo">${cat}</div><div class="fileira" id="container-${idCat}"></div>`;
                 });
+
                 dados.banners.forEach(item => {
-                    const idCat = item.categoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-');
+                    const idCat = item.categoria.toLowerCase().replace(/\s+/g, '-');
                     const fileira = document.getElementById(`container-${idCat}`);
                     if (fileira) {
-                        fileira.innerHTML += `<a href="${item.link}" target="_blank" class="card" style="background-image: url('${tratarImagem(item.imagem)}');"><div class="card-info">${item.nome.toUpperCase()}</div></a>`;
+                        const img = item.imagem && item.imagem.includes("drive.google") ? `https://drive.google.com/thumbnail?id=${item.imagem.split('id=')[1]}&sz=w1000` : (item.imagem || IMG_PADRAO);
+                        fileira.innerHTML += `<a href="${item.link}" target="_blank" class="card" style="background-image: url('${img}');"><div class="card-info">${item.nome}</div></a>`;
                     }
                 });
-            } catch (erro) { console.error(erro); }
+            } catch (e) { console.error(e); }
         }
-        carregarTudo();
+
+        function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
