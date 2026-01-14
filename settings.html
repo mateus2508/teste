@@ -8,151 +8,92 @@
     <style>
         :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; }
         body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 40px 20px; }
-        
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         .login-box { background: var(--card); padding: 40px; border-radius: 12px; text-align: center; border: 1px solid #444; width: 300px; }
         #main-content { display: none; }
-
         .container { max-width: 900px; margin: 0 auto; }
         h1 { color: var(--primary); text-align: center; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px; }
-        
         .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
         .config-card { background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid #444; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         h2 { font-size: 18px; margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px; color: #eee; display: flex; align-items: center; gap: 10px; }
-        
         label { display: block; margin: 15px 0 5px; font-size: 13px; color: #aaa; }
         input, select { width: 100%; padding: 12px; border-radius: 4px; background: #444; color: white; border: 1px solid #555; box-sizing: border-box; outline: none; }
-        input:focus { border-color: var(--primary); }
-        
         .btn { width: 100%; padding: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 14px; }
         .btn-add { background: #27ae60; color: white; }
-        .btn-add:hover { background: #219150; }
         .btn-del { background: var(--primary); color: white; }
-        .btn-del:hover { background: #b20710; }
-        .btn-del:disabled { background: #555; opacity: 0.5; cursor: not-allowed; }
-        .btn-nav { background: #444; color: white; margin-top: 20px; }
-
-        #status-msg { text-align: center; margin-bottom: 20px; font-weight: bold; min-height: 20px; font-size: 14px; }
+        .btn-logout { background: #444; color: white; }
+        #status-msg { text-align: center; margin-bottom: 20px; font-weight: bold; min-height: 20px; }
         hr { border: 0; border-top: 1px solid #444; margin: 25px 0; }
-
         @media (max-width: 768px) { .section-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-
     <div id="login-screen">
         <div class="login-box">
             <h2 style="border:none; justify-content:center;"><i class="fas fa-lock"></i> Acesso</h2>
             <input type="password" id="passInput" placeholder="Senha Mestre">
             <button class="btn btn-add" onclick="checkPass()">ENTRAR</button>
-            <a href="index.html" style="color:#aaa; text-decoration:none; display:block; margin-top:20px; font-size:12px;">Voltar</a>
+            <a href="index.html" style="color:#aaa; text-decoration:none; display:block; margin-top:20px; font-size:12px;">Voltar ao Início</a>
         </div>
     </div>
-
     <div id="main-content">
         <div class="container">
             <h1><i class="fas fa-tools"></i> Painel de Controle</h1>
             <div id="status-msg"></div>
-
             <div class="section-grid">
-                
                 <div class="config-card">
                     <h2><i class="fas fa-folder"></i> Categorias</h2>
-                    
                     <label>Nova Categoria:</label>
-                    <input type="text" id="novaCat" placeholder="Nome da categoria...">
+                    <input type="text" id="novaCat" placeholder="Nome...">
                     <button class="btn btn-add" onclick="enviarAcao('addCategory', 'novaCat')">CRIAR CATEGORIA</button>
-
                     <hr>
-
-                    <label>Excluir Categoria (Apaga TUDO dentro dela):</label>
+                    <label>Excluir Categoria:</label>
                     <select id="selectDelCat"><option value="">Carregando...</option></select>
-                    <button class="btn btn-del" onclick="confirmarDelCat()">EXCLUIR CATEGORIA</button>
+                    <button class="btn btn-del" onclick="confirmarDelCat()">EXCLUIR COMPLETA</button>
                 </div>
-
                 <div class="config-card">
                     <h2><i class="fas fa-image"></i> Banners</h2>
-                    
-                    <a href="cadastro.html" class="btn btn-add"><i class="fas fa-plus-circle"></i> ADICIONAR NOVO BANNER</a>
-
+                    <a href="cadastro.html" class="btn btn-add"><i class="fas fa-plus-circle"></i> NOVO BANNER</a>
                     <hr>
-
-                    <label>1. Filtrar por Categoria:</label>
-                    <select id="selectCatParaBanner" onchange="atualizarListaBanners()">
-                        <option value="">Selecione...</option>
-                    </select>
-
-                    <label>2. Selecionar Banner para Exclusão:</label>
-                    <select id="selectBannerParaDel" disabled>
-                        <option value="">Escolha a categoria acima</option>
-                    </select>
-                    
-                    <button class="btn btn-del" id="btnDelBanner" onclick="confirmarDelBanner()" disabled>
-                        <i class="fas fa-trash"></i> EXCLUIR SOMENTE O BANNER
-                    </button>
+                    <label>Filtrar por Categoria:</label>
+                    <select id="selectCatParaBanner" onchange="atualizarListaBanners()"><option value="">Selecione...</option></select>
+                    <label>Selecionar Banner:</label>
+                    <select id="selectBannerParaDel" disabled><option value="">Selecione a categoria</option></select>
+                    <button class="btn btn-del" id="btnDelBanner" onclick="confirmarDelBanner()" disabled>EXCLUIR BANNER</button>
                 </div>
-
             </div>
-
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="index.html" class="btn btn-nav" style="display:inline-flex; width:auto; padding: 12px 40px;">
-                    <i class="fas fa-sign-out-alt"></i> SAIR E VOLTAR AO INÍCIO
-                </a>
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 40px;">
+                <a href="index.html" class="btn btn-logout" style="width: auto; padding: 12px 30px;"><i class="fas fa-arrow-left"></i> VOLTAR</a>
+                <button onclick="logout()" class="btn btn-del" style="width: auto; padding: 12px 30px; background: #555;"><i class="fas fa-sign-out-alt"></i> ENCERRAR SESSÃO</button>
             </div>
         </div>
     </div>
-
     <script>
-        const SENHA_MESTRE = "1234"; // Altere aqui
+        const SENHA_MESTRE = "1234"; // MUDE AQUI
         const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
         let dadosLocais = {};
-
-        function checkPass() {
-            if(document.getElementById('passInput').value === SENHA_MESTRE) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-                carregarInfo();
-            } else { alert("Senha incorreta!"); }
-        }
-
+        window.onload = () => { if (sessionStorage.getItem('logado') === 'true') mostrarPainel(); };
+        function checkPass() { if(document.getElementById('passInput').value === SENHA_MESTRE) { sessionStorage.setItem('logado', 'true'); mostrarPainel(); } else alert("Erro!"); }
+        function mostrarPainel() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-content').style.display = 'block'; carregarInfo(); }
+        function logout() { sessionStorage.removeItem('logado'); window.location.href = "index.html"; }
         async function carregarInfo() {
             try {
                 const res = await fetch(urlApp);
                 dadosLocais = await res.json();
-                
-                const cats = dadosLocais.categorias.filter(c => c && c !== "");
-                const options = '<option value="">Selecione...</option>' + 
-                                cats.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
-
+                const options = '<option value="">Selecione...</option>' + dadosLocais.categorias.filter(c => c).map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
                 document.getElementById('selectDelCat').innerHTML = options;
                 document.getElementById('selectCatParaBanner').innerHTML = options;
             } catch (e) { console.error(e); }
         }
-
         function atualizarListaBanners() {
             const cat = document.getElementById('selectCatParaBanner').value;
             const selectB = document.getElementById('selectBannerParaDel');
-            const btn = document.getElementById('btnDelBanner');
-            
-            if(!cat) {
-                selectB.innerHTML = '<option value="">Escolha a categoria acima</option>';
-                selectB.disabled = true;
-                btn.disabled = true;
-                return;
-            }
-
+            if(!cat) { selectB.disabled = true; return; }
             const filtrados = dadosLocais.banners.filter(b => b.categoria === cat);
-            selectB.innerHTML = '<option value="">Selecione o banner para remover</option>' + 
-                                filtrados.map(b => `<option value="${b.nome}">${b.nome}</option>`).join('');
-            
+            selectB.innerHTML = '<option value="">Selecione o banner</option>' + filtrados.map(b => `<option value="${b.nome}">${b.nome}</option>`).join('');
             selectB.disabled = filtrados.length === 0;
-            btn.disabled = true; // Só ativa ao selecionar o banner
         }
-
-        document.getElementById('selectBannerParaDel').addEventListener('change', function() {
-            document.getElementById('btnDelBanner').disabled = !this.value;
-        });
-
+        document.getElementById('selectBannerParaDel').addEventListener('change', function() { document.getElementById('btnDelBanner').disabled = !this.value; });
         async function enviarAcao(acao, idCampo) {
             const valor = document.getElementById(idCampo).value;
             if(!valor) return;
@@ -161,36 +102,18 @@
             msg("Sucesso!", "#27ae60");
             setTimeout(() => location.reload(), 1200);
         }
-
-        async function confirmarDelCat() {
-            const cat = document.getElementById('selectDelCat').value;
-            if(!cat) return;
-            if(confirm(`CUIDADO: Isso apagará a categoria "${cat}" e TODOS os banners dela. Confirma?`)) {
-                await enviarAcao('deleteCategory', 'selectDelCat');
-            }
-        }
-
+        async function confirmarDelCat() { const cat = document.getElementById('selectDelCat').value; if(cat && confirm(`Apagar "${cat}"?`)) await enviarAcao('deleteCategory', 'selectDelCat'); }
         async function confirmarDelBanner() {
             const cat = document.getElementById('selectCatParaBanner').value;
             const nome = document.getElementById('selectBannerParaDel').value;
-            if(!nome) return;
-            
-            if(confirm(`Deseja excluir apenas o banner "${nome}"?`)) {
-                msg("Excluindo banner...", "#aaa");
-                await fetch(urlApp, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    body: JSON.stringify({ action: "delete", categoria: cat, nome: nome }) 
-                });
-                msg("Banner removido!", "#27ae60");
+            if(confirm(`Excluir banner "${nome}"?`)) {
+                msg("Excluindo...", "#aaa");
+                await fetch(urlApp, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", categoria: cat, nome: nome }) });
+                msg("Removido!", "#27ae60");
                 setTimeout(() => location.reload(), 1200);
             }
         }
-
-        function msg(t, c) {
-            const s = document.getElementById('status-msg');
-            s.innerText = t; s.style.color = c;
-        }
+        function msg(t, c) { const s = document.getElementById('status-msg'); s.innerText = t; s.style.color = c; }
     </script>
 </body>
 </html>
