@@ -3,63 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetLinks Gestão</title>
+    <title>NetLinks - Seu Organizador de Links</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        body { background-color: #141414; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; }
-        #login-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
-        #painel-principal { display: none; padding: 20px 4% 140px 4%; }
-        h1 { color: #E50914; text-transform: uppercase; letter-spacing: 2px; margin: 0; }
+        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        /* TELA DE BOAS-VINDAS */
+        #login-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        .hero-title { font-size: 3.5rem; color: var(--primary); margin: 0; text-transform: uppercase; letter-spacing: 4px; }
+        .hero-desc { max-width: 600px; color: #aaa; font-size: 1.2rem; line-height: 1.6; margin: 20px 0 40px 0; }
+        .features { display: flex; gap: 30px; margin-bottom: 40px; flex-wrap: wrap; justify-content: center; }
+        .feat-item { font-size: 0.9rem; color: #888; display: flex; align-items: center; gap: 8px; }
+        .feat-item i { color: var(--primary); }
+
+        /* PAINEL PRINCIPAL */
+        #painel-principal { display: none; padding: 20px 4% 140px 4%; flex: 1; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .logo-small { color: var(--primary); text-decoration: none; font-size: 1.5rem; font-weight: bold; }
         .user-badge { display: flex; align-items: center; gap: 10px; background: #222; padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; }
-        .user-badge img { width: 28px; border-radius: 50%; border: 1px solid #E50914; }
-        .btn-config { color: white; text-decoration: none; padding: 10px; border-radius: 4px; background: #333; transition: 0.3s; }
-        .btn-config:hover { background: #444; }
-        .btn-logout { background: none; border: none; color: #888; cursor: pointer; font-size: 18px; margin-left:15px; transition: 0.3s; }
-        .btn-logout:hover { color: #E50914; }
-        .categoria-titulo { font-size: 1.2rem; margin: 40px 0 20px 0; border-left: 5px solid #E50914; padding-left: 15px; text-transform: uppercase; font-weight: bold; }
+        .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
+        .nav-btns { display: flex; align-items: center; gap: 15px; }
+        .btn-icon { color: white; text-decoration: none; font-size: 18px; transition: 0.3s; background: none; border: none; cursor: pointer; }
+        .btn-icon:hover { color: var(--primary); }
+
+        /* CATEGORIAS E CARDS */
+        .categoria-titulo { font-size: 1.2rem; margin: 40px 0 20px 0; border-left: 5px solid var(--primary); padding-left: 15px; text-transform: uppercase; font-weight: bold; }
         .fileira { display: flex; flex-wrap: wrap; gap: 20px; }
-        .card { flex: 0 1 calc(20% - 20px); min-width: 200px; height: 120px; background-color: #2f2f2f; background-size: cover; background-position: center; border-radius: 6px; text-decoration: none; color: white; transition: 0.4s; overflow: hidden; border: 2px solid transparent; position: relative; }
+        .card { flex: 0 1 calc(20% - 20px); min-width: 200px; height: 120px; background-color: var(--card); background-size: cover; background-position: center; border-radius: 6px; text-decoration: none; color: white; transition: 0.4s; overflow: hidden; border: 2px solid transparent; }
         .card:hover { transform: scale(1.05); border-color: #fff; z-index: 10; }
-        .card-info { background: rgba(0,0,0,0.7); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 10px; box-sizing: border-box; transition: 0.3s; }
-        .card:hover .card-info { background: rgba(0,0,0,0.4); }
-        .footer { position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.95); padding: 20px 0; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #333; }
+        .card-info { background: rgba(0,0,0,0.7); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 10px; box-sizing: border-box; }
+
+        /* FOOTER */
+        .footer { background: #000; padding: 30px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; }
+        .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .footer-links a { color: #888; text-decoration: none; margin-left: 20px; transition: 0.3s; }
+        .footer-links a:hover { color: #fff; }
+        
         #loading-overlay { text-align: center; padding: 50px; color: #888; }
     </style>
 </head>
 <body>
 
     <div id="login-container">
-        <h1 style="font-size: 3.5rem;">NetLinks</h1>
-        <p style="color: #888; margin-bottom: 30px;">Acesse seu painel personalizado</p>
+        <h1 class="hero-title">NetLinks</h1>
+        <p class="hero-desc">
+            Sua central definitiva de organização. O NetLinks permite que você categorize e acesse seus sistemas, sites e ferramentas favoritas em um painel personalizado estilo streaming.
+        </p>
+        <div class="features">
+            <span class="feat-item"><i class="fas fa-check-circle"></i> Acesso Rápido</span>
+            <span class="feat-item"><i class="fas fa-check-circle"></i> Categorias Editáveis</span>
+            <span class="feat-item"><i class="fas fa-check-circle"></i> Login Seguro Google</span>
+        </div>
         <div id="buttonDiv"></div>
     </div>
 
     <div id="painel-principal">
         <div class="header">
-            <h1>NetLinks</h1>
-            <div style="display: flex; align-items: center;">
+            <a href="#" class="logo-small">NetLinks</a>
+            <div class="nav-btns">
                 <div class="user-badge" id="userBadge"></div>
-                <a href="settings.html" class="btn-config" title="Configurações"><i class="fas fa-cog"></i></a>
-                <button onclick="logout()" class="btn-logout" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
+                <a href="settings.html" class="btn-icon" title="Configurações"><i class="fas fa-cog"></i></a>
+                <button onclick="logout()" class="btn-icon" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </div>
 
         <div id="categorias-container">
-            <div id="loading-overlay"><i class="fas fa-spinner fa-spin"></i> Carregando seus links...</div>
+            <div id="loading-overlay"><i class="fas fa-spinner fa-spin"></i> Sincronizando sua biblioteca...</div>
         </div>
     </div>
 
-    <footer class="footer"> &reg; 2026 - Mateus Padilha </footer>
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                &copy; 2026 <strong>NetLinks</strong>. Todos os direitos reservados.
+            </div>
+            <div class="footer-links">
+                <a href="#"><i class="fas fa-shield-alt"></i> Privacidade</a>
+                <a href="https://github.com/mateuspadilha" target="_blank"><i class="fas fa-user-code"></i> Sobre o Criador</a>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // CONFIGURAÇÕES
         const CLIENT_ID = "136794075494-063o3rr6rd2umpcuu8nt097fg8sqbo9k.apps.googleusercontent.com";
         const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
         const IMG_PADRAO = "https://drive.google.com/thumbnail?id=1OyRgCJqj0SASvlxkbPBWxh8SYRYJJc2N&sz=w1000";
 
-        // CALLBACK DE LOGIN
         function handleCredentialResponse(response) {
             const data = JSON.parse(atob(response.credential.split('.')[1]));
             localStorage.setItem("netlinks_user", data.email);
@@ -68,83 +99,55 @@
             location.reload();
         }
 
-        // AO CARREGAR A PÁGINA
         window.onload = function () {
             const email = localStorage.getItem("netlinks_user");
             if (email) {
                 document.getElementById('login-container').style.display = 'none';
                 document.getElementById('painel-principal').style.display = 'block';
-                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}" alt="User"> ${localStorage.getItem('netlinks_name')}`;
+                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> ${localStorage.getItem('netlinks_name')}`;
                 carregarDados(email);
             } else {
-                google.accounts.id.initialize({ 
-                    client_id: CLIENT_ID, 
-                    callback: handleCredentialResponse,
-                    auto_select: false 
-                });
-                google.accounts.id.renderButton(document.getElementById("buttonDiv"), { 
-                    theme: "outline", 
-                    size: "large",
-                    text: "signin_with"
-                });
+                google.accounts.id.initialize({ client_id: CLIENT_ID, callback: handleCredentialResponse });
+                google.accounts.id.renderButton(document.getElementById("buttonDiv"), { theme: "outline", size: "large", text: "continue_with" });
             }
         };
 
-        // BUSCAR DADOS DO GOOGLE APPS SCRIPT
         async function carregarDados(email) {
             try {
                 const res = await fetch(`${urlApp}?dono=${email}`);
                 const dados = await res.json();
                 const container = document.getElementById('categorias-container');
-                container.innerHTML = ""; // Limpa o loading
+                container.innerHTML = "";
 
                 if (dados.categorias.length === 0) {
-                    container.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px;">Nenhuma categoria encontrada. Vá em configurações para criar uma.</p>';
+                    container.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px;">Bem-vindo! Comece criando uma categoria nas configurações.</p>';
                     return;
                 }
 
-                // Cria os títulos das categorias
                 dados.categorias.forEach(cat => {
                     const idCat = cat.toLowerCase().replace(/\s+/g, '-');
-                    container.innerHTML += `
-                        <div class="categoria-titulo">${cat}</div>
-                        <div class="fileira" id="container-${idCat}"></div>
-                    `;
+                    container.innerHTML += `<div class="categoria-titulo">${cat}</div><div class="fileira" id="container-${idCat}"></div>`;
                 });
 
-                // Preenche os banners dentro de cada categoria
                 dados.banners.forEach(item => {
                     const idCat = item.categoria.toLowerCase().replace(/\s+/g, '-');
                     const fileira = document.getElementById(`container-${idCat}`);
-                    
                     if (fileira) {
-                        let img = item.imagem;
-                        if (!img || img.trim() === "") {
-                            img = IMG_PADRAO;
-                        } else if (img.includes("drive.google.com")) {
-                            // Converte link do Drive para Thumbnail de alta qualidade
+                        let img = item.imagem || IMG_PADRAO;
+                        if (img.includes("drive.google.com")) {
                             const id = img.split('id=')[1] || img.split('/d/')[1].split('/')[0];
                             img = `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
                         }
-
-                        fileira.innerHTML += `
-                            <a href="${item.link}" target="_blank" class="card" style="background-image: url('${img}');">
-                                <div class="card-info"><span>${item.nome}</span></div>
-                            </a>
-                        `;
+                        fileira.innerHTML += `<a href="${item.link}" target="_blank" class="card" style="background-image: url('${img}');"><div class="card-info">${item.nome}</div></a>`;
                     }
                 });
             } catch (e) { 
-                console.error("Erro ao carregar dados:", e);
-                document.getElementById('categorias-container').innerHTML = '<p style="color:red; text-align:center;">Erro ao sincronizar com a planilha. Verifique a internet.</p>';
+                console.error(e);
+                document.getElementById('categorias-container').innerHTML = "Erro ao carregar dados.";
             }
         }
 
-        // LOGOUT
-        function logout() { 
-            localStorage.clear(); 
-            location.reload(); 
-        }
+        function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
