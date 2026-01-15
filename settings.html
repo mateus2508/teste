@@ -3,175 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <title>Configurações - NetLinks</title>
+    <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; --green: #27ae60; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        
-        h1 { color: var(--primary); text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
-        
-        /* Box de Resumo/Guia */
-        .guia-rapido { background: #1f1f1f; border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 30px; border-radius: 4px; font-size: 14px; line-height: 1.6; color: #ccc; }
-        .guia-rapido b { color: #fff; }
-
-        .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .config-card { background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid #444; display: flex; flex-direction: column; }
-        
-        h2 { font-size: 18px; border-bottom: 1px solid #444; padding-bottom: 15px; margin-top: 0; display: flex; align-items: center; gap: 10px; }
-        
-        label { display: block; margin: 15px 0 5px; font-size: 12px; color: #888; text-transform: uppercase; font-weight: bold; }
-        input, select { width: 100%; padding: 12px; border-radius: 4px; background: #444; color: white; border: 1px solid #555; outline: none; box-sizing: border-box; font-size: 14px; }
-        
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; font-size: 14px; }
-        .btn-add { background: var(--green); margin-bottom: 20px; }
-        .btn-add:hover { background: #219150; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .config-card { background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid #444; margin-bottom: 20px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 4px; background: #444; color: white; border: 1px solid #555; box-sizing: border-box; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; margin-top: 10px; }
+        .btn-add { background: var(--green); }
         .btn-del { background: var(--primary); }
-        .btn-del:hover { background: #b20710; }
-        .btn-del:disabled { background: #555; cursor: not-allowed; opacity: 0.5; }
-        
-        .btn-voltar { background: #444; width: 200px; margin: 40px auto; }
-        #status-msg { text-align: center; font-weight: bold; color: var(--green); margin-bottom: 10px; min-height: 20px; }
-        hr { border: 0; border-top: 1px solid #444; margin: 10px 0; }
+        .btn-voltar { background: #444; display: block; text-align: center; text-decoration: none; width: 200px; margin: 20px auto; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Painel de Controle</h1>
-
-        <div class="guia-rapido">
-            <i class="fas fa-info-circle"></i> <b>Como utilizar:</b><br>
-            1. <b>Categorias:</b> Primeiro, crie uma pasta (ex: "RH" ou "Vendas"). Para excluir, selecione a pasta desejada. <br>
-            2. <b>Banners:</b> Clique em "Novo Banner" para cadastrar um link. Para excluir um banner específico, filtre primeiro pela categoria dele.<br>
-            3. <b>Sincronização:</b> Após cada ação, o sistema atualizará a planilha automaticamente.
+        <h1 style="color:var(--primary); text-align:center;">Configurações</h1>
+        <div class="config-card">
+            <h2>Categorias</h2>
+            <input type="text" id="novaCat" placeholder="Nova Categoria">
+            <button class="btn btn-add" onclick="criarCategoria()">Criar Categoria</button>
+            <hr>
+            <select id="selectDelCat"><option>Carregando...</option></select>
+            <button class="btn btn-del" onclick="deletarCat()">Excluir Categoria</button>
         </div>
-
-        <div id="status-msg"></div>
-
-        <div class="section-grid">
-            <div class="config-card">
-                <h2><i class="fas fa-folder"></i> Categorias</h2>
-                
-                <label>1. Criar Nova:</label>
-                <input type="text" id="novaCat" placeholder="Nome da Categoria (Ex: TI)">
-                <button class="btn btn-add" id="btnCriarCat" onclick="criarCategoria()">
-                    <i class="fas fa-plus-circle"></i> CRIAR CATEGORIA
-                </button>
-
-                <hr>
-
-                <label>2. Excluir Categoria:</label>
-                <select id="selectDelCat"><option value="">Carregando...</option></select>
-                <button class="btn btn-del" id="btnDelCat" onclick="deletarCat()">
-                    <i class="fas fa-trash"></i> EXCLUIR CATEGORIA
-                </button>
-            </div>
-
-            <div class="config-card">
-                <h2><i class="fas fa-image"></i> Banners</h2>
-                
-                <label>1. Cadastrar Novo:</label>
-                <a href="cadastro.html" class="btn btn-add">
-                    <i class="fas fa-plus-circle"></i> NOVO BANNER
-                </a>
-
-                <hr>
-
-                <label>2. Filtrar por Categoria:</label>
-                <select id="selCatB" onchange="atualizarListaBanners()">
-                    <option value="">Selecione...</option>
-                </select>
-                
-                <label>3. Selecionar Banner para Excluir:</label>
-                <select id="selBanner" disabled>
-                    <option value="">Escolha a categoria acima</option>
-                </select>
-                <button class="btn btn-del" id="btnDelBanner" onclick="deletarBanner()" disabled>
-                    <i class="fas fa-eraser"></i> EXCLUIR APENAS BANNER
-                </button>
-            </div>
+        <div class="config-card">
+            <h2>Banners</h2>
+            <a href="cadastro.html" class="btn btn-add" style="display:block; text-align:center; text-decoration:none;">Novo Banner</a>
         </div>
-
-        <a href="index.html" class="btn btn-voltar">VOLTAR AO INÍCIO</a>
+        <a href="index.html" class="btn btn-voltar">Voltar</a>
     </div>
-
     <script>
         const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
         const dono = localStorage.getItem("netlinks_user");
-        let dadosLocais = {};
-
-        if(!dono) window.location.href = "index.html";
-
         async function carregar() {
-            try {
-                const res = await fetch(`${urlApp}?dono=${dono}`);
-                dadosLocais = await res.json();
-                const opts = '<option value="">Selecione...</option>' + 
-                             dadosLocais.categorias.map(c => `<option value="${c}">${c.toUpperCase()}</option>`).join('');
-                document.getElementById('selectDelCat').innerHTML = opts;
-                document.getElementById('selCatB').innerHTML = opts;
-            } catch (e) { console.error(e); }
+            const res = await fetch(`${urlApp}?dono=${dono}`);
+            const dados = await res.json();
+            document.getElementById('selectDelCat').innerHTML = '<option value="">Selecione...</option>' + dados.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
         }
-
-        function atualizarListaBanners() {
-            const cat = document.getElementById('selCatB').value;
-            const selB = document.getElementById('selBanner');
-            const btn = document.getElementById('btnDelBanner');
-            
-            if(!cat) {
-                selB.innerHTML = '<option value="">Escolha a categoria</option>';
-                selB.disabled = true;
-                btn.disabled = true;
-                return;
-            }
-
-            const filtrados = dadosLocais.banners.filter(b => b.categoria === cat);
-            selB.innerHTML = '<option value="">Selecione o banner</option>' + 
-                             filtrados.map(b => `<option value="${b.nome}">${b.nome}</option>`).join('');
-            selB.disabled = filtrados.length === 0;
-            btn.disabled = true;
-        }
-
-        document.getElementById('selBanner').addEventListener('change', function() {
-            document.getElementById('btnDelBanner').disabled = !this.value;
-        });
-
         async function criarCategoria() {
-            const nome = document.getElementById('novaCat').value;
-            if(!nome) return alert("Digite o nome da categoria!");
-            
-            statusLoading('btnCriarCat');
-            await fetch(urlApp, { method: 'POST', body: JSON.stringify({ action: "addCategory", nome: nome, dono: dono }) });
+            const n = document.getElementById('novaCat').value;
+            await fetch(urlApp, { method:'POST', body: JSON.stringify({ action: "addCategory", nome: n, dono: dono }) });
             location.reload();
         }
-
         async function deletarCat() {
-            const val = document.getElementById('selectDelCat').value;
-            if(!val) return;
-            if(confirm(`ATENÇÃO: Isso excluirá a categoria "${val}" e TODOS os banners dentro dela. Prosseguir?`)) {
-                statusLoading('btnDelCat');
-                await fetch(urlApp, { method: 'POST', body: JSON.stringify({ action: "deleteCategory", nome: val, dono: dono }) });
+            const v = document.getElementById('selectDelCat').value;
+            if(confirm(`Excluir ${v}?`)) {
+                await fetch(urlApp, { method:'POST', body: JSON.stringify({ action: "deleteCategory", nome: v, dono: dono }) });
                 location.reload();
             }
         }
-
-        async function deletarBanner() {
-            const cat = document.getElementById('selCatB').value;
-            const nome = document.getElementById('selBanner').value;
-            if(confirm(`Excluir o banner "${nome}"?`)) {
-                statusLoading('btnDelBanner');
-                await fetch(urlApp, { method: 'POST', body: JSON.stringify({ action: "delete", categoria: cat, nome: nome, dono: dono }) });
-                location.reload();
-            }
-        }
-
-        function statusLoading(id) {
-            const btn = document.getElementById(id);
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSANDO...';
-            document.getElementById('status-msg').innerHTML = "<i class='fas fa-cloud-upload-alt'></i> Sincronizando com a planilha...";
-        }
-
         carregar();
     </script>
 </body>
