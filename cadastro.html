@@ -2,126 +2,45 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novo Banner - NetLinks</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; --green: #27ae60; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        
-        .form-container { background: var(--card); padding: 40px; border-radius: 12px; width: 100%; max-width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #444; }
-        
-        h2 { color: var(--primary); text-align: center; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; }
-        
-        label { display: block; margin-bottom: 8px; font-size: 12px; color: #aaa; text-transform: uppercase; font-weight: bold; }
-        
-        input, select { width: 100%; padding: 14px; margin-bottom: 25px; border-radius: 6px; background: #1f1f1f; color: white; border: 1px solid #444; outline: none; box-sizing: border-box; transition: 0.3s; font-size: 16px; }
-        input:focus, select:focus { border-color: var(--primary); background: #252525; }
-        
-        .btn-salvar { width: 100%; padding: 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; background: var(--primary); color: white; transition: 0.3s; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-salvar:hover { background: #b20710; transform: translateY(-2px); }
-        .btn-salvar:disabled { background: #555; cursor: not-allowed; transform: none; }
-        
-        .link-cancelar { display: block; text-align: center; color: #888; margin-top: 25px; text-decoration: none; font-size: 14px; transition: 0.3s; }
-        .link-cancelar:hover { color: #fff; text-decoration: underline; }
-
-        .ajuda-input { font-size: 11px; color: #666; margin-top: -20px; margin-bottom: 20px; }
+        body { background-color: #141414; color: #fff; font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .form-container { background: #2f2f2f; padding: 30px; border-radius: 12px; width: 400px; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 4px; background: #444; color: white; border: 1px solid #555; box-sizing: border-box; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; background: #E50914; color: white; }
     </style>
 </head>
 <body>
-
     <div class="form-container">
-        <h2>Cadastrar Banner</h2>
-        
+        <h2 style="color:#E50914; text-align:center;">Cadastrar Banner</h2>
         <form id="formCadastro">
-            <label>1. Escolha a Categoria</label>
-            <select id="categoria" required>
-                <option value="">Carregando categorias...</option>
-            </select>
-
-            <label>2. Nome do Sistema/Site</label>
-            <input type="text" id="nome" placeholder="Ex: Portal do Cliente" required>
-
-            <label>3. Link da Imagem (Opcional)</label>
-            <input type="text" id="imagem" placeholder="Link do Google Drive ou Web">
-            <div class="ajuda-input">Deixe em branco para usar a imagem padrão.</div>
-
-            <label>4. Link do Destino (URL)</label>
-            <input type="url" id="link" placeholder="https://exemplo.com.br" required>
-
-            <button type="submit" class="btn-salvar" id="btnSalvar">
-                <i class="fas fa-save"></i> SALVAR BANNER
-            </button>
+            <select id="categoria" required><option value="">Carregando...</option></select>
+            <input type="text" id="nome" placeholder="Nome" required>
+            <input type="text" id="imagem" placeholder="Link Imagem (Drive ou Web)">
+            <input type="url" id="link" placeholder="Link do Site" required>
+            <button type="submit" class="btn" id="btnSalvar">Salvar Banner</button>
         </form>
-
-        <a href="settings.html" class="link-cancelar">Cancelar e Voltar</a>
+        <a href="settings.html" style="display:block; text-align:center; color:#aaa; margin-top:20px; text-decoration:none;">Cancelar</a>
     </div>
-
     <script>
         const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
         const dono = localStorage.getItem("netlinks_user");
-
-        // Carregar categorias existentes para o select
-        async function carregarCategorias() {
-            if (!dono) { window.location.href = "index.html"; return; }
-            try {
-                const res = await fetch(`${urlApp}?dono=${dono}`);
-                const dados = await res.json();
-                const s = document.getElementById('categoria');
-                
-                if (dados.categorias.length === 0) {
-                    s.innerHTML = '<option value="">Crie uma categoria primeiro!</option>';
-                } else {
-                    s.innerHTML = '<option value="">Selecione...</option>' + 
-                                  dados.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
-                }
-            } catch (e) {
-                console.error("Erro:", e);
-                document.getElementById('categoria').innerHTML = '<option value="">Erro ao carregar</option>';
-            }
+        async function carregar() {
+            const res = await fetch(`${urlApp}?dono=${dono}`);
+            const dados = await res.json();
+            document.getElementById('categoria').innerHTML = '<option value="">Selecione...</option>' + dados.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
         }
-
-        // Evento de Envio do Formulário
         document.getElementById('formCadastro').addEventListener('submit', async (e) => {
             e.preventDefault();
             const b = document.getElementById('btnSalvar');
-            
-            // Início do Feedback Visual
-            b.disabled = true; 
-            b.style.backgroundColor = "#444";
-            b.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SALVANDO NO BANCO...';
-
-            const d = { 
-                action: "addBanner", 
-                dono: dono, 
-                categoria: document.getElementById('categoria').value, 
-                nome: document.getElementById('nome').value, 
-                imagem: document.getElementById('imagem').value, 
-                link: document.getElementById('link').value 
-            };
-
-            try {
-                // Envia para o Google Apps Script
-                await fetch(urlApp, { method: 'POST', body: JSON.stringify(d) });
-                
-                // Feedback de Sucesso Final
-                b.style.backgroundColor = "#27ae60";
-                b.innerHTML = '<i class="fas fa-check"></i> SALVO COM SUCESSO!';
-                
-                // Aguarda 1.2 segundos para o usuário ver o sucesso e redireciona
-                setTimeout(() => {
-                    window.location.href = "index.html";
-                }, 1200);
-
-            } catch (error) {
-                alert("Ocorreu um erro ao salvar. Verifique sua conexão.");
-                b.disabled = false;
-                b.style.backgroundColor = "#E50914";
-                b.innerHTML = '<i class="fas fa-save"></i> TENTAR NOVAMENTE';
-            }
+            b.disabled = true; b.innerHTML = 'Salvando...';
+            const d = { action: "addBanner", dono: dono, categoria: document.getElementById('categoria').value, nome: document.getElementById('nome').value, imagem: document.getElementById('imagem').value, link: document.getElementById('link').value };
+            await fetch(urlApp, { method: 'POST', body: JSON.stringify(d) });
+            window.location.href = "index.html";
         });
-
-        window.onload = carregarCategorias;
+        carregar();
     </script>
 </body>
 </html>
