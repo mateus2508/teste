@@ -2,58 +2,145 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configurações - NetLinks</title>
     <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; --green: #27ae60; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; }
-        .config-card { background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid #444; margin-bottom: 20px; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 4px; background: #444; color: white; border: 1px solid #555; box-sizing: border-box; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; margin-top: 10px; }
+        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; --green: #27ae60; --text: #ffffff; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; margin: 0; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { color: var(--primary); text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
+        
+        .section-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .config-card { background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid #444; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        
+        h2 { font-size: 18px; border-bottom: 1px solid #444; padding-bottom: 15px; margin-top: 0; color: #fff; }
+        label { display: block; margin: 15px 0 5px; font-size: 12px; color: #888; text-transform: uppercase; font-weight: bold; }
+        
+        input, select { width: 100%; padding: 12px; border-radius: 4px; background: #444; color: white; border: 1px solid #555; outline: none; box-sizing: border-box; transition: 0.3s; }
+        input:focus, select:focus { border-color: var(--primary); }
+        
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; }
         .btn-add { background: var(--green); }
         .btn-del { background: var(--primary); }
-        .btn-voltar { background: #444; display: block; text-align: center; text-decoration: none; width: 200px; margin: 20px auto; }
+        .btn-del:disabled { background: #555; cursor: not-allowed; opacity: 0.5; }
+        
+        .btn-voltar { background: #444; width: 200px; margin: 40px auto; }
+        #status-msg { text-align: center; font-weight: bold; color: var(--green); margin-bottom: 15px; min-height: 20px; text-transform: uppercase; font-size: 13px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 style="color:var(--primary); text-align:center;">Configurações</h1>
-        <div class="config-card">
-            <h2>Categorias</h2>
-            <input type="text" id="novaCat" placeholder="Nova Categoria">
-            <button class="btn btn-add" onclick="criarCategoria()">Criar Categoria</button>
-            <hr>
-            <select id="selectDelCat"><option>Carregando...</option></select>
-            <button class="btn btn-del" onclick="deletarCat()">Excluir Categoria</button>
+        <h1>Painel de Controle</h1>
+        <div id="status-msg"></div>
+
+        <div class="section-grid">
+            <div class="config-card">
+                <h2><i class="fas fa-list"></i> Categorias</h2>
+                <label>Criar Nova:</label>
+                <input type="text" id="novaCat" placeholder="Ex: Sistemas, Bancos...">
+                <button class="btn btn-add" id="btnCriarCat" onclick="criarCategoria()">
+                    <i class="fas fa-plus"></i> CRIAR
+                </button>
+                
+                <hr style="border:0; border-top:1px solid #444; margin:25px 0;">
+                
+                <label>Excluir Categoria:</label>
+                <select id="selectDelCat"><option value="">Carregando...</option></select>
+                <button class="btn btn-del" id="btnDelCat" onclick="deletarCat()">
+                    <i class="fas fa-trash-alt"></i> EXCLUIR CATEGORIA
+                </button>
+            </div>
+
+            <div class="config-card">
+                <h2><i class="fas fa-link"></i> Links (Banners)</h2>
+                <a href="cadastro.html" class="btn btn-add"><i class="fas fa-plus"></i> NOVO LINK</a>
+                
+                <hr style="border:0; border-top:1px solid #444; margin:25px 0;">
+                
+                <label>1. Filtrar Categoria:</label>
+                <select id="selCatB" onchange="atualizarListaBanners()">
+                    <option value="">Selecione...</option>
+                </select>
+                
+                <label>2. Selecionar Link:</label>
+                <select id="selBanner" disabled><option value="">Escolha a categoria</option></select>
+                
+                <button class="btn btn-del" id="btnDelBanner" onclick="deletarBanner()" disabled>
+                    <i class="fas fa-eraser"></i> EXCLUIR LINK
+                </button>
+            </div>
         </div>
-        <div class="config-card">
-            <h2>Banners</h2>
-            <a href="cadastro.html" class="btn btn-add" style="display:block; text-align:center; text-decoration:none;">Novo Banner</a>
-        </div>
-        <a href="index.html" class="btn btn-voltar">Voltar</a>
+
+        <a href="index.html" class="btn btn-voltar">VOLTAR À HOME</a>
     </div>
+
     <script>
         const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
         const dono = localStorage.getItem("netlinks_user");
+        let dadosLocais = { categorias: [], banners: [] };
+
         async function carregar() {
-            const res = await fetch(`${urlApp}?dono=${dono}`);
-            const dados = await res.json();
-            document.getElementById('selectDelCat').innerHTML = '<option value="">Selecione...</option>' + dados.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
+            try {
+                const res = await fetch(`${urlApp}?dono=${dono}`);
+                dadosLocais = await res.json();
+                const opts = '<option value="">Selecione...</option>' + 
+                             dadosLocais.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
+                document.getElementById('selectDelCat').innerHTML = opts;
+                document.getElementById('selCatB').innerHTML = opts;
+            } catch (e) { document.getElementById('status-msg').innerText = "Erro de conexão."; }
         }
+
+        function atualizarListaBanners() {
+            const cat = document.getElementById('selCatB').value;
+            const selB = document.getElementById('selBanner');
+            const btn = document.getElementById('btnDelBanner');
+            if(!cat) { selB.disabled = true; btn.disabled = true; return; }
+            
+            const bans = dadosLocais.banners.filter(b => b.categoria === cat);
+            selB.innerHTML = bans.length ? '<option value="">Selecione...</option>' + bans.map(b => `<option value="${b.nome}">${b.nome}</option>`).join('') : '<option>Vazio</option>';
+            selB.disabled = !bans.length;
+        }
+
+        document.getElementById('selBanner').onchange = function() {
+            document.getElementById('btnDelBanner').disabled = !this.value;
+        };
+
         async function criarCategoria() {
-            const n = document.getElementById('novaCat').value;
+            const n = document.getElementById('novaCat').value.trim();
+            if(!n) return;
+            setLoading('btnCriarCat', 'Criando...');
             await fetch(urlApp, { method:'POST', body: JSON.stringify({ action: "addCategory", nome: n, dono: dono }) });
             location.reload();
         }
+
         async function deletarCat() {
             const v = document.getElementById('selectDelCat').value;
-            if(confirm(`Excluir ${v}?`)) {
+            if(v && confirm(`Excluir "${v}" e todos os seus links?`)) {
+                setLoading('btnDelCat', 'Excluindo...');
                 await fetch(urlApp, { method:'POST', body: JSON.stringify({ action: "deleteCategory", nome: v, dono: dono }) });
                 location.reload();
             }
         }
+
+        async function deletarBanner() {
+            const c = document.getElementById('selCatB').value;
+            const n = document.getElementById('selBanner').value;
+            if(confirm(`Excluir o link "${n}"?`)) {
+                setLoading('btnDelBanner', 'Removendo...');
+                await fetch(urlApp, { method:'POST', body: JSON.stringify({ action: "delete", categoria: c, nome: n, dono: dono }) });
+                location.reload();
+            }
+        }
+
+        function setLoading(id, msg) {
+            const b = document.getElementById(id);
+            b.disabled = true;
+            b.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${msg}`;
+            document.getElementById('status-msg').innerText = "Processando solicitação...";
+        }
+
         carregar();
     </script>
 </body>
