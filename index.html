@@ -30,9 +30,21 @@
         .user-badge { display: flex; align-items: center; gap: 10px; background: #222; padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; flex-shrink: 0; }
         .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
 
-        /* CATEGORIAS E BANNERS */
-        .categoria-titulo { font-size: 1.2rem; margin: 40px 0 20px 0; border-left: 5px solid var(--primary); padding-left: 15px; text-transform: uppercase; font-weight: bold; }
-        .fileira { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; }
+        /* CATEGORIAS EXPANSÍVEIS */
+        .categoria-header { 
+            display: flex; align-items: center; cursor: pointer; 
+            margin: 40px 0 20px 0; border-left: 5px solid var(--primary); 
+            padding-left: 15px; transition: 0.2s; user-select: none;
+        }
+        .categoria-header:hover { color: var(--primary); }
+        .categoria-titulo { font-size: 1.2rem; text-transform: uppercase; font-weight: bold; margin: 0; flex: 1; }
+        .seta-icon { transition: transform 0.3s ease; color: #555; font-size: 1.1rem; margin-right: 10px; }
+        
+        /* Classe para quando estiver recolhido */
+        .recolhido .seta-icon { transform: rotate(-90deg); }
+        .recolhido .fileira { display: none; }
+
+        .fileira { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; transition: all 0.3s ease; }
         
         .card { 
             flex: 1 1 220px; max-width: 350px; height: 140px; 
@@ -50,7 +62,6 @@
             text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 2px 2px 4px rgba(0,0,0,0.8);
         }
 
-        /* CLASSES DE FILTRO */
         .hidden { display: none !important; }
         .cat-hidden { display: none !important; }
 
@@ -61,7 +72,6 @@
         @media (max-width: 600px) {
             .header { flex-direction: column; align-items: stretch; }
             .search-container { max-width: 100%; order: 3; }
-            .logo-small { text-align: center; }
         }
     </style>
 </head>
@@ -76,13 +86,11 @@
     <div id="painel-principal">
         <header class="header">
             <a href="index.html" class="logo-small">NetLinks</a>
-            
             <div class="search-container">
                 <i class="fas fa-search"></i>
                 <input type="text" id="searchInput" placeholder="Pesquisar link..." onkeyup="filtrarBanners()">
             </div>
-
-            <div style="display: flex; align-items: center; gap: 15px; justify-content: center;">
+            <div style="display: flex; align-items: center; gap: 15px;">
                 <div id="userBadge" class="user-badge"></div>
                 <a href="settings.html" class="btn-icon" title="Configurações"><i class="fas fa-cog"></i></a>
                 <button onclick="logout()" class="btn-icon" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
@@ -96,7 +104,7 @@
 
     <footer class="footer">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-            <span>&copy; 2026 <b>NetLinks</b>. Todos os direitos reservados.</span>
+            <span>&copy; 2026 <b>NetLinks</b>.</span>
             <a href="sobre.html" style="color:#888; text-decoration:none;"><i class="fas fa-user-code"></i> Sobre o Criador</a>
         </div>
     </footer>
@@ -105,7 +113,6 @@
         const CLIENT_ID = "136794075494-063o3rr6rd2umpcuu8nt097fg8sqbo9k.apps.googleusercontent.com";
         const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
 
-        // GESTÃO DE ACESSO
         function handleCredentialResponse(response) {
             const data = JSON.parse(atob(response.credential.split('.')[1]));
             localStorage.setItem("netlinks_user", data.email);
@@ -118,10 +125,7 @@
             const email = localStorage.getItem("netlinks_user");
             if (email) {
                 document.getElementById('painel-principal').style.display = 'block';
-                document.getElementById('userBadge').innerHTML = `
-                    <img src="${localStorage.getItem('netlinks_pic')}">
-                    <span>${localStorage.getItem('netlinks_name')}</span>
-                `;
+                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
                 carregarDados(email);
             } else {
                 document.getElementById('login-container').style.display = 'flex';
@@ -130,7 +134,6 @@
             }
         };
 
-        // CARREGAMENTO DE DADOS
         async function carregarDados(email) {
             try {
                 const res = await fetch(`${urlApp}?dono=${encodeURIComponent(email)}`);
@@ -138,14 +141,16 @@
                 const container = document.getElementById('categorias-container');
                 container.innerHTML = "";
 
-                if (dados.categorias.length === 0) {
-                    container.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px;">Nenhuma categoria encontrada.</p>';
-                    return;
-                }
-
                 dados.categorias.forEach(cat => {
                     const idCat = cat.toLowerCase().replace(/\s+/g, '-');
-                    container.innerHTML += `<div class="categoria-titulo">${cat}</div><div class="fileira" id="container-${idCat}"></div>`;
+                    container.innerHTML += `
+                        <div class="categoria-wrapper" id="wrapper-${idCat}">
+                            <div class="categoria-header" onclick="toggleCategoria('${idCat}')">
+                                <i class="fas fa-chevron-down seta-icon"></i>
+                                <h2 class="categoria-titulo">${cat}</h2>
+                            </div>
+                            <div class="fileira" id="container-${idCat}"></div>
+                        </div>`;
                 });
 
                 dados.banners.forEach(item => {
@@ -163,32 +168,32 @@
                             </a>`;
                     }
                 });
-            } catch (e) {
-                document.getElementById('categorias-container').innerHTML = "Erro ao conectar com a planilha.";
-            }
+            } catch (e) { container.innerHTML = "Erro ao carregar dados."; }
         }
 
-        // FUNÇÃO DE BUSCA
+        // FUNÇÃO PARA RECOLHER/EXPANDIR
+        function toggleCategoria(id) {
+            const wrapper = document.getElementById(`wrapper-${id}`);
+            wrapper.classList.toggle('recolhido');
+        }
+
         function filtrarBanners() {
             const termo = document.getElementById('searchInput').value.toLowerCase();
             const banners = document.querySelectorAll('.card');
-            const categorias = document.querySelectorAll('.categoria-titulo');
+            const wrappers = document.querySelectorAll('.categoria-wrapper');
             
             banners.forEach(banner => {
-                const nome = banner.textContent.toLowerCase();
-                banner.classList.toggle('hidden', !nome.includes(termo));
+                banner.classList.toggle('hidden', !banner.textContent.toLowerCase().includes(termo));
             });
 
-            categorias.forEach(titulo => {
-                const fileira = titulo.nextElementSibling;
-                const visiveis = fileira.querySelectorAll('.card:not(.hidden)').length;
-                
+            wrappers.forEach(wrapper => {
+                const visiveis = wrapper.querySelectorAll('.card:not(.hidden)').length;
                 if (termo !== "" && visiveis === 0) {
-                    titulo.classList.add('cat-hidden');
-                    fileira.classList.add('hidden');
+                    wrapper.classList.add('cat-hidden');
                 } else {
-                    titulo.classList.remove('cat-hidden');
-                    fileira.classList.remove('hidden');
+                    wrapper.classList.remove('cat-hidden');
+                    // Se estiver pesquisando, força a expansão para mostrar o resultado
+                    if (termo !== "") wrapper.classList.remove('recolhido');
                 }
             });
         }
