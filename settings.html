@@ -12,44 +12,20 @@
         .container { max-width: 800px; margin: 0 auto; }
         h1 { color: var(--primary); text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
 
-        /* GUIA DE USO */
         .guia-rapido { background: #1f1f1f; border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 25px; border-radius: 4px; font-size: 13px; color: #ccc; }
 
-        /* BOTÕES PRINCIPAIS (ESTILO DA IMAGEM) */
+        /* BOTÕES ESTILO IMAGEM */
         .accordion-btn {
-            width: 100%;
-            padding: 20px;
-            margin-bottom: 10px;
-            border-radius: 15px; /* Bordas arredondadas conforme imagem */
-            border: 3px solid #000;
-            font-size: 18px;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            transition: 0.3s;
-            color: white;
+            width: 100%; padding: 20px; margin-bottom: 10px; border-radius: 15px; border: 3px solid #000;
+            font-size: 18px; font-weight: bold; text-transform: uppercase; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 15px; transition: 0.3s; color: white;
         }
-
         .btn-verde { background-color: var(--green); }
         .btn-vermelho { background-color: var(--primary); }
         .accordion-btn:hover { opacity: 0.9; transform: scale(1.01); }
 
-        /* PAINÉIS QUE ABREM E FECHAM */
-        .panel {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            background: #252525;
-            border-radius: 0 0 15px 15px;
-            margin-top: -15px;
-            margin-bottom: 15px;
-            padding: 0 20px;
-        }
-
+        /* PAINÉIS RETRÁTEIS */
+        .panel { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #252525; border-radius: 0 0 15px 15px; margin-top: -15px; margin-bottom: 15px; padding: 0 20px; }
         .panel-content { padding: 25px 0; }
 
         label { display: block; margin-bottom: 8px; font-size: 12px; color: #888; text-transform: uppercase; }
@@ -65,12 +41,7 @@
 <body>
 
     <div class="container">
-        <h1>Ajustes NetLinks</h1>
-        
-        <div class="guia-rapido">
-            <i class="fas fa-info-circle"></i> <b>Dica:</b> Clique em um botão abaixo para abrir as opções de gerenciamento.
-        </div>
-
+        <h1>Painel NetLinks</h1>
         <div id="status-msg"></div>
 
         <button class="accordion-btn btn-verde" onclick="togglePanel('panel1')">
@@ -78,24 +49,37 @@
         </button>
         <div id="panel1" class="panel">
             <div class="panel-content">
-                <label>Nome do Grupo:</label>
-                <input type="text" id="novaCat" placeholder="Ex: Bancos, Redes Sociais...">
+                <label>Nome do Novo Grupo:</label>
+                <input type="text" id="novaCat" placeholder="Ex: Bancos, Ferramentas...">
                 <button class="action-submit" onclick="criarCategoria()">SALVAR CATEGORIA</button>
             </div>
         </div>
 
-        <button class="accordion-btn btn-verde" onclick="window.location.href='cadastro.html'">
+        <button class="accordion-btn btn-verde" onclick="togglePanel('panelBanner')">
             <i class="fas fa-plus-circle"></i> Criar Baner - Link
         </button>
+        <div id="panelBanner" class="panel">
+            <div class="panel-content">
+                <label>Grupo (Categoria):</label>
+                <select id="cadCatBanner"><option value="">Carregando...</option></select>
+                <label>Nome do Link:</label>
+                <input type="text" id="cadNomeBanner" placeholder="Ex: Gmail">
+                <label>Link da Imagem (Opcional):</label>
+                <input type="text" id="cadImgBanner" placeholder="Cole o link da imagem">
+                <label>Link do Site:</label>
+                <input type="text" id="cadUrlBanner" placeholder="https://...">
+                <button class="action-submit" onclick="criarBanner()">SALVAR LINK</button>
+            </div>
+        </div>
 
         <button class="accordion-btn btn-vermelho" onclick="togglePanel('panel2')">
             <i class="fas fa-folder-minus"></i> Excluir Categoria
         </button>
         <div id="panel2" class="panel">
             <div class="panel-content">
-                <label>Selecione o Grupo para apagar:</label>
+                <label>Selecione a Categoria para apagar:</label>
                 <select id="selectDelCat"><option value="">Carregando...</option></select>
-                <button class="action-submit" onclick="deletarCat()" style="color: var(--primary);">CONFIRMAR EXCLUSÃO</button>
+                <button class="action-submit" onclick="deletarCat()" style="color: var(--primary);">EXCLUIR TUDO DESTA CATEGORIA</button>
             </div>
         </div>
 
@@ -108,13 +92,13 @@
                 <select id="selCatB" onchange="atualizarListaBanners()">
                     <option value="">Selecione...</option>
                 </select>
-                <label>2. Escolher Link:</label>
-                <select id="selBanner" disabled><option value="">Selecione o grupo acima</option></select>
-                <button class="action-submit" id="btnDelBanner" onclick="deletarBanner()" disabled style="color: var(--primary);">APAGAR LINK SELECIONADO</button>
+                <label>2. Escolher Link para Remover:</label>
+                <select id="selBanner" disabled><option value="">Selecione a categoria acima</option></select>
+                <button class="action-submit" id="btnDelBanner" onclick="deletarBanner()" disabled style="color: var(--primary);">REMOVER APENAS ESTE LINK</button>
             </div>
         </div>
 
-        <a href="index.html" class="btn-voltar">VOLTAR À HOME</a>
+        <a href="index.html" class="btn-voltar">VOLTAR AO PAINEL</a>
     </div>
 
     <script>
@@ -122,17 +106,11 @@
         const dono = localStorage.getItem("netlinks_user");
         let dadosLocais = { categorias: [], banners: [] };
 
-        // Função para abrir/fechar as caixas
         function togglePanel(id) {
             const panel = document.getElementById(id);
             const isOpened = panel.style.maxHeight;
-
-            // Fecha todos antes de abrir o novo
             document.querySelectorAll('.panel').forEach(p => p.style.maxHeight = null);
-
-            if (!isOpened) {
-                panel.style.maxHeight = panel.scrollHeight + "px";
-            }
+            if (!isOpened) { panel.style.maxHeight = panel.scrollHeight + "px"; }
         }
 
         async function carregar() {
@@ -143,7 +121,8 @@
                              dadosLocais.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
                 document.getElementById('selectDelCat').innerHTML = opts;
                 document.getElementById('selCatB').innerHTML = opts;
-            } catch (e) { document.getElementById('status-msg').innerText = "Erro ao carregar dados."; }
+                document.getElementById('cadCatBanner').innerHTML = opts;
+            } catch (e) { msg("Erro ao sincronizar."); }
         }
 
         function atualizarListaBanners() {
@@ -151,7 +130,6 @@
             const selB = document.getElementById('selBanner');
             const btn = document.getElementById('btnDelBanner');
             if(!cat) { selB.disabled = true; btn.disabled = true; return; }
-            
             const bans = dadosLocais.banners.filter(b => b.categoria === cat);
             selB.innerHTML = bans.length ? '<option value="">Selecione...</option>' + bans.map(b => `<option value="${b.nome}">${b.nome}</option>`).join('') : '<option>Vazio</option>';
             selB.disabled = !bans.length;
@@ -166,7 +144,18 @@
             if(!n) return;
             msg("Salvando Categoria...");
             await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "addCategory", nome: n, dono: dono }) });
-            setTimeout(() => location.reload(), 1500);
+            setTimeout(() => location.reload(), 1200);
+        }
+
+        async function criarBanner() {
+            const cat = document.getElementById('cadCatBanner').value;
+            const nome = document.getElementById('cadNomeBanner').value.trim();
+            const img = document.getElementById('cadImgBanner').value.trim();
+            const url = document.getElementById('cadUrlBanner').value.trim();
+            if(!cat || !nome || !url) { alert("Preencha os campos obrigatórios!"); return; }
+            msg("Salvando Link...");
+            await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "addBanner", dono: dono, categoria: cat, nome: nome, imagem: img, link: url }) });
+            setTimeout(() => location.reload(), 1200);
         }
 
         async function deletarCat() {
@@ -174,7 +163,7 @@
             if(v && confirm(`Excluir grupo "${v}"?`)) {
                 msg("Excluindo...");
                 await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "deleteCategory", nome: v, dono: dono }) });
-                setTimeout(() => location.reload(), 1500);
+                setTimeout(() => location.reload(), 1200);
             }
         }
 
@@ -182,14 +171,13 @@
             const c = document.getElementById('selCatB').value;
             const n = document.getElementById('selBanner').value;
             if(confirm(`Remover "${n}"?`)) {
-                msg("Removendo Banner...");
+                msg("Removendo...");
                 await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", categoria: c, nome: n, dono: dono }) });
-                setTimeout(() => location.reload(), 1500);
+                setTimeout(() => location.reload(), 1200);
             }
         }
 
         function msg(t) { document.getElementById('status-msg').innerText = t; }
-
         carregar();
     </script>
 </body>
