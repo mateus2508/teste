@@ -19,20 +19,18 @@
             min-height: 100vh; 
             display: flex; 
             flex-direction: column;
-            /* Estilos para o fundo personalizado */
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             transition: background 0.5s ease-in-out;
         }
         
-        /* Overlay para garantir leitura sobre fundos claros */
         .bg-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7); /* Escurece o fundo personalizado */
+            background: rgba(0, 0, 0, 0.7);
             z-index: -1;
-            display: none; /* Só aparece se houver fundo personalizado */
+            display: none;
         }
 
         #login-container { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); }
@@ -125,36 +123,40 @@
         }
 
         window.onload = function () {
-            aplicarFundoSalvo();
             const email = localStorage.getItem("netlinks_user");
             if (email) {
+                aplicarFundoSalvo(email); // Aplica o fundo específico deste e-mail
                 document.getElementById('painel-principal').style.display = 'block';
                 document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
                 carregarDados(email);
             } else {
+                document.body.style.backgroundImage = 'none';
+                document.getElementById('bgOverlay').style.display = 'none';
                 document.getElementById('login-container').style.display = 'flex';
                 google.accounts.id.initialize({ client_id: CLIENT_ID, callback: handleCredentialResponse });
                 google.accounts.id.renderButton(document.getElementById("buttonDiv"), { theme: "outline", size: "large", shape: "pill" });
             }
         };
 
-        // FUNÇÃO PARA MUDAR O FUNDO
         function mudarFundo() {
-            const url = prompt("Cole o link da imagem de fundo (Google Drive ou Web):\n(Deixe vazio para voltar ao fundo padrão)");
+            const email = localStorage.getItem("netlinks_user");
+            if (!email) return;
+
+            const url = prompt("Cole o link da imagem de fundo:\n(Vazio para o padrão)");
             if (url !== null) {
                 let finalUrl = url.trim();
-                // Trata link do Drive se necessário
                 if (finalUrl.includes("drive.google.com")) {
                     const id = finalUrl.split('id=')[1] || finalUrl.split('/d/')[1].split('/')[0];
                     finalUrl = `https://drive.google.com/uc?id=${id}`;
                 }
-                localStorage.setItem("netlinks_bg", finalUrl);
-                aplicarFundoSalvo();
+                // Salva com chave exclusiva do usuário
+                localStorage.setItem(`netlinks_bg_${email}`, finalUrl);
+                aplicarFundoSalvo(email);
             }
         }
 
-        function aplicarFundoSalvo() {
-            const bg = localStorage.getItem("netlinks_bg");
+        function aplicarFundoSalvo(email) {
+            const bg = localStorage.getItem(`netlinks_bg_${email}`);
             const overlay = document.getElementById('bgOverlay');
             if (bg && bg !== "") {
                 document.body.style.backgroundImage = `url('${bg}')`;
@@ -222,7 +224,13 @@
             });
         }
 
-        function logout() { localStorage.clear(); location.reload(); }
+        function logout() { 
+            // Remove apenas os dados da sessão, não as preferências de fundo
+            localStorage.removeItem("netlinks_user");
+            localStorage.removeItem("netlinks_name");
+            localStorage.removeItem("netlinks_pic");
+            location.reload(); 
+        }
     </script>
 </body>
 </html>
