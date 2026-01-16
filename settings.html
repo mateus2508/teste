@@ -7,18 +7,11 @@
     <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { 
-            --primary: #E50914; 
-            --bg: #141414; 
-            --card: #2f2f2f; 
-            --green: #27ae60; 
-            --text: #ffffff; 
-        }
-
-        /* FUNDO PADRONIZADO PARA TODAS AS PÁGINAS */
+        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; --green: #27ae60; --text: #ffffff; }
+        
         body { 
-            background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); /* Mesmo fundo da Login/Index */
-            background-attachment: fixed; /* Mantém o fundo fixo ao rolar */
+            background: radial-gradient(circle at center, #2b0505 0%, #141414 100%);
+            background-attachment: fixed;
             color: var(--text); 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
             margin: 0; 
@@ -26,23 +19,13 @@
             min-height: 100vh; 
         }
         
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        
-        /* Cabeçalho Sincronizado */
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 30px; 
-            border-bottom: 1px solid #333; 
-            padding: 10px 4% 20px 4%; 
-            background: rgba(0,0,0,0.5); /* Leve transparência para destacar do fundo */
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding: 10px 4% 20px 4%; background: rgba(0,0,0,0.5); }
         .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; }
         .user-badge { display: flex; align-items: center; gap: 10px; background: #222; padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; }
         .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
 
-        /* Botões Estilo Imagem (Borda Grossa e Arredondada) */
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+
         .accordion-btn {
             width: 100%; padding: 20px; margin-bottom: 10px; border-radius: 15px; border: 3px solid #000;
             font-size: 18px; font-weight: bold; text-transform: uppercase; cursor: pointer;
@@ -52,17 +35,7 @@
         .btn-vermelho { background-color: var(--primary); }
         .accordion-btn:hover { opacity: 0.9; transform: scale(1.01); }
 
-        /* Painéis Retráteis */
-        .panel { 
-            max-height: 0; 
-            overflow: hidden; 
-            transition: max-height 0.3s ease-out; 
-            background: rgba(37, 37, 37, 0.95); /* Leve transparência */
-            border-radius: 0 0 15px 15px; 
-            margin-top: -15px; 
-            margin-bottom: 15px; 
-            padding: 0 20px; 
-        }
+        .panel { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: rgba(37, 37, 37, 0.95); border-radius: 0 0 15px 15px; margin-top: -15px; margin-bottom: 15px; padding: 0 20px; }
         .panel-content { padding: 25px 0; }
 
         label { display: block; margin-bottom: 8px; font-size: 12px; color: #aaa; text-transform: uppercase; }
@@ -77,7 +50,6 @@
     </style>
 </head>
 <body>
-
     <header class="header">
         <a href="index.html" class="logo-small">NetLinks</a>
         <div id="userBadge" class="user-badge"></div>
@@ -85,58 +57,32 @@
 
     <div class="container">
         <div id="status-msg"></div>
+        <button class="accordion-btn btn-verde" onclick="togglePanel('p1')"><i class="fas fa-folder-plus"></i> Criar Categoria</button>
+        <div id="p1" class="panel"><div class="panel-content">
+            <label>Nome:</label><input type="text" id="novaCat" placeholder="Ex: Sistemas">
+            <button class="action-submit" id="b1" onclick="criarCategoria()">Salvar</button>
+        </div></div>
 
-        <button class="accordion-btn btn-verde" onclick="togglePanel('panel1')">
-            <i class="fas fa-folder-plus"></i> Criar Categoria
-        </button>
-        <div id="panel1" class="panel">
-            <div class="panel-content">
-                <label>Nome do Grupo:</label>
-                <input type="text" id="novaCat" placeholder="Ex: Sistemas, Bancos...">
-                <button class="action-submit" id="btnSaveCat" onclick="criarCategoria()">SALVAR CATEGORIA</button>
-            </div>
-        </div>
+        <button class="accordion-btn btn-verde" onclick="togglePanel('pB')"><i class="fas fa-plus-circle"></i> Criar Banner - Link</button>
+        <div id="pB" class="panel"><div class="panel-content">
+            <label>Categoria:</label><select id="cCat"><option value="">Carregando...</option></select>
+            <label>Nome:</label><input type="text" id="cNome" placeholder="Ex: Google">
+            <label>URL:</label><input type="text" id="cUrl" placeholder="https://...">
+            <button class="action-submit" id="bB" onclick="criarBanner()">Salvar</button>
+        </div></div>
 
-        <button class="accordion-btn btn-verde" onclick="togglePanel('panelBanner')">
-            <i class="fas fa-plus-circle"></i> Criar Banner - Link
-        </button>
-        <div id="panelBanner" class="panel">
-            <div class="panel-content">
-                <label>Categoria:</label>
-                <select id="cadCatBanner"><option value="">Carregando...</option></select>
-                <label>Nome do Link:</label>
-                <input type="text" id="cadNomeBanner" placeholder="Ex: Google Drive">
-                <label>URL do Site:</label>
-                <input type="text" id="cadUrlBanner" placeholder="https://...">
-                <button class="action-submit" id="btnSaveBanner" onclick="criarBanner()">SALVAR LINK</button>
-            </div>
-        </div>
+        <button class="accordion-btn btn-vermelho" onclick="togglePanel('p2')"><i class="fas fa-folder-minus"></i> Excluir Categoria</button>
+        <div id="p2" class="panel"><div class="panel-content">
+            <label>Categoria:</label><select id="sDelC"><option value="">Carregando...</option></select>
+            <button class="action-submit" id="b2" onclick="deletarCat()" style="color:#ff4d4d">Excluir Tudo</button>
+        </div></div>
 
-        <button class="accordion-btn btn-vermelho" onclick="togglePanel('panel2')">
-            <i class="fas fa-folder-minus"></i> Excluir Categoria
-        </button>
-        <div id="panel2" class="panel">
-            <div class="panel-content">
-                <label>Escolha o Grupo para Apagar:</label>
-                <select id="selectDelCat"><option value="">Carregando...</option></select>
-                <button class="action-submit" id="btnDelCat" onclick="deletarCat()" style="color: #ff4d4d;">APAGAR TUDO</button>
-            </div>
-        </div>
-
-        <button class="accordion-btn btn-vermelho" onclick="togglePanel('panel3')">
-            <i class="fas fa-eraser"></i> Excluir Banner Link
-        </button>
-        <div id="panel3" class="panel">
-            <div class="panel-content">
-                <label>1. Filtrar Categoria:</label>
-                <select id="selCatB" onchange="atualizarListaBanners()">
-                    <option value="">Selecione...</option>
-                </select>
-                <label>2. Escolher Link:</label>
-                <select id="selBanner" disabled><option value="">Escolha a categoria</option></select>
-                <button class="action-submit" id="btnDelBanner" onclick="deletarBanner()" disabled style="color: #ff4d4d;">EXCLUIR LINK</button>
-            </div>
-        </div>
+        <button class="accordion-btn btn-vermelho" onclick="togglePanel('p3')"><i class="fas fa-eraser"></i> Excluir Banner Link</button>
+        <div id="p3" class="panel"><div class="panel-content">
+            <label>1. Grupo:</label><select id="sCatB" onchange="atualizarListaBanners()"><option value="">Selecione...</option></select>
+            <label>2. Link:</label><select id="sBanner" disabled><option value="">Escolha o grupo</option></select>
+            <button class="action-submit" id="b3" onclick="deletarBanner()" disabled style="color:#ff4d4d">Excluir Link</button>
+        </div></div>
 
         <a href="index.html" class="btn-voltar">VOLTAR À HOME</a>
     </div>
@@ -147,81 +93,68 @@
         let dadosLocais = { categorias: [], banners: [] };
 
         function togglePanel(id) {
-            const panel = document.getElementById(id);
-            const isOpened = panel.style.maxHeight;
-            document.querySelectorAll('.panel').forEach(p => p.style.maxHeight = null);
-            if (!isOpened) { panel.style.maxHeight = panel.scrollHeight + "px"; }
+            const p = document.getElementById(id);
+            const open = p.style.maxHeight;
+            document.querySelectorAll('.panel').forEach(x => x.style.maxHeight = null);
+            if (!open) p.style.maxHeight = p.scrollHeight + "px";
         }
 
         async function carregar() {
-            // Sincroniza dados do usuário
-            const pic = localStorage.getItem('netlinks_pic');
-            const name = localStorage.getItem('netlinks_name');
-            if(pic && name) {
-                document.getElementById('userBadge').innerHTML = `
-                    <img src="${pic}">
-                    <span>${name}</span>
-                `;
-            }
-            
+            document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
             try {
                 const res = await fetch(`${urlApp}?dono=${encodeURIComponent(dono)}`);
                 dadosLocais = await res.json();
-                const opts = '<option value="">Selecione...</option>' + 
-                             dadosLocais.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
-                document.getElementById('selectDelCat').innerHTML = opts;
-                document.getElementById('selCatB').innerHTML = opts;
-                document.getElementById('cadCatBanner').innerHTML = opts;
-            } catch (e) { msg("Erro ao conectar."); }
+                const opts = '<option value="">Selecione...</option>' + dadosLocais.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
+                document.getElementById('sDelC').innerHTML = opts;
+                document.getElementById('sCatB').innerHTML = opts;
+                document.getElementById('cCat').innerHTML = opts;
+            } catch (e) { console.error(e); }
         }
 
         function atualizarListaBanners() {
-            const cat = document.getElementById('selCatB').value;
-            const selB = document.getElementById('selBanner');
-            const btn = document.getElementById('btnDelBanner');
+            const cat = document.getElementById('sCatB').value;
+            const selB = document.getElementById('sBanner');
+            const btn = document.getElementById('b3');
             if(!cat) { selB.disabled = true; btn.disabled = true; return; }
             const bans = dadosLocais.banners.filter(b => b.categoria === cat);
             selB.innerHTML = bans.length ? '<option value="">Selecione...</option>' + bans.map(b => `<option value="${b.nome}">${b.nome}</option>`).join('') : '<option>Vazio</option>';
             selB.disabled = !bans.length;
         }
 
-        document.getElementById('selBanner').onchange = function() {
-            document.getElementById('btnDelBanner').disabled = !this.value;
-        };
+        document.getElementById('sBanner').onchange = function() { document.getElementById('b3').disabled = !this.value; };
 
-        // FUNÇÕES COM FEEDBACK DE PROGRESSO
         async function criarCategoria() {
             const n = document.getElementById('novaCat').value.trim();
             if(!n) return;
-            setLoading('btnSaveCat', "Salvando...");
+            setLoading('b1', "Salvando...");
             await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "addCategory", nome: n, dono: dono }) });
             setTimeout(() => location.reload(), 1500);
         }
 
         async function criarBanner() {
-            const cat = document.getElementById('cadCatBanner').value;
-            const nome = document.getElementById('cadNomeBanner').value.trim();
-            const url = document.getElementById('cadUrlBanner').value.trim();
-            if(!cat || !nome || !url) { alert("Preencha todos os campos!"); return; }
-            setLoading('btnSaveBanner', "Criando Link...");
+            const cat = document.getElementById('cCat').value;
+            const nome = document.getElementById('cNome').value.trim();
+            const url = document.getElementById('cUrl').value.trim();
+            if(!cat || !nome || !url) return;
+            setLoading('bB', "Criando...");
             await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "addBanner", dono: dono, categoria: cat, nome: nome, imagem: "", link: url }) });
             setTimeout(() => location.reload(), 1500);
         }
 
         async function deletarCat() {
-            const v = document.getElementById('selectDelCat').value;
-            if(v && confirm(`Apagar "${v}" e todos os links dentro dele?`)) {
-                setLoading('btnDelCat', "Removendo...");
+            const v = document.getElementById('sDelC').value;
+            if(v && confirm(`Apagar "${v}"?`)) {
+                setLoading('b2', "Removendo...");
                 await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "deleteCategory", nome: v, dono: dono }) });
                 setTimeout(() => location.reload(), 1500);
             }
         }
 
         async function deletarBanner() {
-            const c = document.getElementById('selCatB').value;
-            const n = document.getElementById('selBanner').value;
-            if(confirm(`Excluir o link "${n}"?`)) {
-                setLoading('btnDelBanner', "Apagando...");
+            const c = document.getElementById('sCatB').value;
+            const n = document.getElementById('sBanner').value;
+            if(confirm(`Excluir link "${n}"?`)) {
+                setLoading('b3', "Apagando...");
                 await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", categoria: c, nome: n, dono: dono }) });
                 setTimeout(() => location.reload(), 1500);
             }
@@ -231,10 +164,9 @@
             const b = document.getElementById(id);
             b.disabled = true;
             b.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t}`;
-            document.getElementById('status-msg').innerText = "Aguarde, processando na nuvem...";
+            document.getElementById('status-msg').innerText = "Processando...";
         }
 
-        function msg(t) { document.getElementById('status-msg').innerText = t; }
         carregar();
     </script>
 </body>
