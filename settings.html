@@ -7,18 +7,42 @@
     <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; --green: #27ae60; --text: #ffffff; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; }
+        :root { 
+            --primary: #E50914; 
+            --bg: #141414; 
+            --card: #2f2f2f; 
+            --green: #27ae60; 
+            --text: #ffffff; 
+        }
+
+        /* FUNDO PADRONIZADO PARA TODAS AS PÁGINAS */
+        body { 
+            background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); /* Mesmo fundo da Login/Index */
+            background-attachment: fixed; /* Mantém o fundo fixo ao rolar */
+            color: var(--text); 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            min-height: 100vh; 
+        }
         
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
-        /* Cabeçalho Sincronizado com a Index */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding: 10px 4% 20px 4%; }
+        /* Cabeçalho Sincronizado */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 30px; 
+            border-bottom: 1px solid #333; 
+            padding: 10px 4% 20px 4%; 
+            background: rgba(0,0,0,0.5); /* Leve transparência para destacar do fundo */
+        }
         .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; }
         .user-badge { display: flex; align-items: center; gap: 10px; background: #222; padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; }
         .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
 
-        /* Botões Estilo Imagem */
+        /* Botões Estilo Imagem (Borda Grossa e Arredondada) */
         .accordion-btn {
             width: 100%; padding: 20px; margin-bottom: 10px; border-radius: 15px; border: 3px solid #000;
             font-size: 18px; font-weight: bold; text-transform: uppercase; cursor: pointer;
@@ -29,17 +53,26 @@
         .accordion-btn:hover { opacity: 0.9; transform: scale(1.01); }
 
         /* Painéis Retráteis */
-        .panel { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: #252525; border-radius: 0 0 15px 15px; margin-top: -15px; margin-bottom: 15px; padding: 0 20px; }
+        .panel { 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.3s ease-out; 
+            background: rgba(37, 37, 37, 0.95); /* Leve transparência */
+            border-radius: 0 0 15px 15px; 
+            margin-top: -15px; 
+            margin-bottom: 15px; 
+            padding: 0 20px; 
+        }
         .panel-content { padding: 25px 0; }
 
-        label { display: block; margin-bottom: 8px; font-size: 12px; color: #888; text-transform: uppercase; }
-        input, select { width: 100%; padding: 12px; border-radius: 8px; background: #444; color: white; border: 1px solid #555; outline: none; box-sizing: border-box; margin-bottom: 15px; }
+        label { display: block; margin-bottom: 8px; font-size: 12px; color: #aaa; text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; border-radius: 8px; background: #333; color: white; border: 1px solid #555; outline: none; box-sizing: border-box; margin-bottom: 15px; }
         
         .action-submit { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; background: #444; transition: 0.3s; text-transform: uppercase; }
         .action-submit:hover:not(:disabled) { background: #555; border: 1px solid white; }
         .action-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .btn-voltar { display: block; width: 180px; margin: 40px auto; padding: 12px; background: #333; color: white; text-align: center; text-decoration: none; border-radius: 8px; font-weight: bold; }
+        .btn-voltar { display: block; width: 180px; margin: 40px auto; padding: 12px; background: #333; color: white; text-align: center; text-decoration: none; border-radius: 8px; font-weight: bold; border: 1px solid #444; }
         #status-msg { text-align: center; font-weight: bold; color: #f1c40f; margin-bottom: 15px; min-height: 20px; text-transform: uppercase; font-size: 14px; }
     </style>
 </head>
@@ -121,11 +154,15 @@
         }
 
         async function carregar() {
-            // Sincroniza a imagem do badge
-            document.getElementById('userBadge').innerHTML = `
-                <img src="${localStorage.getItem('netlinks_pic')}">
-                <span>${localStorage.getItem('netlinks_name')}</span>
-            `;
+            // Sincroniza dados do usuário
+            const pic = localStorage.getItem('netlinks_pic');
+            const name = localStorage.getItem('netlinks_name');
+            if(pic && name) {
+                document.getElementById('userBadge').innerHTML = `
+                    <img src="${pic}">
+                    <span>${name}</span>
+                `;
+            }
             
             try {
                 const res = await fetch(`${urlApp}?dono=${encodeURIComponent(dono)}`);
@@ -152,7 +189,7 @@
             document.getElementById('btnDelBanner').disabled = !this.value;
         };
 
-        // FUNÇÕES COM FEEDBACK REFORÇADO
+        // FUNÇÕES COM FEEDBACK DE PROGRESSO
         async function criarCategoria() {
             const n = document.getElementById('novaCat').value.trim();
             if(!n) return;
@@ -166,14 +203,14 @@
             const nome = document.getElementById('cadNomeBanner').value.trim();
             const url = document.getElementById('cadUrlBanner').value.trim();
             if(!cat || !nome || !url) { alert("Preencha todos os campos!"); return; }
-            setLoading('btnSaveBanner', "Criando Banner...");
+            setLoading('btnSaveBanner', "Criando Link...");
             await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "addBanner", dono: dono, categoria: cat, nome: nome, imagem: "", link: url }) });
             setTimeout(() => location.reload(), 1500);
         }
 
         async function deletarCat() {
             const v = document.getElementById('selectDelCat').value;
-            if(v && confirm(`Apagar "${v}"?`)) {
+            if(v && confirm(`Apagar "${v}" e todos os links dentro dele?`)) {
                 setLoading('btnDelCat', "Removendo...");
                 await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "deleteCategory", nome: v, dono: dono }) });
                 setTimeout(() => location.reload(), 1500);
@@ -183,7 +220,7 @@
         async function deletarBanner() {
             const c = document.getElementById('selCatB').value;
             const n = document.getElementById('selBanner').value;
-            if(confirm(`Excluir link "${n}"?`)) {
+            if(confirm(`Excluir o link "${n}"?`)) {
                 setLoading('btnDelBanner', "Apagando...");
                 await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", categoria: c, nome: n, dono: dono }) });
                 setTimeout(() => location.reload(), 1500);
@@ -194,7 +231,7 @@
             const b = document.getElementById(id);
             b.disabled = true;
             b.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t}`;
-            document.getElementById('status-msg').innerText = "Comunicando com a planilha...";
+            document.getElementById('status-msg').innerText = "Aguarde, processando na nuvem...";
         }
 
         function msg(t) { document.getElementById('status-msg').innerText = t; }
