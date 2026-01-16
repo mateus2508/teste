@@ -12,8 +12,6 @@
         .container { max-width: 800px; margin: 0 auto; }
         h1 { color: var(--primary); text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
 
-        .guia-rapido { background: #1f1f1f; border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 25px; border-radius: 4px; font-size: 13px; color: #ccc; }
-
         /* BOTÕES ESTILO IMAGEM */
         .accordion-btn {
             width: 100%; padding: 20px; margin-bottom: 10px; border-radius: 15px; border: 3px solid #000;
@@ -56,7 +54,7 @@
         </div>
 
         <button class="accordion-btn btn-verde" onclick="togglePanel('panelBanner')">
-            <i class="fas fa-plus-circle"></i> Criar Baner - Link
+            <i class="fas fa-plus-circle"></i> Criar Banner - Link
         </button>
         <div id="panelBanner" class="panel">
             <div class="panel-content">
@@ -64,8 +62,6 @@
                 <select id="cadCatBanner"><option value="">Carregando...</option></select>
                 <label>Nome do Link:</label>
                 <input type="text" id="cadNomeBanner" placeholder="Ex: Gmail">
-                <label>Link da Imagem (Opcional):</label>
-                <input type="text" id="cadImgBanner" placeholder="Cole o link da imagem">
                 <label>Link do Site:</label>
                 <input type="text" id="cadUrlBanner" placeholder="https://...">
                 <button class="action-submit" onclick="criarBanner()">SALVAR LINK</button>
@@ -84,7 +80,7 @@
         </div>
 
         <button class="accordion-btn btn-vermelho" onclick="togglePanel('panel3')">
-            <i class="fas fa-eraser"></i> Excluir Naner Link
+            <i class="fas fa-eraser"></i> Excluir Banner Link
         </button>
         <div id="panel3" class="panel">
             <div class="panel-content">
@@ -150,11 +146,11 @@
         async function criarBanner() {
             const cat = document.getElementById('cadCatBanner').value;
             const nome = document.getElementById('cadNomeBanner').value.trim();
-            const img = document.getElementById('cadImgBanner').value.trim();
             const url = document.getElementById('cadUrlBanner').value.trim();
             if(!cat || !nome || !url) { alert("Preencha os campos obrigatórios!"); return; }
             msg("Salvando Link...");
-            await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "addBanner", dono: dono, categoria: cat, nome: nome, imagem: img, link: url }) });
+            // Enviamos imagem vazia já que o campo foi removido
+            await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "addBanner", dono: dono, categoria: cat, nome: nome, imagem: "", link: url }) });
             setTimeout(() => location.reload(), 1200);
         }
 
