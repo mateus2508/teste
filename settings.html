@@ -9,58 +9,112 @@
     <style>
         :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; --green: #27ae60; --text: #ffffff; }
         body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        h1 { color: var(--primary); text-align: center; text-transform: uppercase; letter-spacing: 2px; }
-        .guia-rapido { background: #1f1f1f; border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 30px; border-radius: 4px; font-size: 13px; color: #ccc; }
-        .section-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-        .config-card { background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid #444; }
-        label { display: block; margin: 15px 0 5px; font-size: 11px; color: #888; font-weight: bold; }
-        input, select { width: 100%; padding: 12px; border-radius: 4px; background: #444; color: white; border: 1px solid #555; box-sizing: border-box; margin-bottom: 10px; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
-        .btn-add { background: var(--green); }
-        .btn-del { background: var(--primary); }
-        .btn-del:disabled { opacity: 0.3; cursor: not-allowed; }
-        .btn-voltar { background: #444; width: 200px; margin: 40px auto; text-decoration: none; }
-        #status-msg { text-align: center; font-weight: bold; color: var(--green); margin-bottom: 15px; min-height: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: var(--primary); text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
+
+        /* GUIA DE USO */
+        .guia-rapido { background: #1f1f1f; border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 25px; border-radius: 4px; font-size: 13px; color: #ccc; }
+
+        /* BOTÕES PRINCIPAIS (ESTILO DA IMAGEM) */
+        .accordion-btn {
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 10px;
+            border-radius: 15px; /* Bordas arredondadas conforme imagem */
+            border: 3px solid #000;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            transition: 0.3s;
+            color: white;
+        }
+
+        .btn-verde { background-color: var(--green); }
+        .btn-vermelho { background-color: var(--primary); }
+        .accordion-btn:hover { opacity: 0.9; transform: scale(1.01); }
+
+        /* PAINÉIS QUE ABREM E FECHAM */
+        .panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #252525;
+            border-radius: 0 0 15px 15px;
+            margin-top: -15px;
+            margin-bottom: 15px;
+            padding: 0 20px;
+        }
+
+        .panel-content { padding: 25px 0; }
+
+        label { display: block; margin-bottom: 8px; font-size: 12px; color: #888; text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; border-radius: 8px; background: #444; color: white; border: 1px solid #555; outline: none; box-sizing: border-box; margin-bottom: 15px; }
+        
+        .action-submit { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; background: #444; transition: 0.3s; }
+        .action-submit:hover { background: #555; border: 1px solid white; }
+
+        .btn-voltar { display: block; width: 180px; margin: 40px auto; padding: 12px; background: #333; color: white; text-align: center; text-decoration: none; border-radius: 8px; font-weight: bold; }
+        #status-msg { text-align: center; font-weight: bold; color: orange; margin-bottom: 15px; min-height: 20px; }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>Painel de Controle</h1>
+        <h1>Ajustes NetLinks</h1>
         
         <div class="guia-rapido">
-            <i class="fas fa-info-circle"></i> <b>Guia:</b> Crie uma <b>Categoria</b> antes de adicionar <b>Links</b>. Excluir uma categoria apaga todos os links dela.
+            <i class="fas fa-info-circle"></i> <b>Dica:</b> Clique em um botão abaixo para abrir as opções de gerenciamento.
         </div>
 
         <div id="status-msg"></div>
 
-        <div class="section-grid">
-            <div class="config-card">
-                <h2>Categorias</h2>
-                <label>Nova Categoria:</label>
-                <input type="text" id="novaCat" placeholder="Nome da Categoria">
-                <button class="btn btn-add" id="btnCriarCat" onclick="criarCategoria()">CRIAR</button>
-                <hr style="border:0; border-top:1px solid #444; margin:20px 0;">
-                <label>Excluir Categoria:</label>
-                <select id="selectDelCat"><option value="">Carregando...</option></select>
-                <button class="btn btn-del" id="btnDelCat" onclick="deletarCat()">EXCLUIR GRUPO</button>
+        <button class="accordion-btn btn-verde" onclick="togglePanel('panel1')">
+            <i class="fas fa-folder-plus"></i> Criar Categoria
+        </button>
+        <div id="panel1" class="panel">
+            <div class="panel-content">
+                <label>Nome do Grupo:</label>
+                <input type="text" id="novaCat" placeholder="Ex: Bancos, Redes Sociais...">
+                <button class="action-submit" onclick="criarCategoria()">SALVAR CATEGORIA</button>
             </div>
+        </div>
 
-            <div class="config-card">
-                <h2>Links (Banners)</h2>
-                <a href="cadastro.html" class="btn btn-add">CADASTRAR NOVO LINK</a>
-                <hr style="border:0; border-top:1px solid #444; margin:20px 0;">
+        <button class="accordion-btn btn-verde" onclick="window.location.href='cadastro.html'">
+            <i class="fas fa-plus-circle"></i> Criar Baner - Link
+        </button>
+
+        <button class="accordion-btn btn-vermelho" onclick="togglePanel('panel2')">
+            <i class="fas fa-folder-minus"></i> Excluir Categoria
+        </button>
+        <div id="panel2" class="panel">
+            <div class="panel-content">
+                <label>Selecione o Grupo para apagar:</label>
+                <select id="selectDelCat"><option value="">Carregando...</option></select>
+                <button class="action-submit" onclick="deletarCat()" style="color: var(--primary);">CONFIRMAR EXCLUSÃO</button>
+            </div>
+        </div>
+
+        <button class="accordion-btn btn-vermelho" onclick="togglePanel('panel3')">
+            <i class="fas fa-eraser"></i> Excluir Naner Link
+        </button>
+        <div id="panel3" class="panel">
+            <div class="panel-content">
                 <label>1. Filtrar Categoria:</label>
                 <select id="selCatB" onchange="atualizarListaBanners()">
                     <option value="">Selecione...</option>
                 </select>
                 <label>2. Escolher Link:</label>
-                <select id="selBanner" disabled><option value="">Selecione o grupo</option></select>
-                <button class="btn btn-del" id="btnDelBanner" onclick="deletarBanner()" disabled>EXCLUIR LINK</button>
+                <select id="selBanner" disabled><option value="">Selecione o grupo acima</option></select>
+                <button class="action-submit" id="btnDelBanner" onclick="deletarBanner()" disabled style="color: var(--primary);">APAGAR LINK SELECIONADO</button>
             </div>
         </div>
 
-        <a href="index.html" class="btn btn-voltar">VOLTAR À HOME</a>
+        <a href="index.html" class="btn-voltar">VOLTAR À HOME</a>
     </div>
 
     <script>
@@ -68,48 +122,39 @@
         const dono = localStorage.getItem("netlinks_user");
         let dadosLocais = { categorias: [], banners: [] };
 
-        // Verifica se o usuário está logado
-        if (!dono) { window.location.href = "index.html"; }
+        // Função para abrir/fechar as caixas
+        function togglePanel(id) {
+            const panel = document.getElementById(id);
+            const isOpened = panel.style.maxHeight;
+
+            // Fecha todos antes de abrir o novo
+            document.querySelectorAll('.panel').forEach(p => p.style.maxHeight = null);
+
+            if (!isOpened) {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            }
+        }
 
         async function carregar() {
             try {
                 const res = await fetch(`${urlApp}?dono=${encodeURIComponent(dono)}`);
-                if (!res.ok) throw new Error("Erro na rede");
                 dadosLocais = await res.json();
-                
                 const opts = '<option value="">Selecione...</option>' + 
                              dadosLocais.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
-                
                 document.getElementById('selectDelCat').innerHTML = opts;
                 document.getElementById('selCatB').innerHTML = opts;
-                document.getElementById('status-msg').innerText = "";
-            } catch (e) { 
-                document.getElementById('status-msg').innerText = "Erro ao ler a planilha. Verifique a internet.";
-                console.error("Erro no fetch:", e);
-            }
+            } catch (e) { document.getElementById('status-msg').innerText = "Erro ao carregar dados."; }
         }
 
         function atualizarListaBanners() {
             const cat = document.getElementById('selCatB').value;
             const selB = document.getElementById('selBanner');
             const btn = document.getElementById('btnDelBanner');
-            
-            if(!cat) { 
-                selB.disabled = true; btn.disabled = true; 
-                selB.innerHTML = '<option>Selecione o grupo</option>'; 
-                return; 
-            }
+            if(!cat) { selB.disabled = true; btn.disabled = true; return; }
             
             const bans = dadosLocais.banners.filter(b => b.categoria === cat);
-            if(bans.length > 0) {
-                selB.innerHTML = '<option value="">Selecione o link...</option>' + 
-                                 bans.map(b => `<option value="${b.nome}">${b.nome}</option>`).join('');
-                selB.disabled = false;
-            } else {
-                selB.innerHTML = '<option value="">Nenhum link aqui</option>';
-                selB.disabled = true;
-            }
-            btn.disabled = true;
+            selB.innerHTML = bans.length ? '<option value="">Selecione...</option>' + bans.map(b => `<option value="${b.nome}">${b.nome}</option>`).join('') : '<option>Vazio</option>';
+            selB.disabled = !bans.length;
         }
 
         document.getElementById('selBanner').onchange = function() {
@@ -119,28 +164,16 @@
         async function criarCategoria() {
             const n = document.getElementById('novaCat').value.trim();
             if(!n) return;
-            setLoading('btnCriarCat', 'CRIANDO...');
-            
-            try {
-                await fetch(urlApp, { 
-                    method:'POST', 
-                    mode: 'no-cors', // Importante para Apps Script
-                    body: JSON.stringify({ action: "addCategory", nome: n, dono: dono }) 
-                });
-                // Aguarda um pouco e recarrega
-                setTimeout(() => location.reload(), 1500);
-            } catch (e) { alert("Erro ao salvar."); location.reload(); }
+            msg("Salvando Categoria...");
+            await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "addCategory", nome: n, dono: dono }) });
+            setTimeout(() => location.reload(), 1500);
         }
 
         async function deletarCat() {
             const v = document.getElementById('selectDelCat').value;
             if(v && confirm(`Excluir grupo "${v}"?`)) {
-                setLoading('btnDelCat', 'EXCLUINDO...');
-                await fetch(urlApp, { 
-                    method:'POST', 
-                    mode: 'no-cors',
-                    body: JSON.stringify({ action: "deleteCategory", nome: v, dono: dono }) 
-                });
+                msg("Excluindo...");
+                await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "deleteCategory", nome: v, dono: dono }) });
                 setTimeout(() => location.reload(), 1500);
             }
         }
@@ -149,23 +182,13 @@
             const c = document.getElementById('selCatB').value;
             const n = document.getElementById('selBanner').value;
             if(confirm(`Remover "${n}"?`)) {
-                setLoading('btnDelBanner', 'REMOVENDO...');
-                await fetch(urlApp, { 
-                    method:'POST', 
-                    mode: 'no-cors',
-                    body: JSON.stringify({ action: "delete", categoria: c, nome: n, dono: dono }) 
-                });
+                msg("Removendo Banner...");
+                await fetch(urlApp, { method:'POST', mode: 'no-cors', body: JSON.stringify({ action: "delete", categoria: c, nome: n, dono: dono }) });
                 setTimeout(() => location.reload(), 1500);
             }
         }
 
-        function setLoading(id, msg) {
-            const b = document.getElementById(id);
-            b.disabled = true;
-            b.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${msg}`;
-            document.getElementById('status-msg').style.color = "orange";
-            document.getElementById('status-msg').innerText = "Salvando na planilha...";
-        }
+        function msg(t) { document.getElementById('status-msg').innerText = t; }
 
         carregar();
     </script>
