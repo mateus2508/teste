@@ -9,66 +9,67 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* LOGIN CONTAINER */
+        body { 
+            background-color: var(--bg); 
+            color: #fff; 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column;
+            /* Estilos para o fundo personalizado */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background 0.5s ease-in-out;
+        }
+        
+        /* Overlay para garantir leitura sobre fundos claros */
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* Escurece o fundo personalizado */
+            z-index: -1;
+            display: none; /* Só aparece se houver fundo personalizado */
+        }
+
         #login-container { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); }
         .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); color: var(--primary); margin: 0; text-transform: uppercase; letter-spacing: 5px; font-weight: 900; }
         .hero-desc { max-width: 700px; color: #ccc; font-size: 1.1rem; margin: 25px 0; }
 
-        /* PAINEL PRINCIPAL */
-        #painel-principal { display: none; padding: 20px 4% 140px 4%; flex: 1; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid #333; padding-bottom: 20px; gap: 20px; }
+        #painel-principal { display: none; padding: 20px 4% 140px 4%; flex: 1; position: relative; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; gap: 20px; }
         .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; flex-shrink: 0; }
 
-        /* BARRA DE PESQUISA */
         .search-container { flex: 1; max-width: 500px; position: relative; }
         .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
-        #searchInput { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: 1px solid #444; background: #222; color: white; outline: none; transition: 0.3s; font-size: 16px; box-sizing: border-box; }
-        #searchInput:focus { border-color: var(--primary); background: #282828; box-shadow: 0 0 10px rgba(229, 9, 20, 0.3); }
+        #searchInput { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: 1px solid #444; background: rgba(34, 34, 34, 0.8); color: white; outline: none; transition: 0.3s; font-size: 16px; box-sizing: border-box; backdrop-filter: blur(5px); }
+        #searchInput:focus { border-color: var(--primary); background: rgba(40, 40, 40, 0.9); }
 
-        .user-badge { display: flex; align-items: center; gap: 10px; background: #222; padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; flex-shrink: 0; }
+        .user-badge { display: flex; align-items: center; gap: 10px; background: rgba(34, 34, 34, 0.8); padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; flex-shrink: 0; backdrop-filter: blur(5px); }
         .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
 
-        /* CATEGORIAS EXPANSÍVEIS */
-        .categoria-header { 
-            display: flex; align-items: center; cursor: pointer; 
-            margin: 40px 0 20px 0; border-left: 5px solid var(--primary); 
-            padding-left: 15px; transition: 0.2s; user-select: none;
-        }
+        .categoria-header { display: flex; align-items: center; cursor: pointer; margin: 40px 0 20px 0; border-left: 5px solid var(--primary); padding-left: 15px; transition: 0.2s; user-select: none; }
         .categoria-header:hover { color: var(--primary); }
         .categoria-titulo { font-size: 1.2rem; text-transform: uppercase; font-weight: bold; margin: 0; flex: 1; }
         .seta-icon { transition: transform 0.3s ease; color: #555; font-size: 1.1rem; margin-right: 10px; }
-        
-        /* Classe para quando estiver recolhido */
         .recolhido .seta-icon { transform: rotate(-90deg); }
         .recolhido .fileira { display: none; }
 
-        .fileira { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; transition: all 0.3s ease; }
-        
-        .card { 
-            flex: 1 1 220px; max-width: 350px; height: 140px; 
-            background-color: var(--card); background-size: cover; background-position: center; 
-            border-radius: 8px; text-decoration: none; color: white; transition: 0.4s; 
-            overflow: hidden; border: 2px solid #333; position: relative;
-        }
+        .fileira { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; }
+        .card { flex: 1 1 220px; max-width: 350px; height: 140px; background-color: var(--card); background-size: cover; background-position: center; border-radius: 8px; text-decoration: none; color: white; transition: 0.4s; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); position: relative; }
         .card:hover { transform: scale(1.05); border-color: #fff; z-index: 5; }
+        .card-info { background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 15px; box-sizing: border-box; text-transform: uppercase; font-size: 1.1rem; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 2px 2px 4px rgba(0,0,0,0.8); }
 
-        .card-info { 
-            background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 100%);
-            width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; 
-            font-weight: bold; text-align: center; padding: 15px; box-sizing: border-box;
-            text-transform: uppercase; font-size: 1.1rem;
-            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 2px 2px 4px rgba(0,0,0,0.8);
-        }
-
+        .btn-icon { color: white; text-decoration: none; font-size: 20px; background: none; border: none; cursor: pointer; transition: 0.3s; padding: 5px; }
+        .btn-icon:hover { color: var(--primary); transform: scale(1.1); }
+        
+        .footer { background: rgba(0,0,0,0.9); padding: 30px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; margin-top: auto; backdrop-filter: blur(10px); }
         .hidden { display: none !important; }
         .cat-hidden { display: none !important; }
 
-        .btn-icon { color: white; text-decoration: none; font-size: 20px; background: none; border: none; cursor: pointer; transition: 0.3s; }
-        .btn-icon:hover { color: var(--primary); }
-        .footer { background: #000; padding: 30px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; margin-top: auto; }
-        
         @media (max-width: 600px) {
             .header { flex-direction: column; align-items: stretch; }
             .search-container { max-width: 100%; order: 3; }
@@ -76,6 +77,7 @@
     </style>
 </head>
 <body>
+    <div class="bg-overlay" id="bgOverlay"></div>
 
     <div id="login-container">
         <h1 class="hero-title">NetLinks</h1>
@@ -91,6 +93,7 @@
                 <input type="text" id="searchInput" placeholder="Pesquisar link..." onkeyup="filtrarBanners()">
             </div>
             <div style="display: flex; align-items: center; gap: 15px;">
+                <button onclick="mudarFundo()" class="btn-icon" title="Mudar Fundo"><i class="fas fa-image"></i></button>
                 <div id="userBadge" class="user-badge"></div>
                 <a href="settings.html" class="btn-icon" title="Configurações"><i class="fas fa-cog"></i></a>
                 <button onclick="logout()" class="btn-icon" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
@@ -122,6 +125,7 @@
         }
 
         window.onload = function () {
+            aplicarFundoSalvo();
             const email = localStorage.getItem("netlinks_user");
             if (email) {
                 document.getElementById('painel-principal').style.display = 'block';
@@ -133,6 +137,33 @@
                 google.accounts.id.renderButton(document.getElementById("buttonDiv"), { theme: "outline", size: "large", shape: "pill" });
             }
         };
+
+        // FUNÇÃO PARA MUDAR O FUNDO
+        function mudarFundo() {
+            const url = prompt("Cole o link da imagem de fundo (Google Drive ou Web):\n(Deixe vazio para voltar ao fundo padrão)");
+            if (url !== null) {
+                let finalUrl = url.trim();
+                // Trata link do Drive se necessário
+                if (finalUrl.includes("drive.google.com")) {
+                    const id = finalUrl.split('id=')[1] || finalUrl.split('/d/')[1].split('/')[0];
+                    finalUrl = `https://drive.google.com/uc?id=${id}`;
+                }
+                localStorage.setItem("netlinks_bg", finalUrl);
+                aplicarFundoSalvo();
+            }
+        }
+
+        function aplicarFundoSalvo() {
+            const bg = localStorage.getItem("netlinks_bg");
+            const overlay = document.getElementById('bgOverlay');
+            if (bg && bg !== "") {
+                document.body.style.backgroundImage = `url('${bg}')`;
+                overlay.style.display = 'block';
+            } else {
+                document.body.style.backgroundImage = 'none';
+                overlay.style.display = 'none';
+            }
+        }
 
         async function carregarDados(email) {
             try {
@@ -168,10 +199,9 @@
                             </a>`;
                     }
                 });
-            } catch (e) { container.innerHTML = "Erro ao carregar dados."; }
+            } catch (e) { document.getElementById('categorias-container').innerHTML = "Erro ao carregar dados."; }
         }
 
-        // FUNÇÃO PARA RECOLHER/EXPANDIR
         function toggleCategoria(id) {
             const wrapper = document.getElementById(`wrapper-${id}`);
             wrapper.classList.toggle('recolhido');
@@ -181,18 +211,12 @@
             const termo = document.getElementById('searchInput').value.toLowerCase();
             const banners = document.querySelectorAll('.card');
             const wrappers = document.querySelectorAll('.categoria-wrapper');
-            
-            banners.forEach(banner => {
-                banner.classList.toggle('hidden', !banner.textContent.toLowerCase().includes(termo));
-            });
-
+            banners.forEach(banner => banner.classList.toggle('hidden', !banner.textContent.toLowerCase().includes(termo)));
             wrappers.forEach(wrapper => {
                 const visiveis = wrapper.querySelectorAll('.card:not(.hidden)').length;
-                if (termo !== "" && visiveis === 0) {
-                    wrapper.classList.add('cat-hidden');
-                } else {
+                if (termo !== "" && visiveis === 0) wrapper.classList.add('cat-hidden');
+                else {
                     wrapper.classList.remove('cat-hidden');
-                    // Se estiver pesquisando, força a expansão para mostrar o resultado
                     if (termo !== "") wrapper.classList.remove('recolhido');
                 }
             });
