@@ -3,71 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetLinks - Seu Organizador de Links</title>
+    <title>NetLinks - Home</title>
     <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; }
-        
         body { 
             background: radial-gradient(circle at center, #2b0505 0%, #141414 100%);
             background-attachment: fixed;
-            color: #fff; 
-            font-family: 'Helvetica Neue', Arial, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
+            color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; 
         }
-        
         #login-container { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; }
         #painel-principal { display: none; padding: 20px 4% 140px 4%; flex: 1; }
-
-        .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); color: var(--primary); margin: 0; text-transform: uppercase; letter-spacing: 5px; font-weight: 900; }
-        .hero-desc { max-width: 700px; color: #ccc; font-size: 1.1rem; margin: 25px 0; }
-
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid #333; padding-bottom: 20px; gap: 20px; }
         .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; }
-
         .search-container { flex: 1; max-width: 500px; position: relative; }
         .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
         #searchInput { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: 1px solid #444; background: #222; color: white; outline: none; transition: 0.3s; font-size: 16px; box-sizing: border-box; }
-        #searchInput:focus { border-color: var(--primary); background: #282828; box-shadow: 0 0 10px rgba(229, 9, 20, 0.3); }
-
-        .user-badge { display: flex; align-items: center; gap: 10px; background: #222; padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; }
-        .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
-
+        .user-badge { display: flex; align-items: center; gap: 10px; background: #222; padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; cursor: pointer; }
+        .user-badge img { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--primary); }
         .categoria-titulo { font-size: 1.2rem; margin: 40px 0 20px 0; border-left: 5px solid var(--primary); padding-left: 15px; text-transform: uppercase; font-weight: bold; }
         .fileira { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; }
-        
-        .card { flex: 1 1 220px; max-width: 350px; height: 140px; background-color: var(--card); background-size: cover; background-position: center; border-radius: 8px; text-decoration: none; color: white; transition: 0.4s; overflow: hidden; border: 2px solid #333; position: relative; }
-        .card:hover { transform: scale(1.05); border-color: #fff; z-index: 5; }
-
+        .card { flex: 1 1 220px; max-width: 350px; height: 140px; background-color: var(--card); background-size: cover; background-position: center; border-radius: 8px; text-decoration: none; color: white; transition: 0.4s; overflow: hidden; border: 2px solid #333; position: relative; cursor: pointer; }
+        .card:hover { transform: scale(1.05); border-color: #fff; }
         .card-info { 
             background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 100%);
-            width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; 
-            font-weight: bold; text-align: center; padding: 15px; box-sizing: border-box;
-            text-transform: uppercase; font-size: 1.1rem;
-            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 2px 2px 4px rgba(0,0,0,0.8);
+            width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 15px; box-sizing: border-box; text-transform: uppercase;
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
         }
-
+        .edit-icon { position: absolute; top: 5px; right: 5px; font-size: 12px; color: rgba(255,255,255,0.5); opacity: 0; transition: 0.3s; }
+        .card:hover .edit-icon { opacity: 1; }
         .hidden, .cat-hidden { display: none !important; }
-        .btn-icon { color: white; text-decoration: none; font-size: 20px; background: none; border: none; cursor: pointer; transition: 0.3s; }
-        .btn-icon:hover { color: var(--primary); }
+        .btn-icon { color: white; text-decoration: none; font-size: 20px; background: none; border: none; cursor: pointer; }
         .footer { background: rgba(0,0,0,0.8); padding: 30px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; margin-top: auto; }
-        
-        @media (max-width: 600px) {
-            .header { flex-direction: column; align-items: stretch; }
-            .search-container { order: 3; }
-        }
     </style>
 </head>
 <body>
     <div id="login-container">
-        <h1 class="hero-title">NetLinks</h1>
-        <p class="hero-desc">Sua biblioteca de links organizada e profissional.</p>
+        <h1 style="font-size: 4rem; color: var(--primary); font-weight: 900;">NetLinks</h1>
         <div id="buttonDiv"></div>
     </div>
 
@@ -76,10 +50,10 @@
             <a href="index.html" class="logo-small">NetLinks</a>
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Pesquisar link..." onkeyup="filtrarBanners()">
+                <input type="text" id="searchInput" placeholder="Pesquisar..." onkeyup="filtrar()">
             </div>
             <div style="display: flex; align-items: center; gap: 15px;">
-                <div id="userBadge" class="user-badge"></div>
+                <div id="userBadge" class="user-badge" onclick="editarCapa()"></div>
                 <a href="settings.html" class="btn-icon"><i class="fas fa-cog"></i></a>
                 <button onclick="logout()" class="btn-icon"><i class="fas fa-sign-out-alt"></i></button>
             </div>
@@ -87,16 +61,10 @@
         <main id="categorias-container"></main>
     </div>
 
-    <footer class="footer">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span>&copy; 2026 NetLinks.</span>
-            <a href="sobre.html" style="color:#888; text-decoration:none;"><i class="fas fa-user-code"></i> Sobre o Criador</a>
-        </div>
-    </footer>
-
     <script>
         const CLIENT_ID = "136794075494-063o3rr6rd2umpcuu8nt097fg8sqbo9k.apps.googleusercontent.com";
         const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
+        const dono = localStorage.getItem("netlinks_user");
 
         function handleCredentialResponse(response) {
             const data = JSON.parse(atob(response.credential.split('.')[1]));
@@ -107,11 +75,11 @@
         }
 
         window.onload = function () {
-            const email = localStorage.getItem("netlinks_user");
-            if (email) {
+            if (dono) {
                 document.getElementById('painel-principal').style.display = 'block';
-                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
-                carregarDados(email);
+                const pic = localStorage.getItem('netlinks_pic');
+                document.getElementById('userBadge').innerHTML = `<img src="${pic}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
+                carregarDados();
             } else {
                 document.getElementById('login-container').style.display = 'flex';
                 google.accounts.id.initialize({ client_id: CLIENT_ID, callback: handleCredentialResponse });
@@ -119,42 +87,55 @@
             }
         };
 
-        async function carregarDados(email) {
-            try {
-                const res = await fetch(`${urlApp}?dono=${encodeURIComponent(email)}`);
-                const dados = await res.json();
-                const container = document.getElementById('categorias-container');
-                container.innerHTML = "";
-                dados.categorias.forEach(cat => {
-                    const idCat = cat.toLowerCase().replace(/\s+/g, '-');
-                    container.innerHTML += `<div class="categoria-titulo">${cat}</div><div class="fileira" id="container-${idCat}"></div>`;
-                });
-                dados.banners.forEach(item => {
-                    const idCat = item.categoria.toLowerCase().replace(/\s+/g, '-');
-                    const fileira = document.getElementById(`container-${idCat}`);
-                    if (fileira) {
-                        let img = item.imagem || "https://drive.google.com/thumbnail?id=1OyRgCJqj0SASvlxkbPBWxh8SYRYJJc2N&sz=w1000";
-                        if (img.includes("drive.google.com")) {
-                            const id = img.split('id=')[1] || img.split('/d/')[1].split('/')[0];
-                            img = `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
-                        }
-                        fileira.innerHTML += `<a href="${item.link}" target="_blank" class="card" style="background-image: url('${img}');"><div class="card-info">${item.nome}</div></a>`;
+        async function carregarDados() {
+            const res = await fetch(`${urlApp}?dono=${encodeURIComponent(dono)}`);
+            const dados = await res.json();
+            const container = document.getElementById('categorias-container');
+            container.innerHTML = "";
+            
+            dados.categorias.forEach(cat => {
+                const idCat = cat.toLowerCase().replace(/\s+/g, '-');
+                container.innerHTML += `<div class="categoria-titulo">${cat}</div><div class="fileira" id="container-${idCat}"></div>`;
+            });
+
+            dados.banners.forEach(item => {
+                const idCat = item.categoria.toLowerCase().replace(/\s+/g, '-');
+                const fileira = document.getElementById(`container-${idCat}`);
+                if (fileira) {
+                    let img = item.imagem || "https://via.placeholder.com/350x140/2f2f2f/ffffff?text=Sem+Imagem";
+                    if (img.includes("drive.google.com")) {
+                        const id = img.split('id=')[1] || img.split('/d/')[1].split('/')[0];
+                        img = `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
                     }
-                });
-            } catch (e) { console.error(e); }
+                    fileira.innerHTML += `
+                        <div class="card" style="background-image: url('${img}');" onclick="window.open('${item.link}', '_blank')">
+                            <div class="card-info">${item.nome}</div>
+                            <i class="fas fa-edit edit-icon" onclick="event.stopPropagation(); editarBanner('${item.categoria}', '${item.nome}')"></i>
+                        </div>`;
+                }
+            });
         }
 
-        function filtrarBanners() {
+        async function editarCapa() {
+            const novo = prompt("Cole o link da nova imagem de perfil/capa:");
+            if (novo) {
+                localStorage.setItem('netlinks_pic', novo);
+                location.reload();
+            }
+        }
+
+        async function editarBanner(cat, nome) {
+            const novo = prompt(`Novo link de imagem para o banner "${nome}":`);
+            if (novo) {
+                await fetch(urlApp, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: "editBannerImage", dono: dono, categoria: cat, nome: nome, novaImagem: novo }) });
+                alert("Imagem atualizada! Recarregando...");
+                location.reload();
+            }
+        }
+
+        function filtrar() {
             const termo = document.getElementById('searchInput').value.toLowerCase();
-            const banners = document.querySelectorAll('.card');
-            const categorias = document.querySelectorAll('.categoria-titulo');
-            banners.forEach(banner => banner.classList.toggle('hidden', !banner.textContent.toLowerCase().includes(termo)));
-            categorias.forEach(titulo => {
-                const fileira = titulo.nextElementSibling;
-                const visiveis = fileira.querySelectorAll('.card:not(.hidden)').length;
-                titulo.classList.toggle('cat-hidden', termo !== "" && visiveis === 0);
-                fileira.classList.toggle('hidden', termo !== "" && visiveis === 0);
-            });
+            document.querySelectorAll('.card').forEach(c => c.classList.toggle('hidden', !c.textContent.toLowerCase().includes(termo)));
         }
         function logout() { localStorage.clear(); location.reload(); }
     </script>
