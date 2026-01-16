@@ -21,13 +21,11 @@
 
         #login-container { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); }
         .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); color: var(--primary); margin: 0; text-transform: uppercase; letter-spacing: 5px; font-weight: 900; }
-        .hero-desc { max-width: 700px; color: #ccc; font-size: 1.1rem; margin: 25px 0; }
 
         #painel-principal { display: none; padding: 20px 4% 140px 4%; flex: 1; position: relative; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; gap: 20px; }
         .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; flex-shrink: 0; }
 
-        /* RELÓGIO E DATA */
         .datetime-container { text-align: right; line-height: 1.2; min-width: 120px; }
         #clock { font-size: 1.4rem; font-weight: bold; color: #fff; display: block; }
         #date { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
@@ -60,7 +58,6 @@
             display: none; z-index: 10; font-size: 12px; transition: 0.3s;
         }
         .card-wrapper:hover .edit-banner-btn { display: flex; align-items: center; justify-content: center; }
-        .edit-banner-btn:hover { background: var(--primary); transform: scale(1.2); }
 
         .card-info { 
             background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 100%);
@@ -73,22 +70,62 @@
         .btn-icon { color: white; text-decoration: none; font-size: 20px; background: none; border: none; cursor: pointer; transition: 0.3s; padding: 5px; }
         .btn-icon:hover { color: var(--primary); transform: scale(1.1); }
         
-        .footer { background: rgba(0,0,0,0.9); padding: 30px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; margin-top: auto; }
+        .footer { background: rgba(0,0,0,0.9); padding: 20px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; margin-top: auto; backdrop-filter: blur(10px); }
+
+        /* MODAL / POPUP */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px); }
+        .modal-content { 
+            background: #1f1f1f; margin: 5% auto; padding: 30px; border-radius: 12px; 
+            width: 80%; max-width: 700px; color: #ccc; border: 1px solid #444; 
+            max-height: 80vh; overflow-y: auto; line-height: 1.6;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+        .modal-header h2 { color: var(--primary); margin: 0; }
+        .close-btn { color: #fff; font-size: 24px; cursor: pointer; }
+        .modal-content b { color: #fff; }
+        .modal-content h3 { color: var(--primary); font-size: 1.1rem; margin-top: 25px; }
+
         .hidden { display: none !important; }
         .cat-hidden { display: none !important; }
 
-        @media (max-width: 900px) {
-            .datetime-container { display: none; } /* Esconde em telas médias para dar espaço à busca */
-        }
-
-        @media (max-width: 600px) {
-            .header { flex-direction: column; align-items: stretch; }
-            .search-container { max-width: 100%; order: 3; }
-        }
+        @media (max-width: 900px) { .datetime-container { display: none; } }
+        @media (max-width: 600px) { .header { flex-direction: column; align-items: stretch; } }
     </style>
 </head>
 <body>
     <div class="bg-overlay" id="bgOverlay"></div>
+
+    <div id="guideModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🚀 Guia de Uso: NetLinks</h2>
+                <span class="close-btn" onclick="toggleModal()">&times;</span>
+            </div>
+            <p>Bem-vindo ao <b>NetLinks</b>, seu organizador inteligente. Siga este guia para dominar todas as funções:</p>
+            
+            <h3>1. Acesso e Segurança</h3>
+            <p><b>Login com Google:</b> O acesso é seguro e vinculado ao seu e-mail. Seus links são privados.<br>
+            <b>Identidade:</b> Sua foto de perfil confirma seu ambiente personalizado.</p>
+
+            <h3>2. Organização (Painel de Ajustes)</h3>
+            <p>Acesse o ícone de <b>engrenagem</b> para gerenciar:<br>
+            🟢 <b>Categorias:</b> Crie grupos primeiro (ex: Bancos, Redes Sociais).<br>
+            🟢 <b>Banners:</b> Cadastre o nome e URL. Eles aparecerão no grupo escolhido.<br>
+            🔴 <b>Excluir:</b> Apague links ou grupos inteiros (cuidado ao apagar grupos!).</p>
+
+            <h3>3. Personalização Visual</h3>
+            <p><b>Fundo da Página:</b> Clique no ícone de imagem no topo e cole um link.<br>
+            <b>Imagem do Banner:</b> Passe o mouse no card, clique no <b>lápis</b> e cole o link da nova capa.</p>
+
+            <h3>4. Navegação Ágil</h3>
+            <p><b>Busca:</b> Use a barra no topo para filtrar links instantaneamente.<br>
+            <b>Categorias:</b> Clique no título de uma categoria para recolher ou expandir a lista.</p>
+
+            <h3>5. Dicas de Ouro 💡</h3>
+            <p><b>Google Drive:</b> Garanta que as imagens estejam configuradas como "Qualquer pessoa com o link".<br>
+            <b>Tempo Real:</b> Tudo é salvo instantaneamente na sua planilha na nuvem.</p>
+        </div>
+    </div>
 
     <div id="login-container">
         <h1 class="hero-title">NetLinks</h1>
@@ -102,30 +139,30 @@
                 <a href="index.html" class="logo-small">NetLinks</a>
                 <div class="datetime-container">
                     <span id="clock">00:00:00</span>
-                    <span id="date">Carregando data...</span>
+                    <span id="date">Carregando...</span>
                 </div>
             </div>
-
             <div class="search-container">
                 <i class="fas fa-search"></i>
                 <input type="text" id="searchInput" placeholder="Pesquisar link..." onkeyup="filtrarBanners()">
             </div>
-
             <div style="display: flex; align-items: center; gap: 12px;">
-                <button onclick="mudarFundo()" class="btn-icon" title="Mudar Fundo da Página"><i class="fas fa-image"></i></button>
+                <button onclick="mudarFundo()" class="btn-icon" title="Mudar Fundo"><i class="fas fa-image"></i></button>
                 <div id="userBadge" class="user-badge"></div>
                 <a href="settings.html" class="btn-icon" title="Configurações"><i class="fas fa-cog"></i></a>
                 <button onclick="logout()" class="btn-icon" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </header>
-
         <main id="categorias-container"></main>
     </div>
 
     <footer class="footer">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
             <span>&copy; 2026 <b>NetLinks</b>.</span>
-            <a href="sobre.html" style="color:#888; text-decoration:none;"><i class="fas fa-user-code"></i> Sobre o Criador</a>
+            <div style="display: flex; gap: 20px;">
+                <button onclick="toggleModal()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold;"><i class="fas fa-question-circle"></i> AJUDA</button>
+                <a href="sobre.html" style="color:#888; text-decoration:none;"><i class="fas fa-user-code"></i> Sobre o Criador</a>
+            </div>
         </div>
     </footer>
 
@@ -133,14 +170,21 @@
         const CLIENT_ID = "136794075494-063o3rr6rd2umpcuu8nt097fg8sqbo9k.apps.googleusercontent.com";
         const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
 
-        // FUNÇÃO DO RELÓGIO
+        function toggleModal() {
+            const modal = document.getElementById('guideModal');
+            modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // Fecha modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('guideModal');
+            if (event.target == modal) modal.style.display = "none";
+        }
+
         function updateClock() {
             const now = new Date();
-            const timeStr = now.toLocaleTimeString('pt-BR', { hour12: false });
-            const dateStr = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
-            
-            document.getElementById('clock').textContent = timeStr;
-            document.getElementById('date').textContent = dateStr;
+            document.getElementById('clock').textContent = now.toLocaleTimeString('pt-BR', { hour12: false });
+            document.getElementById('date').textContent = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
         }
         setInterval(updateClock, 1000);
 
@@ -161,8 +205,6 @@
                 document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
                 carregarDados(email);
             } else {
-                document.body.style.backgroundImage = 'none';
-                document.getElementById('bgOverlay').style.display = 'none';
                 document.getElementById('login-container').style.display = 'flex';
                 google.accounts.id.initialize({ client_id: CLIENT_ID, callback: handleCredentialResponse });
                 google.accounts.id.renderButton(document.getElementById("buttonDiv"), { theme: "outline", size: "large", shape: "pill" });
@@ -227,18 +269,14 @@
                     if (fileira) {
                         const chaveBanner = btoa(item.nome + item.link);
                         const imgSalva = localStorage.getItem(`banner_img_${chaveBanner}`);
-                        
                         let img = imgSalva || item.imagem || "https://drive.google.com/thumbnail?id=1OyRgCJqj0SASvlxkbPBWxh8SYRYJJc2N&sz=w1000";
                         if (!imgSalva && img.includes("drive.google.com")) {
                             const id = img.split('id=')[1] || img.split('/d/')[1].split('/')[0];
                             img = `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
                         }
-
                         fileira.innerHTML += `
                             <div class="card-wrapper">
-                                <button class="edit-banner-btn" onclick="mudarImagemBanner('card-${index}', '${chaveBanner}')" title="Trocar imagem">
-                                    <i class="fas fa-pen"></i>
-                                </button>
+                                <button class="edit-banner-btn" onclick="mudarImagemBanner('card-${index}', '${chaveBanner}')" title="Trocar imagem"><i class="fas fa-pen"></i></button>
                                 <a href="${item.link}" target="_blank" class="card" id="card-${index}" style="background-image: url('${img}');">
                                     <div class="card-info">${item.nome}</div>
                                 </a>
