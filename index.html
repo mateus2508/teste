@@ -34,6 +34,11 @@
         .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
         #searchInput { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: 1px solid #444; background: rgba(34, 34, 34, 0.8); color: white; outline: none; transition: 0.3s; font-size: 16px; box-sizing: border-box; backdrop-filter: blur(5px); }
 
+        /* FEEDBACK DE CARREGAMENTO (SKELETON) */
+        .skeleton { background: #222; border-radius: 8px; position: relative; overflow: hidden; height: 140px; flex: 1 1 220px; max-width: 350px; }
+        .skeleton::after { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); animation: loading 1.5s infinite; }
+        @keyframes loading { 100% { left: 100%; } }
+
         .user-badge { display: flex; align-items: center; gap: 10px; background: rgba(34, 34, 34, 0.8); padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; backdrop-filter: blur(5px); }
         .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
 
@@ -44,7 +49,6 @@
         .recolhido .fileira { display: none; }
 
         .fileira { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; }
-        
         .card-wrapper { position: relative; flex: 1 1 220px; max-width: 350px; }
         .card { display: block; height: 140px; background-color: var(--card); background-size: cover; background-position: center; border-radius: 8px; text-decoration: none; color: white; transition: 0.4s; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); }
         .card:hover { transform: scale(1.05); border-color: #fff; z-index: 5; }
@@ -59,23 +63,16 @@
         
         .footer { background: rgba(0,0,0,0.9); padding: 20px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; margin-top: auto; backdrop-filter: blur(10px); }
 
-        /* MODAL / POPUP */
+        /* MODAL GUIA */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
-        .modal-content { 
-            background: #1f1f1f; margin: 5% auto; padding: 35px; border-radius: 15px; 
-            width: 85%; max-width: 650px; color: #ddd; border: 1px solid #444; 
-            max-height: 80vh; overflow-y: auto; line-height: 1.7; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
+        .modal-content { background: #1f1f1f; margin: 5% auto; padding: 35px; border-radius: 15px; width: 85%; max-width: 650px; color: #ddd; border: 1px solid #444; max-height: 80vh; overflow-y: auto; line-height: 1.7; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
         .modal-header h2 { color: var(--primary); margin: 0; display: flex; align-items: center; gap: 10px; }
-        .close-btn { color: #888; font-size: 28px; cursor: pointer; transition: 0.3s; }
-        .close-btn:hover { color: #fff; }
-        
+        .close-btn { color: #888; font-size: 28px; cursor: pointer; }
         .guia-item { margin-top: 25px; }
         .guia-item h3 { color: #fff; font-size: 1.1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
         .guia-item h3 i { color: var(--primary); width: 20px; text-align: center; }
         .guia-item p { margin: 0 0 10px 32px; font-size: 0.95rem; }
-        .guia-item b { color: var(--primary); }
 
         .hidden { display: none !important; }
         .cat-hidden { display: none !important; }
@@ -93,31 +90,18 @@
                 <h2><i class="fas fa-rocket"></i> Guia Rápido NetLinks</h2>
                 <span class="close-btn" onclick="toggleModal()">&times;</span>
             </div>
-            
             <p>Bem-vindo ao seu novo painel de produtividade! O NetLinks foi feito para você acessar seus sites favoritos com agilidade. Veja como configurar:</p>
-
             <div class="guia-item">
                 <h3><i class="fas fa-layer-group"></i> 1. Começando a Organizar</h3>
-                <p>Tudo funciona através de <b>Categorias</b> e <b>Links</b>.</p>
-                <p>Acesse o ícone de <b>Engrenagem</b> (Configurações) no topo. Primeiro, crie um grupo (ex: "Trabalho"). Depois, adicione seus links nele para que apareçam na tela inicial.</p>
+                <p>Acesse o ícone de <b>Engrenagem</b>. Crie um grupo (ex: "Trabalho"). Depois, adicione seus links nele.</p>
             </div>
-
             <div class="guia-item">
                 <h3><i class="fas fa-paint-brush"></i> 2. Personalize o seu Estilo</h3>
-                <p>Deixe o painel com a sua cara sem menus complicados:</p>
-                <p><b>Fundo da Tela:</b> Clique no ícone de <b>Imagem</b> no topo e cole o endereço de qualquer foto da internet.</p>
-                <p><b>Capas dos Cartões:</b> Passe o mouse sobre um link e clique no <b>Lápis</b>. Cole o link de uma imagem para mudar a capa dele.</p>
+                <p><b>Fundo:</b> Ícone de Imagem no topo. <b>Capas:</b> Ícone de Lápis no banner.</p>
             </div>
-
             <div class="guia-item">
                 <h3><i class="fas fa-bolt"></i> 3. Navegação Inteligente</h3>
-                <p><b>Busca Instantânea:</b> Use a barra no topo para filtrar links enquanto digita.</p>
-                <p><b>Recolher Grupos:</b> Clique no nome de uma categoria para "fechar" ou "abrir" o grupo, mantendo o visual limpo.</p>
-            </div>
-
-            <div class="guia-item">
-                <h3><i class="fas fa-mobile-alt"></i> 4. Dica de Acesso</h3>
-                <p>Instale como aplicativo! Abra o site no navegador do celular e selecione <b>"Adicionar à tela inicial"</b> no menu do navegador.</p>
+                <p><b>Busca:</b> Filtre links digitando no topo. <b>Recolher:</b> Clique no título para fechar grupos.</p>
             </div>
         </div>
     </div>
@@ -148,7 +132,12 @@
                 <button onclick="logout()" class="btn-icon" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </header>
-        <main id="categorias-container"></main>
+        <main id="categorias-container">
+            <div class="categoria-header"><h2 class="categoria-titulo">Carregando biblioteca...</h2></div>
+            <div class="fileira">
+                <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+            </div>
+        </main>
     </div>
 
     <footer class="footer">
@@ -169,8 +158,6 @@
             const m = document.getElementById('guideModal');
             m.style.display = (m.style.display === 'block') ? 'none' : 'block';
         }
-
-        window.onclick = function(e) { if (e.target == document.getElementById('guideModal')) toggleModal(); }
 
         function updateClock() {
             const n = new Date();
@@ -194,6 +181,12 @@
                 aplicarFundoSalvo(e);
                 document.getElementById('painel-principal').style.display = 'block';
                 document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
+                
+                // 1. Tenta carregar do Cache Local para velocidade instantânea
+                const cachedData = localStorage.getItem(`netlinks_cache_${e}`);
+                if (cachedData) renderizar(JSON.parse(cachedData));
+                
+                // 2. Busca dados novos da planilha
                 carregarDados(e);
             } else {
                 document.getElementById('login-container').style.display = 'flex';
@@ -202,6 +195,39 @@
             }
         };
 
+        async function carregarDados(e) {
+            try {
+                const r = await fetch(`${urlApp}?dono=${encodeURIComponent(e)}`);
+                const d = await r.json();
+                localStorage.setItem(`netlinks_cache_${e}`, JSON.stringify(d)); // Salva no cache
+                renderizar(d);
+            } catch (err) { console.error("Erro na busca:", err); }
+        }
+
+        function renderizar(d) {
+            const c = document.getElementById('categorias-container');
+            c.innerHTML = "";
+            d.categorias.forEach(cat => {
+                const id = cat.toLowerCase().replace(/\s+/g, '-');
+                c.innerHTML += `<div class="categoria-wrapper" id="wrapper-${id}"><div class="categoria-header" onclick="toggleCategoria('${id}')"><i class="fas fa-chevron-down seta-icon"></i><h2 class="categoria-titulo">${cat}</h2></div><div class="fileira" id="container-${id}"></div></div>`;
+            });
+            d.banners.forEach((i, idx) => {
+                const id = i.categoria.toLowerCase().replace(/\s+/g, '-');
+                const f = document.getElementById(`container-${id}`);
+                if (f) {
+                    const chave = btoa(i.nome + i.link);
+                    const s = localStorage.getItem(`banner_img_${chave}`);
+                    let img = s || i.imagem || "https://drive.google.com/thumbnail?id=1OyRgCJqj0SASvlxkbPBWxh8SYRYJJc2N&sz=w1000";
+                    if (!s && img.includes("drive.google.com")) {
+                        const drvId = img.split('id=')[1] || img.split('/d/')[1].split('/')[0];
+                        img = `https://drive.google.com/thumbnail?id=${drvId}&sz=w1000`;
+                    }
+                    f.innerHTML += `<div class="card-wrapper"><button class="edit-banner-btn" onclick="mudarImagemBanner('card-${idx}', '${chave}')"><i class="fas fa-pen"></i></button><a href="${i.link}" target="_blank" class="card" id="card-${idx}" style="background-image: url('${img}');"><div class="card-info">${i.nome}</div></a></div>`;
+                }
+            });
+        }
+
+        // Funções de Estilo e Personalização (Mesma Lógica anterior)
         function mudarFundo() {
             const e = localStorage.getItem("netlinks_user");
             const u = prompt("Link da imagem de fundo:");
@@ -211,13 +237,11 @@
                 aplicarFundoSalvo(e);
             }
         }
-
         function aplicarFundoSalvo(e) {
             const b = localStorage.getItem(`netlinks_bg_${e}`);
             const o = document.getElementById('bgOverlay');
             if (b) { document.body.style.backgroundImage = `url('${b}')`; o.style.display = 'block'; }
         }
-
         function mudarImagemBanner(id, c) {
             const u = prompt("Link da nova capa do banner:");
             if (u !== null) {
@@ -226,7 +250,6 @@
                 document.getElementById(id).style.backgroundImage = `url('${f}')`;
             }
         }
-
         function formatarUrlDrive(u) {
             if (u.includes("drive.google.com")) {
                 const id = u.split('id=')[1] || u.split('/d/')[1].split('/')[0];
@@ -234,33 +257,7 @@
             }
             return u;
         }
-
-        async function carregarDados(e) {
-            try {
-                const r = await fetch(`${urlApp}?dono=${encodeURIComponent(e)}`);
-                const d = await r.json();
-                const c = document.getElementById('categorias-container');
-                c.innerHTML = "";
-                d.categorias.forEach(cat => {
-                    const id = cat.toLowerCase().replace(/\s+/g, '-');
-                    c.innerHTML += `<div class="categoria-wrapper" id="wrapper-${id}"><div class="categoria-header" onclick="toggleCategoria('${id}')"><i class="fas fa-chevron-down seta-icon"></i><h2 class="categoria-titulo">${cat}</h2></div><div class="fileira" id="container-${id}"></div></div>`;
-                });
-                d.banners.forEach((i, idx) => {
-                    const id = i.categoria.toLowerCase().replace(/\s+/g, '-');
-                    const f = document.getElementById(`container-${id}`);
-                    if (f) {
-                        const chave = btoa(i.nome + i.link);
-                        const s = localStorage.getItem(`banner_img_${chave}`);
-                        let img = s || i.imagem || "https://drive.google.com/thumbnail?id=1OyRgCJqj0SASvlxkbPBWxh8SYRYJJc2N&sz=w1000";
-                        if (!s && img.includes("drive.google.com")) img = `https://drive.google.com/thumbnail?id=${img.split('id=')[1] || img.split('/d/')[1].split('/')[0]}&sz=w1000`;
-                        f.innerHTML += `<div class="card-wrapper"><button class="edit-banner-btn" onclick="mudarImagemBanner('card-${idx}', '${chave}')"><i class="fas fa-pen"></i></button><a href="${i.link}" target="_blank" class="card" id="card-${idx}" style="background-image: url('${img}');"><div class="card-info">${i.nome}</div></a></div>`;
-                    }
-                });
-            } catch (err) { console.error(err); }
-        }
-
         function toggleCategoria(id) { document.getElementById(`wrapper-${id}`).classList.toggle('recolhido'); }
-
         function filtrarBanners() {
             const t = document.getElementById('searchInput').value.toLowerCase();
             document.querySelectorAll('.card-wrapper').forEach(w => {
@@ -273,7 +270,6 @@
                 if (t !== "") w.classList.remove('recolhido');
             });
         }
-
         function logout() { localStorage.removeItem("netlinks_user"); localStorage.removeItem("netlinks_name"); localStorage.removeItem("netlinks_pic"); location.reload(); }
     </script>
 </body>
