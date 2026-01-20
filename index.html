@@ -13,9 +13,10 @@
         .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; display: none; }
         #painel-principal { display: none; padding: 20px 4% 140px 4%; flex: 1; position: relative; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; gap: 20px; }
-        .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; flex-shrink: 0; }
+        .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; }
+        #clock { font-size: 1.4rem; font-weight: bold; color: #fff; }
         .search-container { flex: 1; max-width: 400px; position: relative; }
-        #searchInput { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: 1px solid #444; background: rgba(34, 34, 34, 0.8); color: white; outline: none; transition: 0.3s; font-size: 16px; box-sizing: border-box; backdrop-filter: blur(5px); }
+        #searchInput { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: 1px solid #444; background: rgba(34, 34, 34, 0.8); color: white; outline: none; box-sizing: border-box; }
         .user-badge { display: flex; align-items: center; gap: 10px; background: rgba(34, 34, 34, 0.8); padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; }
         .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
         .categoria-header { display: flex; align-items: center; cursor: pointer; margin: 40px 0 20px 0; border-left: 5px solid var(--primary); padding-left: 15px; }
@@ -25,8 +26,8 @@
         .card { display: block; height: 140px; background-color: var(--card); background-size: cover; background-position: center; border-radius: 8px; text-decoration: none; color: white; transition: 0.4s; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); }
         .edit-banner-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: #fff; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: none; z-index: 10; font-size: 12px; }
         .card-wrapper:hover .edit-banner-btn { display: flex; align-items: center; justify-content: center; }
-        .card-info { background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 15px; box-sizing: border-box; text-transform: uppercase; font-size: 1.1rem; text-shadow: 1px 1px 2px #000; }
-        .btn-icon { color: white; text-decoration: none; font-size: 20px; background: none; border: none; cursor: pointer; transition: 0.3s; padding: 5px; }
+        .card-info { background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 15px; box-sizing: border-box; text-transform: uppercase; text-shadow: 1px 1px 2px #000; }
+        .btn-icon { color: white; text-decoration: none; font-size: 20px; background: none; border: none; cursor: pointer; padding: 5px; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -41,17 +42,16 @@
         <header class="header">
             <div style="display: flex; align-items: center; gap: 20px;">
                 <a href="index.html" class="logo-small">NetLinks</a>
-                <span id="clock" style="font-weight:bold;">00:00:00</span>
+                <span id="clock">00:00:00</span>
             </div>
             <div class="search-container">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Pesquisar link..." onkeyup="filtrarBanners()">
+                <input type="text" id="searchInput" placeholder="Pesquisar..." onkeyup="filtrarBanners()">
             </div>
             <div style="display: flex; align-items: center; gap: 12px;">
                 <button onclick="mudarFundo()" class="btn-icon" title="Mudar Fundo"><i class="fas fa-image"></i></button>
                 <div id="userBadge" class="user-badge"></div>
-                <a href="settings.html" class="btn-icon" title="Configurações"><i class="fas fa-cog"></i></a>
-                <button onclick="logout()" class="btn-icon" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
+                <a href="settings.html" class="btn-icon"><i class="fas fa-cog"></i></a>
+                <button onclick="logout()" class="btn-icon"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </header>
         <main id="categorias-container"></main>
@@ -119,9 +119,12 @@
             const e = localStorage.getItem("netlinks_user");
             const u = prompt("URL da imagem de fundo:");
             if (u) {
-                localStorage.setItem(`netlinks_bg_${e}`, u);
+                const linkFinal = formatarUrlDrive(u.trim());
+                // Aplica visualmente
+                localStorage.setItem(`netlinks_bg_${e}`, linkFinal);
                 aplicarFundoSalvo(e);
-                fetch(`${urlApp}?action=saveBackground&dono=${encodeURIComponent(e)}&fundo=${encodeURIComponent(u)}`, { mode: 'no-cors' });
+                // GRAVA NA PLANILHA
+                fetch(`${urlApp}?action=saveBackground&dono=${encodeURIComponent(e)}&fundo=${encodeURIComponent(linkFinal)}`, { mode: 'no-cors' });
             }
         }
 
@@ -129,16 +132,27 @@
             const e = localStorage.getItem("netlinks_user");
             const u = prompt("URL da nova imagem para " + nomeBanner + ":");
             if (u) {
-                document.getElementById(id).style.backgroundImage = `url('${u}')`;
-                // COMANDO PARA GRAVAR NA PLANILHA:
-                fetch(`${urlApp}?action=updateBanner&dono=${encodeURIComponent(e)}&nome=${encodeURIComponent(nomeBanner)}&imagem=${encodeURIComponent(u)}`, { mode: 'no-cors' });
+                const linkFinal = formatarUrlDrive(u.trim());
+                document.getElementById(id).style.backgroundImage = `url('${linkFinal}')`;
+                fetch(`${urlApp}?action=updateBanner&dono=${encodeURIComponent(e)}&nome=${encodeURIComponent(nomeBanner)}&imagem=${encodeURIComponent(linkFinal)}`, { mode: 'no-cors' });
             }
         }
 
         function aplicarFundoSalvo(e) {
             const b = localStorage.getItem(`netlinks_bg_${e}`);
             const o = document.getElementById('bgOverlay');
-            if (b) { document.body.style.backgroundImage = `url('${b}')`; o.style.display = 'block'; }
+            if (b && b.trim() !== "") { 
+                document.body.style.backgroundImage = `url('${b}')`; 
+                o.style.display = 'block'; 
+            }
+        }
+
+        function formatarUrlDrive(u) {
+            if (u.includes("drive.google.com")) {
+                const id = u.split('id=')[1] || u.split('/d/')[1].split('/')[0];
+                return `https://drive.google.com/uc?id=${id}`;
+            }
+            return u;
         }
 
         function toggleCategoria(id) { document.getElementById(`wrapper-${id}`).classList.toggle('recolhido'); }
