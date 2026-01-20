@@ -2,57 +2,68 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>NetLinks - Estável</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetLinks - Home</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #E50914; --bg: #141414; }
-        body { background-color: var(--bg); color: #fff; font-family: Arial, sans-serif; margin: 0; background-size: cover; background-position: center; background-attachment: fixed; }
-        #painel { display: none; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .categoria-bloco { margin-top: 30px; }
-        .titulo-cat { border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; background-size: cover; background-position: center; background-attachment: fixed; transition: 0.5s; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; }
+        #login-container { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        #painel { display: none; padding: 20px 5%; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 30px; }
+        .clock { font-size: 1.5rem; font-weight: bold; }
+        .categoria-titulo { font-size: 1.2rem; border-left: 4px solid var(--primary); padding-left: 12px; margin: 35px 0 15px; text-transform: uppercase; letter-spacing: 1px; color: #e5e5e5; }
         .fileira { display: flex; flex-wrap: wrap; gap: 15px; }
-        .card { width: 280px; height: 150px; border-radius: 8px; border: 2px solid #333; background-size: cover; background-position: center; position: relative; text-decoration: none; color: #fff; transition: 0.3s; }
-        .card:hover { transform: scale(1.03); border-color: #fff; }
-        .info { background: rgba(0,0,0,0.6); height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; border-radius: 6px; }
-        .edit-btn { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.8); border: none; color: #fff; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; }
+        .card-wrapper { position: relative; flex: 1 1 200px; max-width: 300px; }
+        .card { display: block; height: 140px; background-color: #222; background-size: cover; background-position: center; border-radius: 6px; border: 2px solid #333; text-decoration: none; overflow: hidden; transition: 0.4s; }
+        .card:hover { transform: scale(1.05); border-color: #fff; z-index: 5; }
+        .card-info { background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); height: 100%; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 15px; font-weight: bold; text-align: center; color: #fff; text-transform: uppercase; font-size: 0.85rem; padding-inline: 5px; }
+        .edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.8); border: none; color: #fff; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: none; z-index: 10; align-items: center; justify-content: center; }
+        .card-wrapper:hover .edit-btn { display: flex; }
+        .user-pic { width: 35px; border-radius: 50%; border: 2px solid var(--primary); }
+        .btn-top { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; transition: 0.3s; }
+        .btn-top:hover { color: var(--primary); }
     </style>
 </head>
 <body>
-    <div id="login" style="text-align:center; margin-top:100px;">
-        <h1 style="color:var(--primary)">NETLINKS</h1>
+    <div class="bg-overlay"></div>
+    <div id="login-container">
+        <h1 style="color:var(--primary); font-size: 3.5rem; letter-spacing: 5px; margin-bottom:0;">NETLINKS</h1>
+        <p style="color:#888; margin-bottom:30px;">Acesso Restrito BrasilTecpar</p>
         <div id="buttonDiv"></div>
     </div>
 
     <div id="painel">
         <header class="header">
-            <div id="clock">00:00</div>
-            <div style="display:flex; gap:15px; align-items:center;">
-                <button onclick="mudarFundo()" style="background:none; border:none; color:#fff; cursor:pointer;"><i class="fas fa-image"></i></button>
+            <div id="clock" class="clock">00:00</div>
+            <div style="display:flex; align-items:center; gap:20px">
+                <button onclick="mudarFundo()" class="btn-top" title="Trocar Fundo"><i class="fas fa-image"></i></button>
                 <div id="userBadge"></div>
-                <button onclick="logout()" style="background:none; border:none; color:#fff; cursor:pointer;"><i class="fas fa-sign-out-alt"></i></button>
+                <button onclick="logout()" class="btn-top" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </header>
-        <div id="conteudo"></div>
+        <div id="main-content"></div>
     </div>
 
     <script>
-        // ATENÇÃO: COLOQUE SUA URL DO SCRIPT ABAIXO
-        const urlApp = "COLE_AQUI_A_SUA_URL_DO_SCRIPT"; 
+        // COLOQUE ABAIXO A SUA URL QUE TERMINA EM /exec
+        const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec"; 
 
         window.onload = function() {
             const email = localStorage.getItem("u_mail");
             if (email) {
-                document.getElementById('login').style.display = 'none';
                 document.getElementById('painel').style.display = 'block';
+                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('u_pic')}" class="user-pic">`;
                 carregar(email);
             } else {
+                document.getElementById('login-container').style.display = 'flex';
                 google.accounts.id.initialize({ 
                     client_id: "136794075494-063o3rr6rd2umpcuu8nt097fg8sqbo9k.apps.googleusercontent.com", 
                     callback: r => {
                         const d = JSON.parse(atob(r.credential.split('.')[1]));
-                        localStorage.setItem("u_mail", d.email);
+                        localStorage.setItem("u_mail", d.email); 
                         localStorage.setItem("u_pic", d.picture);
                         location.reload();
                     }
@@ -67,34 +78,39 @@
                 const d = await res.json();
                 
                 if(d.fundo_tela) document.body.style.backgroundImage = `url('${d.fundo_tela}')`;
-                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('u_pic')}" style="width:30px; border-radius:50%">`;
-
-                const cont = document.getElementById('conteudo');
-                cont.innerHTML = "";
+                
+                const c = document.getElementById('main-content');
+                c.innerHTML = "";
 
                 d.categorias.forEach(cat => {
-                    let html = `<div class="categoria-bloco"><h2 class="titulo-cat">${cat}</h2><div class="fileira">`;
-                    
-                    const linksDaCat = d.banners.filter(b => b.categoria == cat);
-                    linksDaCat.forEach(b => {
-                        html += `
-                            <div style="position:relative">
+                    const linksDaCat = d.banners.filter(b => b.categoria === cat);
+                    if(linksDaCat.length > 0) {
+                        let html = `<div class="categoria-titulo">${cat}</div><div class="fileira">`;
+                        linksDaCat.forEach(b => {
+                            const imgStyle = b.imagem ? `style="background-image:url('${b.imagem}')"` : "";
+                            html += `
+                            <div class="card-wrapper">
                                 <button class="edit-btn" onclick="mudarBanner('${b.nome}')"><i class="fas fa-pen"></i></button>
-                                <a href="${b.link}" target="_blank" class="card" style="background-image:url('${b.imagem}')">
-                                    <div class="info">${b.nome}</div>
+                                <a href="${b.link}" target="_blank" class="card" ${imgStyle}>
+                                    <div class="card-info">${b.nome}</div>
                                 </a>
                             </div>`;
-                    });
-                    cont.innerHTML += html + `</div></div>`;
+                        });
+                        c.innerHTML += html + `</div>`;
+                    }
                 });
-            } catch (e) { document.getElementById('conteudo').innerHTML = "Erro ao carregar dados."; }
+            } catch (err) {
+                console.error("Erro ao carregar:", err);
+                alert("Erro ao ler dados da planilha.");
+            }
         }
 
         async function mudarFundo() {
-            const u = prompt("Link da imagem de fundo:");
+            const u = prompt("Link da imagem de fundo (URL):");
             if(u) {
                 const email = localStorage.getItem("u_mail");
-                await fetch(`${urlApp}?action=saveBackground&dono=${encodeURIComponent(email)}&fundo=${encodeURIComponent(u)}`, {mode:'no-cors'});
+                await fetch(`${urlApp}?action=saveBackground&dono=${encodeURIComponent(email)}&fundo=${encodeURIComponent(u)}`, {mode: 'no-cors'});
+                alert("Fundo salvo! A página será atualizada.");
                 location.reload();
             }
         }
@@ -103,7 +119,8 @@
             const u = prompt("Link da nova imagem para " + nome + ":");
             if(u) {
                 const email = localStorage.getItem("u_mail");
-                await fetch(`${urlApp}?action=updateBanner&dono=${encodeURIComponent(email)}&nome=${encodeURIComponent(nome)}&imagem=${encodeURIComponent(u)}`, {mode:'no-cors'});
+                await fetch(`${urlApp}?action=updateBanner&dono=${encodeURIComponent(email)}&nome=${encodeURIComponent(nome)}&imagem=${encodeURIComponent(u)}`, {mode: 'no-cors'});
+                alert("Banner atualizado!");
                 location.reload();
             }
         }
