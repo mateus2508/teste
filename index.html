@@ -2,121 +2,88 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetLinks Professional</title>
+    <title>NetLinks Cloud</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #E50914; --bg: #141414; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; min-height: 100vh; background-size: cover; background-position: center; background-attachment: fixed; }
-        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; display: none; }
-        #login-container { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-        #painel-principal { display: none; padding: 20px 5%; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 30px; }
-        .fileira { display: flex; flex-wrap: wrap; gap: 15px; }
-        .card-wrapper { position: relative; flex: 1 1 200px; max-width: 300px; }
-        .card { display: block; height: 130px; background-size: cover; background-position: center; border-radius: 8px; border: 2px solid #333; text-decoration: none; overflow: hidden; transition: 0.3s; }
-        .card:hover { transform: scale(1.03); border-color: #fff; }
-        .card-info { background: rgba(0,0,0,0.6); height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; text-transform: uppercase; }
-        .edit-btn { position: absolute; top: 5px; right: 5px; background: #000; color: #fff; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; display: none; z-index: 10; }
-        .card-wrapper:hover .edit-btn { display: block; }
-        .categoria-titulo { font-size: 1rem; border-left: 4px solid var(--primary); padding-left: 10px; margin: 25px 0 15px; text-transform: uppercase; }
+        body { background: #141414; color: #fff; font-family: sans-serif; margin: 0; background-size: cover; background-attachment: fixed; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: -1; }
+        #painel { padding: 20px 5%; display: none; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .card-row { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 30px; }
+        .card-wrap { position: relative; width: 250px; height: 140px; border-radius: 8px; overflow: hidden; border: 2px solid #333; }
+        .card { display: block; width: 100%; height: 100%; background-size: cover; text-decoration: none; }
+        .card-info { background: rgba(0,0,0,0.5); height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-transform: uppercase; }
+        .edit-btn { position: absolute; top: 5px; right: 5px; background: #000; color: #fff; border: none; border-radius: 50%; cursor: pointer; padding: 5px; width: 25px; height: 25px; }
     </style>
 </head>
 <body>
-    <div class="bg-overlay" id="bgOverlay"></div>
-    <div id="login-container">
-        <h1 style="color:var(--primary)">NetLinks</h1>
+    <div class="bg-overlay"></div>
+    <div id="login" style="text-align:center; margin-top:100px;">
+        <h1>NetLinks</h1>
         <div id="buttonDiv"></div>
     </div>
-    <div id="painel-principal">
+
+    <div id="painel">
         <header class="header">
-            <div id="clock" style="font-weight:bold">00:00</div>
-            <div style="display:flex; align-items:center; gap:20px">
-                <button onclick="mudarFundo()" style="background:none; border:none; color:#fff; cursor:pointer"><i class="fas fa-image"></i></button>
+            <div id="clock">00:00</div>
+            <div style="display:flex; gap:20px; align-items:center;">
+                <button onclick="setFundo()"><i class="fas fa-image"></i></button>
                 <div id="userBadge"></div>
-                <a href="settings.html" style="color:#fff"><i class="fas fa-cog"></i></a>
-                <button onclick="logout()" style="background:none; border:none; color:#fff; cursor:pointer"><i class="fas fa-sign-out-alt"></i></button>
+                <button onclick="localStorage.clear(); location.reload();"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </header>
-        <div id="main-content">Carregando...</div>
+        <div id="content"></div>
     </div>
 
     <script>
-        const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
-
-        function updateClock() {
-            document.getElementById('clock').textContent = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-        }
-        setInterval(updateClock, 1000);
+        const urlApp = "SUA_URL_DO_SCRIPT_AQUI"; // <--- COLE O LINK DO SCRIPT AQUI
 
         window.onload = function() {
-            updateClock();
-            const email = localStorage.getItem("netlinks_user");
+            const email = localStorage.getItem("u_mail");
             if (email) {
-                document.getElementById('painel-principal').style.display = 'block';
-                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}" style="width:25px; border-radius:50%">`;
-                carregar(email);
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('painel').style.display = 'block';
+                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('u_pic')}" style="width:25px; border-radius:50%">`;
+                load(email);
             } else {
-                document.getElementById('login-container').style.display = 'flex';
-                google.accounts.id.initialize({ 
-                    client_id: "136794075494-063o3rr6rd2umpcuu8nt097fg8sqbo9k.apps.googleusercontent.com", 
-                    callback: r => {
-                        const d = JSON.parse(atob(r.credential.split('.')[1]));
-                        localStorage.setItem("netlinks_user", d.email);
-                        localStorage.setItem("netlinks_pic", d.picture);
-                        location.reload();
-                    }
-                });
-                google.accounts.id.renderButton(document.getElementById("buttonDiv"), {theme:"outline", size:"large"});
+                google.accounts.id.initialize({ client_id: "136794075494-063o3rr6rd2umpcuu8nt097fg8sqbo9k.apps.googleusercontent.com", callback: r => {
+                    const d = JSON.parse(atob(r.credential.split('.')[1]));
+                    localStorage.setItem("u_mail", d.email); localStorage.setItem("u_pic", d.picture);
+                    location.reload();
+                }});
+                google.accounts.id.renderButton(document.getElementById("buttonDiv"), {theme:"outline"});
             }
         };
 
-        async function carregar(email) {
-            const res = await fetch(`${urlApp}?dono=${encodeURIComponent(email)}`);
+        async function load(email) {
+            const res = await fetch(`${urlApp}?dono=${email}`);
             const d = await res.json();
-            if(d.fundo_tela) {
-                document.body.style.backgroundImage = `url('${d.fundo_tela}')`;
-                document.getElementById('bgOverlay').style.display = 'block';
-            }
-            const c = document.getElementById('main-content');
-            c.innerHTML = "";
+            if (d.fundo) document.body.style.backgroundImage = `url('${d.fundo}')`;
+            
+            const cont = document.getElementById('content');
+            cont.innerHTML = "";
             d.categorias.forEach(cat => {
-                const id = cat.toLowerCase().replace(/\s+/g, '-');
-                c.innerHTML += `<div class="categoria-titulo">${cat}</div><div class="fileira" id="container-${id}"></div>`;
-            });
-            d.banners.forEach(b => {
-                const f = document.getElementById(`container-${b.categoria.toLowerCase().replace(/\s+/g, '-')}`);
-                if(f) {
-                    let img = b.imagem || "";
-                    if (img.includes("drive.google.com")) img = `https://drive.google.com/uc?id=${img.split('id=')[1] || img.split('/d/')[1].split('/')[0]}`;
-                    f.innerHTML += `
-                    <div class="card-wrapper">
-                        <button class="edit-btn" onclick="mudarBanner('${b.nome}', '${email}')"><i class="fas fa-pen"></i></button>
-                        <a href="${b.link}" target="_blank" class="card" style="background-image:url('${img}')"><div class="card-info">${b.nome}</div></a>
+                let html = `<h3>${cat}</h3><div class="card-row">`;
+                d.banners.filter(b => b.cat == cat).forEach(b => {
+                    html += `<div class="card-wrap">
+                        <button class="edit-btn" onclick="setBanner('${b.nome}')"><i class="fas fa-pen"></i></button>
+                        <a href="${b.link}" target="_blank" class="card" style="background-image:url('${b.img}')"><div class="card-info">${b.nome}</div></a>
                     </div>`;
-                }
+                });
+                cont.innerHTML += html + `</div>`;
             });
         }
 
-        function mudarFundo() {
+        function setFundo() {
             const u = prompt("Link do fundo:");
-            if(u) {
-                const email = localStorage.getItem("netlinks_user");
-                fetch(`${urlApp}?action=saveBackground&dono=${encodeURIComponent(email)}&fundo=${encodeURIComponent(u)}`)
-                .then(() => location.reload());
-            }
+            if(u) fetch(`${urlApp}?action=saveBackground&dono=${localStorage.getItem("u_mail")}&fundo=${u}`).then(()=>location.reload());
         }
 
-        function mudarBanner(nome, email) {
-            const u = prompt("Link da nova imagem:");
-            if(u) {
-                fetch(`${urlApp}?action=updateBannerImage&dono=${encodeURIComponent(email)}&nome=${encodeURIComponent(nome)}&novaImagem=${encodeURIComponent(u)}`)
-                .then(() => location.reload());
-            }
+        function setBanner(nome) {
+            const u = prompt("Link da imagem do banner:");
+            if(u) fetch(`${urlApp}?action=updateBanner&dono=${localStorage.getItem("u_mail")}&nome=${nome}&imagem=${u}`).then(()=>location.reload());
         }
-
-        function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
