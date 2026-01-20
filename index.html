@@ -3,61 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetLinks - Master Cloud</title>
-    <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
+    <title>NetLinks Professional</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #E50914; --bg: #141414; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; background-size: cover; background-position: center; background-attachment: fixed; transition: 0.5s; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; min-height: 100vh; background-size: cover; background-position: center; background-attachment: fixed; }
         .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; display: none; }
-        #login-container { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        #painel-principal { display: none; padding: 20px 5%; flex: 1; }
+        #login-container { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        #painel-principal { display: none; padding: 20px 5%; }
         .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 30px; }
-        .search-container { flex: 1; max-width: 400px; position: relative; margin: 0 20px; }
-        #searchInput { width: 100%; padding: 10px 15px 10px 40px; border-radius: 20px; border: 1px solid #444; background: rgba(0,0,0,0.5); color: #fff; outline: none; }
-        .fileira { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 30px; }
-        .card-wrapper { position: relative; flex: 1 1 220px; max-width: 320px; }
-        .card { display: block; height: 140px; background-size: cover; background-position: center; border-radius: 10px; border: 2px solid #333; text-decoration: none; position: relative; overflow: hidden; transition: 0.3s; }
-        .card:hover { transform: scale(1.05); border-color: #fff; z-index: 5; }
-        .card-info { background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); height: 100%; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 15px; font-weight: bold; text-align: center; color: #fff; text-transform: uppercase; text-shadow: 1px 1px 2px #000; }
-        .edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.8); border: none; color: #fff; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: none; z-index: 10; align-items: center; justify-content: center; }
-        .card-wrapper:hover .edit-btn { display: flex; }
-        .categoria-titulo { font-size: 1.1rem; border-left: 4px solid var(--primary); padding-left: 12px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
-        .hidden { display: none !important; }
+        .fileira { display: flex; flex-wrap: wrap; gap: 15px; }
+        .card-wrapper { position: relative; flex: 1 1 200px; max-width: 300px; }
+        .card { display: block; height: 130px; background-size: cover; background-position: center; border-radius: 8px; border: 2px solid #333; text-decoration: none; overflow: hidden; transition: 0.3s; }
+        .card:hover { transform: scale(1.03); border-color: #fff; }
+        .card-info { background: rgba(0,0,0,0.6); height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; text-transform: uppercase; }
+        .edit-btn { position: absolute; top: 5px; right: 5px; background: #000; color: #fff; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; display: none; z-index: 10; }
+        .card-wrapper:hover .edit-btn { display: block; }
+        .categoria-titulo { font-size: 1rem; border-left: 4px solid var(--primary); padding-left: 10px; margin: 25px 0 15px; text-transform: uppercase; }
     </style>
 </head>
 <body>
     <div class="bg-overlay" id="bgOverlay"></div>
     <div id="login-container">
-        <h1 style="color:var(--primary); font-size: 3rem;">NetLinks</h1>
+        <h1 style="color:var(--primary)">NetLinks</h1>
         <div id="buttonDiv"></div>
     </div>
-
     <div id="painel-principal">
         <header class="header">
-            <div id="clock" style="font-weight:bold; font-size:1.2rem;">00:00</div>
-            <div class="search-container">
-                <i class="fas fa-search" style="position:absolute; left:15px; top:12px; color:#666"></i>
-                <input type="text" id="searchInput" placeholder="Buscar..." onkeyup="filtrar()">
-            </div>
-            <div style="display:flex; align-items:center; gap:15px">
-                <button onclick="mudarFundo()" title="Trocar Fundo" style="background:none; border:none; color:#fff; cursor:pointer"><i class="fas fa-image"></i></button>
+            <div id="clock" style="font-weight:bold">00:00</div>
+            <div style="display:flex; align-items:center; gap:20px">
+                <button onclick="mudarFundo()" style="background:none; border:none; color:#fff; cursor:pointer"><i class="fas fa-image"></i></button>
                 <div id="userBadge"></div>
                 <a href="settings.html" style="color:#fff"><i class="fas fa-cog"></i></a>
                 <button onclick="logout()" style="background:none; border:none; color:#fff; cursor:pointer"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </header>
-        <div id="main-content"></div>
+        <div id="main-content">Carregando...</div>
     </div>
 
     <script>
-        const CLIENT_ID = "136794075494-063o3rr6rd2umpcuu8nt097fg8sqbo9k.apps.googleusercontent.com";
         const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
 
         function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').textContent = now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('clock').textContent = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
         }
         setInterval(updateClock, 1000);
 
@@ -66,86 +55,65 @@
             const email = localStorage.getItem("netlinks_user");
             if (email) {
                 document.getElementById('painel-principal').style.display = 'block';
-                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}" style="width:28px; border-radius:50%; border:1px solid var(--primary)">`;
+                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}" style="width:25px; border-radius:50%">`;
                 carregar(email);
             } else {
                 document.getElementById('login-container').style.display = 'flex';
-                google.accounts.id.initialize({ client_id: CLIENT_ID, callback: r => {
-                    const d = JSON.parse(atob(r.credential.split('.')[1]));
-                    localStorage.setItem("netlinks_user", d.email);
-                    localStorage.setItem("netlinks_name", d.name);
-                    localStorage.setItem("netlinks_pic", d.picture);
-                    location.reload();
-                }});
-                google.accounts.id.renderButton(document.getElementById("buttonDiv"), {theme:"outline", size:"large", shape: "pill"});
+                google.accounts.id.initialize({ 
+                    client_id: "136794075494-063o3rr6rd2umpcuu8nt097fg8sqbo9k.apps.googleusercontent.com", 
+                    callback: r => {
+                        const d = JSON.parse(atob(r.credential.split('.')[1]));
+                        localStorage.setItem("netlinks_user", d.email);
+                        localStorage.setItem("netlinks_pic", d.picture);
+                        location.reload();
+                    }
+                });
+                google.accounts.id.renderButton(document.getElementById("buttonDiv"), {theme:"outline", size:"large"});
             }
         };
 
         async function carregar(email) {
-            try {
-                const res = await fetch(`${urlApp}?dono=${encodeURIComponent(email)}`);
-                const d = await res.json();
-                
-                if(d.fundo_tela) {
-                    document.body.style.backgroundImage = `url('${d.fundo_tela}')`;
-                    document.getElementById('bgOverlay').style.display = 'block';
-                }
-
-                const c = document.getElementById('main-content');
-                c.innerHTML = "";
-                d.categorias.forEach(cat => {
-                    const id = cat.toLowerCase().replace(/\s+/g, '-');
-                    c.innerHTML += `<div class="categoria-titulo">${cat}</div><div class="fileira" id="container-${id}"></div>`;
-                });
-
-                d.banners.forEach((b, idx) => {
-                    const id = b.categoria.toLowerCase().replace(/\s+/g, '-');
-                    const f = document.getElementById(`container-${id}`);
-                    if(f) {
-                        let img = b.imagem || "";
-                        if (img.includes("drive.google.com")) {
-                            const drvId = img.split('id=')[1] || img.split('/d/')[1].split('/')[0];
-                            img = `https://drive.google.com/uc?id=${drvId}`;
-                        }
-                        f.innerHTML += `
-                        <div class="card-wrapper">
-                            <button class="edit-btn" onclick="mudarImagemBanner('${b.nome}', '${email}')"><i class="fas fa-pen"></i></button>
-                            <a href="${b.link}" target="_blank" class="card" id="card-${idx}" style="background-image:url('${img}')">
-                                <div class="card-info">${b.nome}</div>
-                            </a>
-                        </div>`;
-                    }
-                });
-            } catch (e) { console.error("Erro ao carregar:", e); }
-        }
-
-        // FUNÇÃO DE GRAVAÇÃO BLINDADA (VIA GET/PARAM PARA EVITAR ERRO DE LEITURA)
-        async function mudarFundo() {
-            const e = localStorage.getItem("netlinks_user");
-            const u = prompt("Link da imagem de fundo:");
-            if(u) {
-                document.body.style.backgroundImage = `url('${u}')`;
+            const res = await fetch(`${urlApp}?dono=${encodeURIComponent(email)}`);
+            const d = await res.json();
+            if(d.fundo_tela) {
+                document.body.style.backgroundImage = `url('${d.fundo_tela}')`;
                 document.getElementById('bgOverlay').style.display = 'block';
-                // Enviamos como POST mas com os dados na URL para o Google aceitar sem travar a leitura
-                const salvarUrl = `${urlApp}?action=saveBackground&dono=${encodeURIComponent(e)}&fundo=${encodeURIComponent(u)}`;
-                fetch(salvarUrl, { method: 'POST' });
             }
+            const c = document.getElementById('main-content');
+            c.innerHTML = "";
+            d.categorias.forEach(cat => {
+                const id = cat.toLowerCase().replace(/\s+/g, '-');
+                c.innerHTML += `<div class="categoria-titulo">${cat}</div><div class="fileira" id="container-${id}"></div>`;
+            });
+            d.banners.forEach(b => {
+                const f = document.getElementById(`container-${b.categoria.toLowerCase().replace(/\s+/g, '-')}`);
+                if(f) {
+                    let img = b.imagem || "";
+                    if (img.includes("drive.google.com")) img = `https://drive.google.com/uc?id=${img.split('id=')[1] || img.split('/d/')[1].split('/')[0]}`;
+                    f.innerHTML += `
+                    <div class="card-wrapper">
+                        <button class="edit-btn" onclick="mudarBanner('${b.nome}', '${email}')"><i class="fas fa-pen"></i></button>
+                        <a href="${b.link}" target="_blank" class="card" style="background-image:url('${img}')"><div class="card-info">${b.nome}</div></a>
+                    </div>`;
+                }
+            });
         }
 
-        async function mudarImagemBanner(nomeBanner, email) {
-            const u = prompt("Nova imagem para o banner " + nomeBanner + ":");
+        function mudarFundo() {
+            const u = prompt("Link do fundo:");
             if(u) {
-                const salvarUrl = `${urlApp}?action=updateBannerImage&dono=${encodeURIComponent(email)}&nome=${encodeURIComponent(nomeBanner)}&novaImagem=${encodeURIComponent(u)}`;
-                fetch(salvarUrl, { method: 'POST' }).then(() => {
-                    alert("Imagem atualizada na nuvem!");
-                    location.reload();
-                });
+                const email = localStorage.getItem("netlinks_user");
+                fetch(`${urlApp}?action=saveBackground&dono=${encodeURIComponent(email)}&fundo=${encodeURIComponent(u)}`)
+                .then(() => location.reload());
             }
         }
 
-        function filtrar() {
-            const t = document.getElementById('searchInput').value.toLowerCase();
-            document.querySelectorAll('.card-wrapper').forEach(w => w.classList.toggle('hidden', !w.innerText.toLowerCase().includes(t)));
+        function mudarBanner(nome, email) {
+            const u = prompt("Link da nova imagem:");
+            if(u) {
+                fetch(`${urlApp}?action=updateBannerImage&dono=${encodeURIComponent(email)}&nome=${encodeURIComponent(nome)}&novaImagem=${encodeURIComponent(u)}`)
+                .then(() => location.reload());
+            }
         }
 
         function logout() { localStorage.clear(); location.reload(); }
