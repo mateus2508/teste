@@ -3,52 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetLinks - Home</title>
+    <title>NetLinks - Premium</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #E50914; --bg: #141414; }
         body { background-color: var(--bg); color: #fff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; background-size: cover; background-position: center; background-attachment: fixed; transition: 0.5s; }
-        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: -1; }
+        
+        /* LOGIN */
         #login-container { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
-        #painel { display: none; padding: 20px 5%; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 30px; }
-        .clock { font-size: 1.5rem; font-weight: bold; }
-        .categoria-titulo { font-size: 1.2rem; border-left: 4px solid var(--primary); padding-left: 12px; margin: 35px 0 15px; text-transform: uppercase; letter-spacing: 1px; color: #e5e5e5; }
+        
+        /* HEADER PREMIUM */
+        #painel { display: none; padding: 10px 4%; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; position: sticky; top: 0; background: rgba(20,20,20,0.8); backdrop-filter: blur(10px); z-index: 100; }
+        .logo-netlinks { color: var(--primary); font-size: 1.8rem; font-weight: 900; letter-spacing: 3px; text-decoration: none; margin-right: 30px; }
+        
+        .header-left { display: flex; align-items: center; }
+        .clock { font-size: 1.2rem; font-weight: 300; color: #aaa; margin-right: 20px; }
+        
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        
+        /* BUSCA */
+        .search-box { position: relative; width: 250px; }
+        .search-box input { width: 100%; padding: 8px 15px 8px 35px; border-radius: 4px; border: 1px solid #333; background: #000; color: #fff; outline: none; font-size: 0.9rem; }
+        .search-box i { position: absolute; left: 10px; top: 10px; color: #666; }
+
+        /* CATEGORIAS E CARDS */
+        .categoria-titulo { font-size: 1.4rem; border-left: 4px solid var(--primary); padding-left: 12px; margin: 40px 0 20px; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
         .fileira { display: flex; flex-wrap: wrap; gap: 15px; }
-        .card-wrapper { position: relative; flex: 1 1 200px; max-width: 300px; }
-        .card { display: block; height: 140px; background-color: #222; background-size: cover; background-position: center; border-radius: 6px; border: 2px solid #333; text-decoration: none; overflow: hidden; transition: 0.4s; }
-        .card:hover { transform: scale(1.05); border-color: #fff; z-index: 5; }
-        .card-info { background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); height: 100%; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 15px; font-weight: bold; text-align: center; color: #fff; text-transform: uppercase; font-size: 0.85rem; padding-inline: 5px; }
-        .edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.8); border: none; color: #fff; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: none; z-index: 10; align-items: center; justify-content: center; }
+        .card-wrapper { position: relative; flex: 1 1 220px; max-width: 320px; }
+        .card { display: block; height: 145px; background-color: #222; background-size: cover; background-position: center; border-radius: 6px; border: 1px solid #333; text-decoration: none; overflow: hidden; transition: 0.4s; }
+        .card:hover { transform: scale(1.06); border-color: #fff; z-index: 5; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .card-info { background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); height: 100%; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 15px; font-weight: bold; text-align: center; color: #fff; text-transform: uppercase; font-size: 0.8rem; padding-inline: 10px; }
+        
+        /* BOTÕES */
+        .edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.8); border: none; color: #fff; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: none; z-index: 10; align-items: center; justify-content: center; transition: 0.3s; }
         .card-wrapper:hover .edit-btn { display: flex; }
-        .user-pic { width: 35px; border-radius: 50%; border: 2px solid var(--primary); }
-        .btn-top { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; transition: 0.3s; }
-        .btn-top:hover { color: var(--primary); }
+        .edit-btn:hover { background: var(--primary); }
+        .user-pic { width: 35px; border-radius: 50%; border: 2px solid #444; }
+        .btn-top { background: none; border: none; color: #aaa; font-size: 1.2rem; cursor: pointer; transition: 0.3s; }
+        .btn-top:hover { color: #fff; }
+        
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
     <div class="bg-overlay"></div>
+    
     <div id="login-container">
-        <h1 style="color:var(--primary); font-size: 3.5rem; letter-spacing: 5px; margin-bottom:0;">NETLINKS</h1>
-        <p style="color:#888; margin-bottom:30px;">Acesso Restrito BrasilTecpar</p>
+        <h1 style="color:var(--primary); font-size: 4rem; letter-spacing: 8px; margin-bottom:0;">NETLINKS</h1>
+        <p style="color:#666; letter-spacing: 2px; margin-bottom:40px;">PRIVATE REPOSITORY</p>
         <div id="buttonDiv"></div>
     </div>
 
     <div id="painel">
         <header class="header">
-            <div id="clock" class="clock">00:00</div>
-            <div style="display:flex; align-items:center; gap:20px">
-                <button onclick="mudarFundo()" class="btn-top" title="Trocar Fundo"><i class="fas fa-image"></i></button>
+            <div class="header-left">
+                <div class="logo-netlinks">NETLINKS</div>
+                <div id="clock" class="clock">00:00</div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Títulos, sistemas..." onkeyup="filtrar()">
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <button onclick="mudarFundo()" class="btn-top" title="Personalizar Fundo"><i class="fas fa-palette"></i></button>
                 <div id="userBadge"></div>
-                <button onclick="logout()" class="btn-top" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
+                <button onclick="logout()" class="btn-top" title="Encerrar Sessão"><i class="fas fa-power-off"></i></button>
             </div>
         </header>
+
         <div id="main-content"></div>
     </div>
 
     <script>
-        // COLOQUE ABAIXO A SUA URL QUE TERMINA EM /exec
         const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec"; 
 
         window.onload = function() {
@@ -71,62 +101,3 @@
                 google.accounts.id.renderButton(document.getElementById("buttonDiv"), {theme:"outline", size:"large"});
             }
         };
-
-        async function carregar(email) {
-            try {
-                const res = await fetch(`${urlApp}?dono=${encodeURIComponent(email)}`);
-                const d = await res.json();
-                
-                if(d.fundo_tela) document.body.style.backgroundImage = `url('${d.fundo_tela}')`;
-                
-                const c = document.getElementById('main-content');
-                c.innerHTML = "";
-
-                d.categorias.forEach(cat => {
-                    const linksDaCat = d.banners.filter(b => b.categoria === cat);
-                    if(linksDaCat.length > 0) {
-                        let html = `<div class="categoria-titulo">${cat}</div><div class="fileira">`;
-                        linksDaCat.forEach(b => {
-                            const imgStyle = b.imagem ? `style="background-image:url('${b.imagem}')"` : "";
-                            html += `
-                            <div class="card-wrapper">
-                                <button class="edit-btn" onclick="mudarBanner('${b.nome}')"><i class="fas fa-pen"></i></button>
-                                <a href="${b.link}" target="_blank" class="card" ${imgStyle}>
-                                    <div class="card-info">${b.nome}</div>
-                                </a>
-                            </div>`;
-                        });
-                        c.innerHTML += html + `</div>`;
-                    }
-                });
-            } catch (err) {
-                console.error("Erro ao carregar:", err);
-                alert("Erro ao ler dados da planilha.");
-            }
-        }
-
-        async function mudarFundo() {
-            const u = prompt("Link da imagem de fundo (URL):");
-            if(u) {
-                const email = localStorage.getItem("u_mail");
-                await fetch(`${urlApp}?action=saveBackground&dono=${encodeURIComponent(email)}&fundo=${encodeURIComponent(u)}`, {mode: 'no-cors'});
-                alert("Fundo salvo! A página será atualizada.");
-                location.reload();
-            }
-        }
-
-        async function mudarBanner(nome) {
-            const u = prompt("Link da nova imagem para " + nome + ":");
-            if(u) {
-                const email = localStorage.getItem("u_mail");
-                await fetch(`${urlApp}?action=updateBanner&dono=${encodeURIComponent(email)}&nome=${encodeURIComponent(nome)}&imagem=${encodeURIComponent(u)}`, {mode: 'no-cors'});
-                alert("Banner atualizado!");
-                location.reload();
-            }
-        }
-
-        function logout() { localStorage.clear(); location.reload(); }
-        setInterval(() => { document.getElementById('clock').textContent = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}); }, 1000);
-    </script>
-</body>
-</html>
