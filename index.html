@@ -9,49 +9,59 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; background-size: cover; background-position: center; background-attachment: fixed; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; background-size: cover; background-position: center; background-attachment: fixed; transition: background 0.5s ease-in-out; }
         .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; display: none; }
-        #painel-principal { display: none; padding: 20px 4% 140px 4%; flex: 1; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
-        .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; }
-        #searchInput { width: 300px; padding: 10px 15px; border-radius: 20px; border: 1px solid #444; background: #222; color: white; }
-        .user-badge { display: flex; align-items: center; gap: 10px; background: #222; padding: 5px 15px; border-radius: 20px; font-size: 13px; }
-        .user-badge img { width: 28px; border-radius: 50%; }
-        .categoria-header { border-left: 5px solid var(--primary); padding-left: 15px; margin: 30px 0 15px; cursor: pointer; }
+        #painel-principal { display: none; padding: 20px 4% 140px 4%; flex: 1; position: relative; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; gap: 20px; }
+        .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; flex-shrink: 0; }
+        .search-container { flex: 1; max-width: 400px; position: relative; }
+        #searchInput { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: 1px solid #444; background: rgba(34, 34, 34, 0.8); color: white; outline: none; transition: 0.3s; font-size: 16px; box-sizing: border-box; backdrop-filter: blur(5px); }
+        .user-badge { display: flex; align-items: center; gap: 10px; background: rgba(34, 34, 34, 0.8); padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; }
+        .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
+        .categoria-header { display: flex; align-items: center; cursor: pointer; margin: 40px 0 20px 0; border-left: 5px solid var(--primary); padding-left: 15px; }
+        .categoria-titulo { font-size: 1.2rem; text-transform: uppercase; font-weight: bold; margin: 0; flex: 1; }
         .fileira { display: flex; flex-wrap: wrap; gap: 15px; }
         .card-wrapper { position: relative; flex: 1 1 220px; max-width: 350px; }
-        .card { display: block; height: 140px; background-color: var(--card); background-size: cover; background-position: center; border-radius: 8px; text-decoration: none; color: white; border: 2px solid rgba(255,255,255,0.1); }
-        .edit-banner-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: none; z-index: 10; }
+        .card { display: block; height: 140px; background-color: var(--card); background-size: cover; background-position: center; border-radius: 8px; text-decoration: none; color: white; transition: 0.4s; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); }
+        .edit-banner-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: #fff; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: none; z-index: 10; font-size: 12px; }
         .card-wrapper:hover .edit-banner-btn { display: flex; align-items: center; justify-content: center; }
-        .card-info { background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-transform: uppercase; }
-        .btn-icon { color: white; background: none; border: none; cursor: pointer; font-size: 20px; padding: 5px; }
+        .card-info { background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 15px; box-sizing: border-box; text-transform: uppercase; font-size: 1.1rem; text-shadow: 1px 1px 2px #000; }
+        .btn-icon { color: white; text-decoration: none; font-size: 20px; background: none; border: none; cursor: pointer; transition: 0.3s; padding: 5px; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
     <div class="bg-overlay" id="bgOverlay"></div>
-    <div id="login-container" style="display:none; text-align:center; margin-top:30vh;">
-        <h1 style="color:var(--primary); font-size: 3rem;">NetLinks</h1>
+    <div id="login-container" style="display:none; text-align:center; margin-top:20vh;">
+        <h1 style="color:var(--primary); font-size: 4rem;">NetLinks</h1>
         <div id="buttonDiv"></div>
     </div>
 
     <div id="painel-principal">
         <header class="header">
-            <a href="index.html" class="logo-small">NetLinks</a>
-            <input type="text" id="searchInput" placeholder="Buscar..." onkeyup="filtrarBanners()">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <button onclick="mudarFundo()" class="btn-icon"><i class="fas fa-image"></i></button>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <a href="index.html" class="logo-small">NetLinks</a>
+                <span id="clock" style="font-weight:bold;">00:00:00</span>
+            </div>
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Pesquisar link..." onkeyup="filtrarBanners()">
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button onclick="mudarFundo()" class="btn-icon" title="Mudar Fundo"><i class="fas fa-image"></i></button>
                 <div id="userBadge" class="user-badge"></div>
-                <a href="settings.html" class="btn-icon"><i class="fas fa-cog"></i></a>
-                <button onclick="logout()" class="btn-icon"><i class="fas fa-sign-out-alt"></i></button>
+                <a href="settings.html" class="btn-icon" title="Configurações"><i class="fas fa-cog"></i></a>
+                <button onclick="logout()" class="btn-icon" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </header>
         <main id="categorias-container"></main>
     </div>
 
     <script>
-        // COLE O SEU LINK DE IMPLANTAÇÃO AQUI:
         const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
+
+        function updateClock() { document.getElementById('clock').textContent = new Date().toLocaleTimeString('pt-BR'); }
+        setInterval(updateClock, 1000);
 
         window.onload = function () {
             const e = localStorage.getItem("netlinks_user");
@@ -80,9 +90,12 @@
             try {
                 const r = await fetch(`${urlApp}?dono=${encodeURIComponent(e)}`);
                 const d = await r.json();
-                if (d.fundo) { localStorage.setItem(`netlinks_bg_${e}`, d.fundo); aplicarFundoSalvo(e); }
+                if (d.fundo) {
+                    localStorage.setItem(`netlinks_bg_${e}`, d.fundo);
+                    aplicarFundoSalvo(e);
+                }
                 renderizar(d);
-            } catch (err) { console.error(err); }
+            } catch (err) { console.error("Erro:", err); }
         }
 
         function renderizar(d) {
@@ -90,13 +103,13 @@
             c.innerHTML = "";
             d.categorias.forEach(cat => {
                 const id = cat.toLowerCase().replace(/\s+/g, '-');
-                c.innerHTML += `<div class="categoria-wrapper" id="wrapper-${id}"><div class="categoria-header"><h2>${cat}</h2></div><div class="fileira" id="container-${id}"></div></div>`;
+                c.innerHTML += `<div class="categoria-wrapper" id="wrapper-${id}"><div class="categoria-header" onclick="toggleCategoria('${id}')"><h2 class="categoria-titulo">${cat}</h2></div><div class="fileira" id="container-${id}"></div></div>`;
             });
             d.banners.forEach((i, idx) => {
                 const id = i.categoria.toLowerCase().replace(/\s+/g, '-');
                 const f = document.getElementById(`container-${id}`);
                 if (f) {
-                    let img = i.imagem || "https://via.placeholder.com/350x140?text=Sem+Imagem";
+                    let img = i.imagem || "https://drive.google.com/thumbnail?id=1OyRgCJqj0SASvlxkbPBWxh8SYRYJJc2N&sz=w1000";
                     f.innerHTML += `<div class="card-wrapper"><button class="edit-banner-btn" onclick="mudarImagemBanner('card-${idx}', '${i.nome}')"><i class="fas fa-pen"></i></button><a href="${i.link}" target="_blank" class="card" id="card-${idx}" style="background-image: url('${img}');"><div class="card-info">${i.nome}</div></a></div>`;
                 }
             });
@@ -114,18 +127,21 @@
 
         async function mudarImagemBanner(id, nomeBanner) {
             const e = localStorage.getItem("netlinks_user");
-            const u = prompt("Nova imagem para " + nomeBanner + ":");
+            const u = prompt("URL da nova imagem para " + nomeBanner + ":");
             if (u) {
                 document.getElementById(id).style.backgroundImage = `url('${u}')`;
+                // COMANDO PARA GRAVAR NA PLANILHA:
                 fetch(`${urlApp}?action=updateBanner&dono=${encodeURIComponent(e)}&nome=${encodeURIComponent(nomeBanner)}&imagem=${encodeURIComponent(u)}`, { mode: 'no-cors' });
             }
         }
 
         function aplicarFundoSalvo(e) {
             const b = localStorage.getItem(`netlinks_bg_${e}`);
-            if (b) { document.body.style.backgroundImage = `url('${b}')`; document.getElementById('bgOverlay').style.display = 'block'; }
+            const o = document.getElementById('bgOverlay');
+            if (b) { document.body.style.backgroundImage = `url('${b}')`; o.style.display = 'block'; }
         }
 
+        function toggleCategoria(id) { document.getElementById(`wrapper-${id}`).classList.toggle('recolhido'); }
         function filtrarBanners() {
             const t = document.getElementById('searchInput').value.toLowerCase();
             document.querySelectorAll('.card-wrapper').forEach(w => w.classList.toggle('hidden', !w.innerText.toLowerCase().includes(t)));
