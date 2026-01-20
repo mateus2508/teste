@@ -14,7 +14,7 @@
             background-color: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; 
             margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column;
             background-size: cover; background-position: center; background-attachment: fixed;
-            transition: background 0.8s ease;
+            transition: background 0.5s ease;
         }
         
         .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; display: none; }
@@ -25,24 +25,35 @@
         #painel-principal { display: none; padding: 20px 4% 100px 4%; flex: 1; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; gap: 20px; }
         
-        /* RELÓGIO */
         .datetime-container { text-align: left; line-height: 1.2; }
         #clock { font-size: 1.4rem; font-weight: bold; display: block; }
         #date { font-size: 0.75rem; color: #aaa; text-transform: uppercase; }
 
-        /* BUSCA */
         .search-container { flex: 1; max-width: 400px; position: relative; }
         .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
         #searchInput { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: 1px solid #444; background: rgba(34, 34, 34, 0.8); color: white; outline: none; box-sizing: border-box; backdrop-filter: blur(5px); }
 
-        /* CARDS */
         .fileira { display: flex; flex-wrap: wrap; gap: 15px; }
         .card-wrapper { position: relative; flex: 1 1 220px; max-width: 350px; }
-        .card { display: block; height: 140px; background-color: var(--card); background-size: cover; background-position: center; border-radius: 8px; text-decoration: none; color: white; transition: 0.4s; border: 2px solid rgba(255,255,255,0.1); position: relative; overflow: hidden; }
+        
+        .card { 
+            display: block; height: 140px; background-color: var(--card); background-size: cover; 
+            background-position: center; border-radius: 8px; text-decoration: none; color: white; 
+            transition: 0.4s; border: 2px solid rgba(255,255,255,0.1); position: relative; overflow: hidden; 
+        }
         .card:hover { transform: scale(1.05); border-color: #fff; z-index: 5; }
+
+        /* BOTÃO DO LÁPIS VOLTOU */
+        .edit-banner-btn {
+            position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7);
+            color: #fff; border: none; width: 30px; height: 30px; border-radius: 50%;
+            cursor: pointer; display: none; z-index: 10; align-items: center; justify-content: center;
+        }
+        .card-wrapper:hover .edit-banner-btn { display: flex; }
+        .edit-banner-btn:hover { background: var(--primary); }
+
         .card-info { background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 15px; text-transform: uppercase; text-shadow: 2px 2px 4px #000; }
         
-        /* FEEDBACK DE CARREGAMENTO */
         .skeleton { background: #222; height: 140px; border-radius: 8px; flex: 1 1 220px; max-width: 350px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
@@ -82,16 +93,12 @@
         </header>
 
         <main id="categorias-container">
-            <div class="fileira">
-                <div class="skeleton"></div>
-                <div class="skeleton"></div>
-                <div class="skeleton"></div>
-            </div>
+            <div class="fileira"><div class="skeleton"></div><div class="skeleton"></div></div>
         </main>
     </div>
 
     <footer class="footer">
-        &copy; 2026 <b>NetLinks</b>. Todos os links sincronizados.
+        &copy; 2026 <b>NetLinks</b>. Painel Sincronizado.
     </footer>
 
     <script>
@@ -132,7 +139,6 @@
                 const res = await fetch(`${urlApp}?dono=${encodeURIComponent(e)}`);
                 const d = await res.json();
                 
-                // Aplica o fundo vindo da planilha
                 if(d.fundo_tela && d.fundo_tela.trim() !== "") {
                     document.body.style.backgroundImage = `url('${d.fundo_tela}')`;
                     document.getElementById('bgOverlay').style.display = 'block';
@@ -148,18 +154,38 @@
                 const id = cat.toLowerCase().replace(/\s+/g, '-');
                 c.innerHTML += `<div><h2 style="text-transform:uppercase; font-size:1.1rem; margin:30px 0 15px 0; border-left:4px solid var(--primary); padding-left:10px;">${cat}</h2><div class="fileira" id="container-${id}"></div></div>`;
             });
-            d.banners.forEach(i => {
+            d.banners.forEach((i, index) => {
                 const id = i.categoria.toLowerCase().replace(/\s+/g, '-');
                 const f = document.getElementById(`container-${id}`);
                 if (f) {
-                    let img = i.imagem;
-                    if (img.includes("drive.google.com")) {
+                    const chaveBanner = btoa(i.nome + i.link);
+                    const localImg = localStorage.getItem(`banner_img_${chaveBanner}`);
+                    let img = localImg || i.imagem || "https://drive.google.com/thumbnail?id=1OyRgCJqj0SASvlxkbPBWxh8SYRYJJc2N&sz=w1000";
+                    
+                    if (!localImg && img.includes("drive.google.com")) {
                         const drvId = img.split('id=')[1] || img.split('/d/')[1].split('/')[0];
                         img = `https://drive.google.com/uc?id=${drvId}`;
                     }
-                    f.innerHTML += `<div class="card-wrapper"><a href="${i.link}" target="_blank" class="card" style="background-image: url('${img}');"><div class="card-info">${i.nome}</div></a></div>`;
+
+                    f.innerHTML += `
+                        <div class="card-wrapper">
+                            <button class="edit-banner-btn" onclick="mudarImagemBanner('card-${index}', '${chaveBanner}')">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                            <a href="${i.link}" target="_blank" class="card" id="card-${index}" style="background-image: url('${img}');">
+                                <div class="card-info">${i.nome}</div>
+                            </a>
+                        </div>`;
                 }
             });
+        }
+
+        function mudarImagemBanner(idElemento, chaveBanner) {
+            const url = prompt("Link da nova imagem para este banner:");
+            if (url) {
+                localStorage.setItem(`banner_img_${chaveBanner}`, url);
+                document.getElementById(idElemento).style.backgroundImage = `url('${url}')`;
+            }
         }
 
         async function mudarFundo() {
@@ -169,7 +195,6 @@
                 document.body.style.backgroundImage = `url('${u}')`;
                 document.getElementById('bgOverlay').style.display = 'block';
                 
-                // Salva na planilha para sincronizar com Android
                 await fetch(urlApp, {
                     method: 'POST',
                     mode: 'no-cors',
