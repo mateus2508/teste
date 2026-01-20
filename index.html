@@ -1,23 +1,49 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetLinks - Seu Organizador de Links</title>
-    <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; background-size: cover; background-position: center; background-attachment: fixed; transition: background 0.5s ease-in-out; }
-        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; display: none; }
-        #login-container { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); }
-        .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); color: var(--primary); margin: 0; text-transform: uppercase; letter-spacing: 5px; font-weight: 900; }
-        #painel-principal { display: none; padding: 20px 4% 140px 4%; flex: 1; position: relative; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; gap: 20px; }
-        .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; flex-shrink: 0; }
-        .datetime-container { text-align: right; line-height: 1.2; min-width: 120px; }
-        #clock { font-size: 1.4rem; font-weight: bold; color: #fff; display: block; }
-        #date { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
-        .search-container { flex: 1; max-width: 400px; position: relative; }
-        .search-container i { position: absolute; left: 15px; top:
+var SS_ID = "1dHpCTK4G7IlgUtHPzEcgmHONj0mwHlpZ_dfCA8yGZqo";
+
+function doGet(e) {
+  var ss = SpreadsheetApp.openById(SS_ID);
+  var p = e.parameter;
+  var dono = p.dono;
+
+  // --- AÇÃO: SALVAR FUNDO ---
+  if (p.action === "saveBackground") {
+    var sP = ss.getSheetByName("preferencias") || ss.insertSheet("preferencias");
+    var dP = sP.getDataRange().getValues();
+    var achou = false;
+    for (var i = 0; i < dP.length; i++) {
+      if (dP[i][0] == dono) { sP.getRange(i+1, 2).setValue(p.fundo); achou = true; break; }
+    }
+    if (!achou) sP.appendRow([dono, p.fundo]);
+    return ContentService.createTextOutput("OK");
+  }
+
+  // --- AÇÃO: SALVAR BANNER ---
+  if (p.action === "updateBanner") {
+    var sB = ss.getSheetByName("banners");
+    var dB = sB.getDataRange().getValues();
+    for (var j = 0; j < dB.length; j++) {
+      if (dB[j][0] == dono && dB[j][2] == p.nome) { 
+        sB.getRange(j+1, 4).setValue(p.imagem); 
+        break;
+      }
+    }
+    return ContentService.createTextOutput("OK");
+  }
+
+  // --- LEITURA DE DADOS ---
+  try {
+    var cats = ss.getSheetByName("categorias").getDataRange().getValues().filter(r => r[0] == dono).map(r => r[1]);
+    var bans = ss.getSheetByName("banners").getDataRange().getValues().filter(r => r[0] == dono).map(r => ({
+      categoria: r[1], nome: r[2], imagem: r[3], link: r[4]
+    }));
+    var sPre = ss.getSheetByName("preferencias") || ss.insertSheet("preferencias");
+    var dPre = sPre.getDataRange().getValues();
+    var fundo = "";
+    for (var k = 0; k < dPre.length; k++) { if (dPre[k][0] == dono) fundo = dPre[k][1]; }
+
+    var result = { categorias: cats, banners: bans, fundo: fundo };
+    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({erro: err.toString()})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
