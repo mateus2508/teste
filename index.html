@@ -34,7 +34,6 @@
         .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
         #searchInput { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: 1px solid #444; background: rgba(34, 34, 34, 0.8); color: white; outline: none; transition: 0.3s; font-size: 16px; box-sizing: border-box; backdrop-filter: blur(5px); }
 
-        /* FEEDBACK DE CARREGAMENTO (SKELETON) */
         .skeleton { background: #222; border-radius: 8px; position: relative; overflow: hidden; height: 140px; flex: 1 1 220px; max-width: 350px; }
         .skeleton::after { content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); animation: loading 1.5s infinite; }
         @keyframes loading { 100% { left: 100%; } }
@@ -63,7 +62,6 @@
         
         .footer { background: rgba(0,0,0,0.9); padding: 20px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; margin-top: auto; backdrop-filter: blur(10px); }
 
-        /* MODAL GUIA */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
         .modal-content { background: #1f1f1f; margin: 5% auto; padding: 35px; border-radius: 15px; width: 85%; max-width: 650px; color: #ddd; border: 1px solid #444; max-height: 80vh; overflow-y: auto; line-height: 1.7; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
@@ -152,7 +150,8 @@
 
     <script>
         const CLIENT_ID = "136794075494-063o3rr6rd2umpcuu8nt097fg8sqbo9k.apps.googleusercontent.com";
-        const urlApp = "https://script.google.com/macros/s/AKfycbxTQvfr6fsACUTjL3ay8yfVWy34HWlXpjUJjsZVzbvRF3F8OgXIJB35tcfwowMObvulVA/exec";
+        // URL DA NOVA IMPLANTAÇÃO ATUALIZADA ABAIXO
+        const urlApp = "https://script.google.com/macros/s/AKfycbxyp6Fw6RM8R73KsWjEKj1eHF4djr5HbLja_NwV4-9055TvL1QOPK-PhOtqce10mHHBag/exec";
 
         function toggleModal() {
             const m = document.getElementById('guideModal');
@@ -182,11 +181,9 @@
                 document.getElementById('painel-principal').style.display = 'block';
                 document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
                 
-                // 1. Tenta carregar do Cache Local para velocidade instantânea
                 const cachedData = localStorage.getItem(`netlinks_cache_${e}`);
                 if (cachedData) renderizar(JSON.parse(cachedData));
                 
-                // 2. Busca dados novos da planilha
                 carregarDados(e);
             } else {
                 document.getElementById('login-container').style.display = 'flex';
@@ -199,7 +196,7 @@
             try {
                 const r = await fetch(`${urlApp}?dono=${encodeURIComponent(e)}`);
                 const d = await r.json();
-                localStorage.setItem(`netlinks_cache_${e}`, JSON.stringify(d)); // Salva no cache
+                localStorage.setItem(`netlinks_cache_${e}`, JSON.stringify(d));
                 renderizar(d);
             } catch (err) { console.error("Erro na busca:", err); }
         }
@@ -227,7 +224,6 @@
             });
         }
 
-        // Funções de Estilo e Personalização (Mesma Lógica anterior)
         function mudarFundo() {
             const e = localStorage.getItem("netlinks_user");
             const u = prompt("Link da imagem de fundo:");
