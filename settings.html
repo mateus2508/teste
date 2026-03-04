@@ -14,9 +14,7 @@
             background-attachment: fixed;
             color: var(--text); 
             font-family: 'Helvetica Neue', Arial, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            min-height: 100vh; 
+            margin: 0; padding: 0; min-height: 100vh; 
         }
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding: 10px 4% 20px 4%; background: rgba(0,0,0,0.5); }
@@ -26,20 +24,38 @@
 
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
 
-        .home-btn { display: block; width: 100%; padding: 15px; background: #333; color: white; text-align: center; text-decoration: none; border-radius: 15px; margin-bottom: 20px; font-weight: bold; border: 2px solid #444; box-sizing: border-box; }
+        .home-btn { display: block; width: 100%; padding: 15px; background: #333; color: white; text-align: center; text-decoration: none; border-radius: 15px; margin-bottom: 20px; font-weight: bold; border: 2px solid #444; box-sizing: border-box; transition: 0.3s; }
+        .home-btn:hover { background: #444; }
 
         .accordion-btn {
             width: 100%; padding: 20px; margin-bottom: 10px; border-radius: 15px; border: 3px solid #000;
             font-size: 18px; font-weight: bold; text-transform: uppercase; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 15px; transition: 0.3s; color: white;
+            position: relative; overflow: hidden;
         }
         .btn-verde { background-color: var(--green); }
         .btn-vermelho { background-color: var(--primary); }
         .accordion-btn:hover { opacity: 0.9; transform: scale(1.01); }
 
-        .content { display: none; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 0 0 15px 15px; margin-top: -15px; margin-bottom: 20px; border: 1px solid #333; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #222; color: white; box-sizing: border-box; }
-        .save-btn { width: 100%; padding: 15px; background: var(--green); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        /* Animação de Feedback Visual no Conteúdo */
+        .content { 
+            display: none; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 0 0 15px 15px; 
+            margin-top: -15px; margin-bottom: 20px; border: 1px solid #333;
+            animation: slideDown 0.4s ease-out;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #222; color: white; box-sizing: border-box; outline: none; }
+        input:focus, select:focus { border-color: var(--primary); }
+
+        .save-btn { width: 100%; padding: 15px; background: var(--green); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .save-btn:active { transform: scale(0.98); }
+        
+        /* Skeleton/Loading feedback para os selects */
+        .loading-select { opacity: 0.5; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -50,32 +66,33 @@
     </header>
 
     <div class="container">
-        <a href="index.html" class="home-btn"><i class="fas fa-home"></i> VOLTAR AO PAINEL</a>
+        <a href="index.html" class="home-btn"><i class="fas fa-arrow-left"></i> VOLTAR AO PAINEL</a>
 
         <button class="accordion-btn btn-verde" onclick="toggle('form-cat')">
             <i class="fas fa-folder-plus"></i> Novo Grupo
         </button>
         <div id="form-cat" class="content">
-            <input type="text" id="cat-nome" placeholder="Nome do Novo Grupo">
-            <button class="save-btn" onclick="salvarCategoria()">CRIAR GRUPO</button>
+            <input type="text" id="cat-nome" placeholder="Digite o nome do novo grupo...">
+            <button class="save-btn" onclick="salvarCategoria(this)">CRIAR GRUPO AGORA</button>
         </div>
 
         <button class="accordion-btn btn-verde" onclick="toggle('form-link')">
-            <i class="fas fa-plus"></i> Novo Link
+            <i class="fas fa-link"></i> Novo Link
         </button>
         <div id="form-link" class="content">
-            <input type="text" id="link-nome" placeholder="Nome do Site">
-            <input type="text" id="link-url" placeholder="URL (https://...)">
-            <select id="link-cat"><option value="">Carregando grupos...</option></select>
-            <button class="save-btn" onclick="salvarLink()">SALVAR LINK</button>
+            <input type="text" id="link-nome" placeholder="Nome do site (ex: YouTube)">
+            <input type="text" id="link-url" placeholder="URL completa (https://...)">
+            <select id="link-cat" class="loading-select"><option value="">Carregando grupos...</option></select>
+            <button class="save-btn" onclick="salvarLink(this)">SALVAR NO PAINEL</button>
         </div>
 
         <button class="accordion-btn btn-vermelho" onclick="toggle('form-del')">
-            <i class="fas fa-trash-alt"></i> Excluir Dados
+            <i class="fas fa-trash-alt"></i> Gerenciar / Excluir
         </button>
         <div id="form-del" class="content">
-            <select id="del-cat"><option value="">Selecione o Grupo para excluir...</option></select>
-            <button class="save-btn" style="background: var(--primary);" onclick="deletarCategoria()">EXCLUIR GRUPO INTEIRO</button>
+            <p style="font-size: 13px; color: #aaa; margin-bottom: 15px;">Atenção: A exclusão de um grupo remove todos os links contidos nele.</p>
+            <select id="del-cat" class="loading-select"><option value="">Selecione para excluir...</option></select>
+            <button class="save-btn" style="background: var(--primary);" onclick="deletarCategoria(this)">EXCLUIR GRUPO SELECIONADO</button>
         </div>
     </div>
 
@@ -83,23 +100,21 @@
         const urlApp = "https://script.google.com/macros/s/AKfycbxyp6Fw6RM8R73KsWjEKj1eHF4djr5HbLja_NwV4-9055TvL1QOPK-PhOtqce10mHHBag/exec";
         const dono = localStorage.getItem("netlinks_user");
 
-        // FEEDBACK VISUAL: Abre e fecha as seções
         function toggle(id) {
             const el = document.getElementById(id);
             const isVisible = (el.style.display === "block");
-            
-            // Fecha todos antes de abrir o clicado
             document.querySelectorAll('.content').forEach(c => c.style.display = "none");
-            
             if (!isVisible) {
                 el.style.display = "block";
-                if (id !== 'form-cat') carregarCategorias(); // Atualiza as listas quando abre Link ou Excluir
+                carregarCategorias();
             }
         }
 
         window.onload = function() {
             if(!dono) window.location.href = "index.html";
-            document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
+            const pic = localStorage.getItem('netlinks_pic');
+            const nome = localStorage.getItem('netlinks_name');
+            document.getElementById('userBadge').innerHTML = `<img src="${pic}"> <span>${nome}</span>`;
             carregarCategorias();
         };
 
@@ -110,45 +125,56 @@
                 const opcoes = '<option value="">Selecione o Grupo...</option>' + 
                                d.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
                 
-                document.getElementById('link-cat').innerHTML = opcoes;
-                document.getElementById('del-cat').innerHTML = opcoes;
-            } catch (e) { console.error("Erro ao carregar categorias"); }
+                const s1 = document.getElementById('link-cat');
+                const s2 = document.getElementById('del-cat');
+                
+                s1.innerHTML = opcoes;
+                s2.innerHTML = opcoes;
+                
+                s1.classList.remove('loading-select');
+                s2.classList.remove('loading-select');
+            } catch (e) { console.error("Erro API"); }
         }
 
-        async function salvarLink() {
-            const p = { 
-                action: "addLink", 
-                dono: dono, 
-                nome: document.getElementById('link-nome').value, 
-                link: document.getElementById('link-url').value, 
-                categoria: document.getElementById('link-cat').value 
-            };
-            enviar(p);
+        async function salvarLink(btn) {
+            const nome = document.getElementById('link-nome').value;
+            const url = document.getElementById('link-url').value;
+            const cat = document.getElementById('link-cat').value;
+            if(!nome || !url || !cat) return alert("Preencha tudo!");
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SALVANDO...';
+            btn.disabled = true;
+
+            await enviar({ action: "addLink", dono: dono, nome: nome, link: url, categoria: cat });
         }
 
-        async function salvarCategoria() {
-            const p = { 
-                action: "addCat", 
-                dono: dono, 
-                categoria: document.getElementById('cat-nome').value 
-            };
-            enviar(p);
+        async function salvarCategoria(btn) {
+            const cat = document.getElementById('cat-nome').value;
+            if(!cat) return alert("Digite o nome!");
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CRIANDO...';
+            btn.disabled = true;
+
+            await enviar({ action: "addCat", dono: dono, categoria: cat });
         }
 
-        async function deletarCategoria() {
+        async function deletarCategoria(btn) {
             const cat = document.getElementById('del-cat').value;
-            if(!cat) return alert("Selecione um grupo");
-            if(confirm(`Excluir o grupo "${cat}" e todos os seus links?`)) {
-                enviar({ action: "delCat", dono: dono, categoria: cat });
+            if(!cat) return alert("Selecione!");
+            if(confirm(`Apagar "${cat}"?`)) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> EXCLUINDO...';
+                await enviar({ action: "delCat", dono: dono, categoria: cat });
             }
         }
 
         async function enviar(p) {
             try {
                 await fetch(urlApp, { method: "POST", body: JSON.stringify(p) });
-                alert("Sucesso!");
                 location.reload();
-            } catch (e) { alert("Erro ao processar."); }
+            } catch (e) { 
+                alert("Erro na conexão."); 
+                location.reload();
+            }
         }
     </script>
 </body>
