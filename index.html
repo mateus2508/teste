@@ -24,11 +24,8 @@
         #searchInput { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: 1px solid #444; background: rgba(34, 34, 34, 0.8); color: white; outline: none; transition: 0.3s; font-size: 16px; box-sizing: border-box; backdrop-filter: blur(5px); }
         .user-badge { display: flex; align-items: center; gap: 10px; background: rgba(34, 34, 34, 0.8); padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; backdrop-filter: blur(5px); }
         .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
-        
-        /* CATEGORIA - Cor definida dinamicamente no JS */
         .categoria-header { display: flex; align-items: center; cursor: pointer; margin: 30px 0 10px 0; border-left: 5px solid var(--primary); padding-left: 15px; user-select: none; }
         .categoria-titulo { font-size: 1.2rem; text-transform: uppercase; font-weight: bold; margin: 0; flex: 1; }
-        
         .btn-icon { color: white; text-decoration: none; font-size: 20px; background: none; border: none; cursor: pointer; transition: 0.3s; padding: 5px; }
         .btn-icon:hover { color: var(--primary); transform: scale(1.1); }
         .fileira { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; }
@@ -116,17 +113,26 @@
             }
         };
 
-        async function carregarDados(e) { try { const r = await fetch(`${urlApp}?dono=${encodeURIComponent(e)}`); const d = await r.json(); if(d.bg) { document.body.style.backgroundImage = `url('${d.bg}')`; document.getElementById('bgOverlay').style.display = 'block'; } renderizar(d); } catch (err) {} }
+        async function carregarDados(e) { 
+            try { 
+                const r = await fetch(`${urlApp}?dono=${encodeURIComponent(e)}`); 
+                const d = await r.json(); 
+                if(d.bg) { document.body.style.backgroundImage = `url('${d.bg}')`; document.getElementById('bgOverlay').style.display = 'block'; } 
+                renderizar(d); 
+            } catch (err) {} 
+        }
         
         function renderizar(d) {
-            const c = document.getElementById('categorias-container'); const isList = c.classList.contains('view-list'); c.innerHTML = "";
+            const c = document.getElementById('categorias-container'); 
+            const isList = c.classList.contains('view-list'); 
+            c.innerHTML = "";
             d.categorias.forEach(cat => {
-                const id = cat.toLowerCase().replace(/\s+/g, '-');
-                // Aplica a cor salva na planilha na borda esquerda
+                const id = cat.nome.toLowerCase().replace(/\s+/g, '-');
                 c.innerHTML += `<div class="categoria-wrapper ${isList ? "recolhido" : ""}" id="wrapper-${id}"><div class="categoria-header" onclick="toggleCategoria('${id}')" style="border-left-color: ${cat.cor}"><i class="fas fa-chevron-down seta-icon"></i><h2 class="categoria-titulo">${cat.nome}</h2></div><div class="fileira" id="container-${id}"></div></div>`;
             });
             d.banners.forEach((i, idx) => {
-                const id = i.categoria.toLowerCase().replace(/\s+/g, '-'); const f = document.getElementById(`container-${id}`);
+                const id = i.categoria.toLowerCase().replace(/\s+/g, '-'); 
+                const f = document.getElementById(`container-${id}`);
                 if (f) {
                     let img = i.imagem || "https://drive.google.com/thumbnail?id=1OyRgCJqj0SASvlxkbPBWxh8SYRYJJc2N&sz=w1000";
                     let urlDestino = i.link.startsWith('http') ? i.link : 'https://' + i.link;
@@ -134,11 +140,11 @@
                 }
             });
         }
+        function toggleCategoria(id) { document.getElementById(`wrapper-${id}`).classList.toggle('recolhido'); }
+        function filtrarBanners() { const t = document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('.card-wrapper').forEach(w => { const n = w.querySelector('.card-info').innerText.toLowerCase(); w.classList.toggle('hidden', !n.includes(t)); }); }
         async function mudarFundo() { const u = prompt("Link da imagem de fundo:"); if (u) { let f = formatarUrlDrive(u.trim()); document.body.style.backgroundImage = `url('${f}')`; document.getElementById('bgOverlay').style.display = 'block'; await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "updateBg", dono: localStorage.getItem("netlinks_user"), imagem: f }) }); } }
         async function mudarImagemBanner(id, nome, link) { const u = prompt("Link da nova capa:"); if (u) { const f = formatarUrlDrive(u.trim()); document.getElementById(id).style.backgroundImage = `url('${f}')`; await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "updateBannerImg", dono: localStorage.getItem("netlinks_user"), nome: nome, link: link, imagem: f }) }); } }
         function formatarUrlDrive(u) { if (u.includes("drive.google.com")) { const id = u.split('id=')[1] || u.split('/d/')[1].split('/')[0]; return `https://drive.google.com/uc?id=${id}`; } return u; }
-        function toggleCategoria(id) { document.getElementById(`wrapper-${id}`).classList.toggle('recolhido'); }
-        function filtrarBanners() { const t = document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('.card-wrapper').forEach(w => { const n = w.querySelector('.card-info').innerText.toLowerCase(); w.classList.toggle('hidden', !n.includes(t)); }); }
         function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
