@@ -3,32 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetLinks Arcade</title>
+    <title>NetLinks Arcade - Pro Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #E50914; --bg: #141414; }
-        body { background: #141414; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding-bottom: 50px; }
-        .game-grid { display: flex; justify-content: center; gap: 20px; padding: 20px; flex-wrap: wrap; }
-        .game-item { background: #222; padding: 15px; border-radius: 10px; cursor: pointer; border: 2px solid #444; width: 140px; transition: 0.3s; }
-        .game-item:hover { border-color: var(--primary); background: #333; transform: translateY(-5px); }
-        .game-item i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; display: block; }
-        #emu-wrap { width: 95%; max-width: 800px; height: 500px; margin: 20px auto; border: 5px solid #333; border-radius: 15px; background: #000; overflow: hidden; position: relative; }
-        #emulator { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #666; }
-        #status { color: #f1c40f; margin: 10px; font-weight: bold; min-height: 1.2em; }
+        body { background: #141414; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; margin: 0; overflow-x: hidden; }
+        
+        .header { padding: 15px; background: #000; border-bottom: 2px solid var(--primary); margin-bottom: 20px; }
+        
+        .game-grid { display: flex; justify-content: center; gap: 15px; padding: 10px; flex-wrap: wrap; }
+        .game-item { background: #222; padding: 12px; border-radius: 8px; cursor: pointer; border: 1px solid #444; width: 120px; transition: all 0.2s; }
+        .game-item:hover { border-color: var(--primary); transform: scale(1.05); background: #282828; }
+        .game-item i { font-size: 1.5rem; color: var(--primary); margin-bottom: 5px; display: block; }
+        
+        /* Container do Emulador maior e com melhor foco */
+        #emu-container { 
+            position: relative; 
+            width: 95%; 
+            max-width: 800px; 
+            height: 500px; 
+            margin: 0 auto; 
+            border: 4px solid #333; 
+            background: #000;
+            box-shadow: 0 0 20px rgba(0,0,0,1);
+        }
+        
+        #emulator { width: 100%; height: 100%; }
+
+        .controls-info {
+            background: #222;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #ccc;
+            border: 1px solid #333;
+        }
+        .key { background: #444; padding: 2px 6px; border-radius: 4px; color: #fff; border-bottom: 2px solid #000; }
+        
+        #status-msg { color: var(--primary); font-weight: bold; margin-bottom: 10px; height: 20px; }
     </style>
 </head>
 <body>
-    <h1 style="margin-top:20px; color:var(--primary);">NetLinks Arcade</h1>
-    <div id="status">Escolha um jogo para carregar</div>
+    <div class="header">
+        <h2 style="margin:0;">NETLINKS <span style="color:var(--primary)">ARCADE PRO</span></h2>
+    </div>
+
+    <div id="status-msg">ESCOLHA UM CLÁSSICO</div>
 
     <div class="game-grid" id="gameLibrary"></div>
 
-    <div id="emu-wrap">
-        <div id="emulator">Aguardando seleção...</div>
+    <div id="emu-container">
+        <div id="emulator"></div>
+    </div>
+
+    <div class="controls-info">
+        🎮 <b>CONTROLES:</b> 
+        Movimento: <span class="key">SETAS</span> | 
+        Botão A: <span class="key">S</span> | 
+        Botão B: <span class="key">A</span> | 
+        Start: <span class="key">ENTER</span> | 
+        Select: <span class="key">SHIFT</span>
     </div>
 
     <script>
-        // Nomes configurados exatamente como na sua imagem da pasta 'roms'
         const games = [
             { name: "Pac-Man", file: "pacman.nes", system: "nes" },
             { name: "Super Mario", file: "smario.smc", system: "snes" },
@@ -41,27 +80,43 @@
             const div = document.createElement('div');
             div.className = 'game-item';
             div.innerHTML = `<i class="fas fa-gamepad"></i><strong>${game.name}</strong><br><small>${game.system.toUpperCase()}</small>`;
-            
-            div.onclick = () => {
-                // O caminho 'roms/' busca a pasta que você criou
-                loadGame(`roms/${game.file}`, game.system, game.name);
-            };
+            div.onclick = () => loadGame(`roms/${game.file}`, game.system, game.name);
             lib.appendChild(div);
         });
 
         function loadGame(url, system, name) {
-            document.getElementById('status').innerText = "Carregando " + name + "...";
+            document.getElementById('status-msg').innerText = "CARREGANDO " + name.toUpperCase() + "...";
             document.getElementById('emulator').innerHTML = "";
             
+            // Configurações para melhorar a latência e os controles
             window.EJS_player = '#emulator';
             window.EJS_core = system;
             window.EJS_gameUrl = url; 
             window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
             window.EJS_startOnLoaded = true;
+            
+            // Forçar mapeamento de teclas mais amigável
+            window.EJS_buttons = {
+                'a': 83,      // S
+                'b': 65,      // A
+                'x': 87,      // W
+                'y': 81,      // Q
+                'start': 13,  // Enter
+                'select': 16, // Shift
+                'up': 38,     // Seta Cima
+                'down': 40,   // Seta Baixo
+                'left': 37,   // Seta Esquerda
+                'right': 39   // Seta Direita
+            };
 
             const script = document.createElement('script');
             script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
             document.head.appendChild(script);
+
+            // Focar no jogo para o teclado funcionar na hora
+            setTimeout(() => {
+                document.getElementById('emulator').focus();
+            }, 1000);
         }
     </script>
 </body>
