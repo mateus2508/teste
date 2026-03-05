@@ -3,215 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Passatempo PRO - NetLinks</title>
+    <title>Passatempo Arcade - NetLinks</title>
     <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; --accent: #f1c40f; --blue: #3498db; }
-        body { background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); background-attachment: fixed; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; --accent: #f1c40f; }
+        body { background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); background-attachment: fixed; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
         
         .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 4%; border-bottom: 1px solid #333; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
         .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; }
         
         .container { max-width: 900px; margin: 20px auto; padding: 20px; flex: 1; text-align: center; padding-bottom: 120px; }
         
-        /* MENU DE NAVEGAÇÃO */
-        .tab-menu { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-        .tab-btn { padding: 12px 25px; background: #222; border: 1px solid #444; color: #888; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 0 15px rgba(229, 9, 20, 0.4); }
+        /* MENU */
+        .tab-menu { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
+        .tab-btn { padding: 10px 18px; background: #222; border: 1px solid #444; color: #888; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 13px; }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        .tab-content { display: none; animation: fadeIn 0.5s ease; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
         .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* CANVAS GERAL */
+        canvas { background: #000; border: 4px solid #333; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.5); cursor: crosshair; }
+        .stats { margin: 10px 0; font-size: 1.1rem; color: var(--accent); font-weight: bold; }
 
-        /* JOGO DA COBRINHA */
-        #game-canvas-wrapper { background: #000; border: 5px solid #333; border-radius: 10px; display: inline-block; position: relative; }
-        canvas { display: block; background-image: radial-gradient(#1a1a1a 1px, transparent 1px); background-size: 20px 20px; }
-        .game-stats { display: flex; justify-content: space-around; margin: 15px 0; font-size: 1.2rem; font-weight: bold; color: var(--accent); }
+        /* CAMPO MINADO */
+        #minesweeper { display: grid; grid-template-columns: repeat(10, 30px); gap: 2px; justify-content: center; margin-top: 10px; }
+        .cell { width: 30px; height: 30px; background: #444; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; border-radius: 2px; }
+        .cell.revealed { background: #666; cursor: default; }
+        .cell.mine { background: var(--primary); }
 
-        /* HORÓSCOPO ESTILIZADO */
-        .signo-selector { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0; }
-        .signo-dot { padding: 10px 15px; background: #222; border: 1px solid #444; border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
-        .signo-dot:hover, .signo-dot.selected { background: var(--blue); border-color: #fff; color: #fff; }
-
-        .horoscopo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; text-align: left; }
-        .horo-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border-left: 4px solid var(--blue); }
-        .horo-card i { color: var(--accent); margin-right: 10px; }
-        .horo-card h4 { margin: 0 0 10px 0; color: #3498db; text-transform: uppercase; font-size: 0.9rem; }
-
-        /* BUSCA RECEITA */
-        .input-group { margin: 20px 0; display: flex; justify-content: center; gap: 10px; }
-        input { padding: 12px; border-radius: 8px; border: 1px solid #444; background: #222; color: white; font-size: 16px; width: 60%; }
-        .action-btn { padding: 12px 25px; background: var(--primary); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
-
-        .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.95); padding: 15px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; z-index: 100; backdrop-filter: blur(10px); box-sizing: border-box; }
+        .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.95); padding: 12px 4%; border-top: 1px solid #333; color: #666; font-size: 12px; z-index: 100; box-sizing: border-box; }
     </style>
 </head>
 <body>
     <header class="header">
         <a href="index.html" class="logo-small">NetLinks</a>
-        <div style="display: flex; gap: 20px; align-items: center;">
-            <span id="clock" style="font-weight: bold; color: #fff;">00:00:00</span>
-            <a href="index.html" style="color: #fff; text-decoration: none;"><i class="fas fa-times"></i></a>
-        </div>
+        <div id="clock" style="font-weight: bold;">00:00:00</div>
     </header>
 
     <div class="container">
         <div class="tab-menu">
-            <button class="tab-btn active" onclick="openTab('game')"><i class="fas fa-snake"></i> COBRINHA</button>
-            <button class="tab-btn" onclick="openTab('horoscopo')"><i class="fas fa-bolt"></i> JOÃO BIDU</button>
-            <button class="tab-btn" onclick="openTab('receitas')"><i class="fas fa-utensils"></i> RECEITAS</button>
+            <button class="tab-btn active" onclick="openTab('snake-tab')"><i class="fas fa-snake"></i> SNAKE</button>
+            <button class="tab-btn" onclick="openTab('mines-tab')"><i class="fas fa-bomb"></i> CAMPO MINADO</button>
+            <button class="tab-btn" onclick="openTab('race-tab')"><i class="fas fa-car"></i> BARATINHA</button>
+            <button class="tab-btn" onclick="openTab('horo-tab')"><i class="fas fa-bolt"></i> JOÃO BIDU</button>
         </div>
 
-        <div id="game" class="tab-content active">
-            <div class="game-stats"><span>PONTOS: <span id="score">0</span></span><span>NÍVEL: <span id="level">1</span></span></div>
-            <div id="game-canvas-wrapper"><canvas id="snakeGame" width="400" height="400"></canvas></div>
+        <div id="snake-tab" class="tab-content active">
+            <div class="stats">SCORE: <span id="s-score">0</span> | NÍVEL: <span id="s-level">1</span></div>
+            <canvas id="snakeGame" width="360" height="360"></canvas>
+            <p style="font-size: 12px; color: #777; margin-top: 10px;">Use SETAS ou W,A,S,D</p>
         </div>
 
-        <div id="horoscopo" class="tab-content">
-            <img src="https://www.joaobidu.com.br/assets/img/logo-joaobidu.png" style="height:40px; margin-bottom:10px;">
-            <h3>Escolha seu Signo</h3>
-            <div class="signo-selector" id="signoSelector">
-                <div class="signo-dot" onclick="selecionarSigno('aries', this)">♈ Áries</div>
-                <div class="signo-dot" onclick="selecionarSigno('touro', this)">♉ Touro</div>
-                <div class="signo-dot" onclick="selecionarSigno('gemeos', this)">♊ Gêmeos</div>
-                <div class="signo-dot" onclick="selecionarSigno('cancer', this)">♋ Câncer</div>
-                <div class="signo-dot" onclick="selecionarSigno('leao', this)">♌ Leão</div>
-                <div class="signo-dot" onclick="selecionarSigno('virgem', this)">♍ Virgem</div>
-                <div class="signo-dot" onclick="selecionarSigno('libra', this)">♎ Libra</div>
-                <div class="signo-dot" onclick="selecionarSigno('escorpiao', this)">♏ Escorpião</div>
-                <div class="signo-dot" onclick="selecionarSigno('sagitario', this)">♐ Sagitário</div>
-                <div class="signo-dot" onclick="selecionarSigno('capricornio', this)">♑ Capricórnio</div>
-                <div class="signo-dot" onclick="selecionarSigno('aquario', this)">♒ Aquário</div>
-                <div class="signo-dot" onclick="selecionarSigno('peixes', this)">♓ Peixes</div>
+        <div id="mines-tab" class="tab-content">
+            <div class="stats">CUIDADO COM AS MINAS!</div>
+            <div id="minesweeper"></div>
+            <button class="tab-btn" style="margin-top:20px;" onclick="initMines()">REINICIAR</button>
+        </div>
+
+        <div id="race-tab" class="tab-content">
+            <div class="stats">SCORE: <span id="r-score">0</span></div>
+            <canvas id="raceGame" width="300" height="400"></canvas>
+            <p style="font-size: 12px; color: #777; margin-top: 10px;">Use SETAS ou A/D para desviar</p>
+        </div>
+
+        <div id="horo-tab" class="tab-content">
+            <h3>Horóscopo João Bidu</h3>
+            <p>Selecione seu signo para ver Trabalho e Amor.</p>
+            <button class="tab-btn" onclick="alert('Áries: Trabalho em alta!')">♈ Áries</button>
+            <button class="tab-btn" onclick="alert('Touro: Cuidado com gastos.')">♉ Touro</button>
             </div>
-
-            <div id="previsao-bidu" style="display:none;">
-                <div class="horoscopo-grid">
-                    <div class="horo-card">
-                        <h4><i class="fas fa-briefcase"></i> Trabalho & Dinheiro</h4>
-                        <p id="bidu-trabalho">Carregando influências de João Bidu...</p>
-                    </div>
-                    <div class="horo-card" style="border-left-color: #e74c3c;">
-                        <h4><i class="fas fa-heart"></i> Relacionamentos</h4>
-                        <p id="bidu-amor">Carregando astral amoroso...</p>
-                    </div>
-                </div>
-                <button class="action-btn" style="margin-top:20px; background:#3498db;" onclick="abrirBiduCompleto()">LER NO SITE DO JOÃO BIDU</button>
-            </div>
-        </div>
-
-        <div id="receitas" class="tab-content">
-            <h2>Buscador de Receitas</h2>
-            <div class="input-group">
-                <input type="text" id="recipe-input" placeholder="Digite o prato (ex: Lasanha)">
-                <button class="action-btn" onclick="procurarReceita()"><i class="fas fa-search"></i></button>
-            </div>
-        </div>
     </div>
 
-    <footer class="footer"><span>&copy; 2026 <b>NetLinks Passatempo</b></span></footer>
+    <footer class="footer">
+        <span>&copy; 2026 NetLinks Games</span>
+    </footer>
 
     <script>
-        let signoAtual = "";
         function openTab(id) {
             document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             event.currentTarget.classList.add('active');
-            if(id === 'game') restartGame();
+            if(id === 'snake-tab') startSnake();
+            if(id === 'mines-tab') initMines();
+            if(id === 'race-tab') startRace();
         }
 
-        // --- JOÃO BIDU LOGIC ---
-        function selecionarSigno(signo, el) {
-            signoAtual = signo;
-            document.querySelectorAll('.signo-dot').forEach(d => d.classList.remove('selected'));
-            el.classList.add('selected');
-            document.getElementById('previsao-bidu').style.display = 'block';
-            
-            // Simulação baseada no perfil real do Bidu para o dia
-            const dicas = {
-                trabalho: [
-                    "O céu favorece novas parcerias. Foque na organização das suas metas no NetLinks!",
-                    "Momento de cautela com gastos. Marte pede mais foco no que é essencial.",
-                    "Sua criatividade está em alta. Ótimo dia para apresentar projetos novos.",
-                    "A paciência será sua maior ferramenta hoje. Evite atritos com colegas."
-                ],
-                amor: [
-                    "Vênus traz um clima de romance. Se está só, um novo contato pode surgir.",
-                    "Paciência no relacionamento. Evite cobranças desnecessárias hoje.",
-                    "O clima é de sedução! Aproveite para sair da rotina com quem ama.",
-                    "Sua comunicação está clara. Ótimo momento para resolver pendências afetivas."
-                ]
-            };
+        // --- SNAKE GAME (CORRIGIDO) ---
+        const sCanvas = document.getElementById("snakeGame");
+        const sCtx = sCanvas.getContext("2d");
+        let sBox = 20, snake, food, sScore, sLevel, sD, sInt, sSpeed;
 
-            document.getElementById('bidu-trabalho').innerText = dicas.trabalho[Math.floor(Math.random() * dicas.trabalho.length)];
-            document.getElementById('bidu-amor').innerText = dicas.amor[Math.floor(Math.random() * dicas.amor.length)];
-        }
-
-        function abrirBiduCompleto() {
-            if(!signoAtual) return alert("Selecione um signo!");
-            window.open(`https://www.joaobidu.com.br/horoscopo/signos/previsao-${signoAtual}`, '_blank');
-        }
-
-        function procurarReceita() {
-            const p = document.getElementById('recipe-input').value;
-            if(p) window.open(`https://www.tudogostoso.com.br/busca?q=${encodeURIComponent(p)}`, '_blank');
-        }
-
-        // --- SNAKE GAME (DIFICULDADE PROGRESSIVA) ---
-        const canvas = document.getElementById("snakeGame");
-        const ctx = canvas.getContext("2d");
-        let box = 20, snake, food, score, level, d, gameInterval, speed;
-
-        function restartGame() {
-            clearInterval(gameInterval);
-            snake = [{x: 9 * box, y: 10 * box}];
-            food = {x: Math.floor(Math.random()*19+1)*box, y: Math.floor(Math.random()*19+1)*box};
-            score = 0; level = 1; speed = 150; d = null;
-            document.getElementById("score").innerText = score;
-            document.getElementById("level").innerText = level;
-            gameInterval = setInterval(draw, speed);
+        function startSnake() {
+            clearInterval(sInt);
+            snake = [{x: 8 * sBox, y: 8 * sBox}];
+            food = {x: Math.floor(Math.random()*17+1)*sBox, y: Math.floor(Math.random()*17+1)*sBox};
+            sScore = 0; sLevel = 1; sSpeed = 160; sD = null;
+            document.getElementById("s-score").innerText = sScore;
+            document.getElementById("s-level").innerText = sLevel;
+            sInt = setInterval(drawSnake, sSpeed);
         }
 
         document.addEventListener("keydown", e => {
-            if(e.keyCode == 37 && d != "RIGHT") d = "LEFT";
-            else if(e.keyCode == 38 && d != "DOWN") d = "UP";
-            else if(e.keyCode == 39 && d != "LEFT") d = "RIGHT";
-            else if(e.keyCode == 40 && d != "UP") d = "DOWN";
+            const k = e.key.toLowerCase();
+            if((k=="arrowleft" || k=="a") && sD != "RIGHT") sD = "LEFT";
+            if((k=="arrowup" || k=="w") && sD != "DOWN") sD = "UP";
+            if((k=="arrowright" || k=="d") && sD != "LEFT") sD = "RIGHT";
+            if((k=="arrowdown" || k=="s") && sD != "UP") sD = "DOWN";
         });
 
-        function draw() {
-            ctx.fillStyle = "#000"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        function drawSnake() {
+            sCtx.fillStyle = "#000"; sCtx.fillRect(0,0,360,360);
             for(let i=0; i<snake.length; i++){
-                ctx.fillStyle = (i==0) ? "#E50914" : "#fff";
-                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                sCtx.fillStyle = (i==0) ? "#E50914" : "#fff";
+                sCtx.fillRect(snake[i].x, snake[i].y, sBox, sBox);
             }
-            ctx.fillStyle = "#f1c40f"; ctx.fillRect(food.x, food.y, box, box);
-            let sX = snake[0].x; let sY = snake[0].y;
-            if(d == "LEFT") sX -= box; if(d == "UP") sY -= box;
-            if(d == "RIGHT") sX += box; if(d == "DOWN") sY += box;
+            sCtx.fillStyle = "#f1c40f"; sCtx.fillRect(food.x, food.y, sBox, sBox);
+            let nX = snake[0].x; let nY = snake[0].y;
+            if(sD=="LEFT") nX -= sBox; if(sD=="UP") nY -= sBox;
+            if(sD=="RIGHT") nX += sBox; if(sD=="DOWN") nY += sBox;
 
-            if(sX == food.x && sY == food.y){
-                score++; document.getElementById("score").innerText = score;
-                if(score % 3 == 0) {
-                    level++; document.getElementById("level").innerText = level;
-                    clearInterval(gameInterval); speed = Math.max(40, speed - 15);
-                    gameInterval = setInterval(draw, speed);
+            if(nX == food.x && nY == food.y){
+                sScore++; document.getElementById("s-score").innerText = sScore;
+                if(sScore % 4 == 0) {
+                    sLevel++; document.getElementById("s-level").innerText = sLevel;
+                    clearInterval(sInt); sSpeed = Math.max(50, sSpeed - 20);
+                    sInt = setInterval(drawSnake, sSpeed);
                 }
-                food = {x: Math.floor(Math.random()*19+1)*box, y: Math.floor(Math.random()*19+1)*box};
+                food = {x: Math.floor(Math.random()*17+1)*sBox, y: Math.floor(Math.random()*17+1)*sBox};
             } else { snake.pop(); }
 
-            let nH = {x: sX, y: sY};
-            if(sX < 0 || sX >= canvas.width || sY < 0 || sY >= canvas.height || collision(nH, snake)){
-                clearInterval(gameInterval); alert("GAME OVER!"); restartGame();
+            let head = {x: nX, y: nY};
+            if(nX<0 || nX>=360 || nY<0 || nY>=360 || snake.some(s => s.x==nX && s.y==nY)){
+                clearInterval(sInt); alert("GAME OVER! Score: "+sScore); startSnake();
             }
-            snake.unshift(nH);
+            snake.unshift(head);
         }
-        function collision(h, a){ for(let i=0; i<a.length; i++) if(h.x==a[i].x && h.y==a[i].y) return true; return false; }
+
+        // --- CAMPO MINADO ---
+        function initMines() {
+            const grid = document.getElementById("minesweeper");
+            grid.innerHTML = "";
+            for(let i=0; i<100; i++){
+                let c = document.createElement("div");
+                c.className = "cell";
+                c.dataset.mine = Math.random() < 0.15;
+                c.onclick = function() {
+                    if(this.dataset.mine == "true"){
+                        this.className = "cell mine"; alert("BOOM! Fim de jogo."); initMines();
+                    } else {
+                        this.className = "cell revealed"; this.innerText = "ok";
+                    }
+                };
+                grid.appendChild(c);
+            }
+        }
+
+        // --- CORRIDA DA BARATINHA ---
+        const rCanvas = document.getElementById("raceGame");
+        const rCtx = rCanvas.getContext("2d");
+        let rX = 135, obstacles = [], rScore = 0, rInt;
+
+        function startRace() {
+            clearInterval(rInt); rX = 135; obstacles = []; rScore = 0;
+            rInt = setInterval(drawRace, 30);
+        }
+
+        document.addEventListener("keydown", e => {
+            if(e.key == "ArrowLeft" || e.key == "a") rX -= 25;
+            if(e.key == "ArrowRight" || e.key == "d") rX += 25;
+        });
+
+        function drawRace() {
+            rCtx.fillStyle = "#222"; rCtx.fillRect(0,0,300,400);
+            rCtx.fillStyle = "#brown"; rCtx.fillRect(rX, 350, 30, 40); // Jogador
+            
+            if(Math.random() < 0.05) obstacles.push({x: Math.random()*270, y: 0});
+            
+            rCtx.fillStyle = "#E50914";
+            obstacles.forEach((o, i) => {
+                o.y += 5;
+                rCtx.fillRect(o.x, o.y, 30, 30);
+                if(o.y > 400) { obstacles.splice(i, 1); rScore++; }
+                if(o.y > 350 && o.x < rX+30 && o.x+30 > rX) {
+                    clearInterval(rInt); alert("BATIDA! Score: "+rScore); startRace();
+                }
+            });
+            document.getElementById("r-score").innerText = rScore;
+            if(rX < 0) rX = 0; if(rX > 270) rX = 270;
+        }
 
         setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-        restartGame();
+        startSnake();
     </script>
 </body>
 </html>
