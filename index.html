@@ -85,7 +85,7 @@
         </div>
     </footer>
     <script>
-        const CLIENT_ID = "399274567375-39135ou0sevgli2g6ctv7shgt8g1eppl.apps.googleusercontent.com";
+        const CLIENT_ID = "399274567375-39135ou0sevgli2g6ctv7shgt8#gl.apps.googleusercontent.com"; // Verifique se seu ClientID está completo aqui
         const urlApp = "https://script.google.com/macros/s/AKfycbxyp6Fw6RM8R73KsWjEKj1eHF4djr5HbLja_NwV4-9055TvL1QOPK-PhOtqce10mHHBag/exec";
 
         function updateClock() {
@@ -97,20 +97,22 @@
 
         async function getClima() {
             const wDiv = document.getElementById('weather');
-            
-            // Tenta GPS nativo primeiro
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(async (pos) => {
-                    fetchClima(pos.coords.latitude, pos.coords.longitude, "Sua Localização");
-                }, async () => {
-                    // Se falhar GPS, usa IP como backup
-                    const res = await fetch('https://ipapi.co/json/');
-                    const d = await res.json();
-                    fetchClima(d.latitude, d.longitude, d.city);
-                });
-            } else {
-                wDiv.innerHTML = `<span>GPS não suportado</span>`;
-            }
+            try {
+                // Pega o nome da cidade pelo IP (é mais garantido o nome vir certo)
+                const locRes = await fetch('https://ipapi.co/json/');
+                const locData = await locRes.json();
+                const cidadeNome = locData.city || "Sua Cidade";
+
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(async (pos) => {
+                        // Usa coordenadas precisas do GPS para a temperatura
+                        fetchClima(pos.coords.latitude, pos.coords.longitude, cidadeNome);
+                    }, async () => {
+                        // Se falhar GPS, usa coordenadas do IP
+                        fetchClima(locData.latitude, locData.longitude, cidadeNome);
+                    });
+                }
+            } catch (e) { wDiv.innerHTML = "Clima indisponível"; }
         }
 
         async function fetchClima(lat, lon, label) {
@@ -160,11 +162,11 @@
                 }
             });
         }
+        function filtrarBanners() { const t = document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('.card-wrapper').forEach(w => { const n = w.querySelector('.card-info').innerText.toLowerCase(); w.classList.toggle('hidden', !n.includes(t)); }); }
         async function mudarFundo() { const u = prompt("Link da imagem de fundo:"); if (u) { let f = formatarUrlDrive(u.trim()); document.body.style.backgroundImage = `url('${f}')`; document.getElementById('bgOverlay').style.display = 'block'; await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "updateBg", dono: localStorage.getItem("netlinks_user"), imagem: f }) }); } }
         async function mudarImagemBanner(id, nome, link) { const u = prompt("Link da nova capa:"); if (u) { const f = formatarUrlDrive(u.trim()); document.getElementById(id).style.backgroundImage = `url('${f}')`; await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "updateBannerImg", dono: localStorage.getItem("netlinks_user"), nome: nome, link: link, imagem: f }) }); } }
         function formatarUrlDrive(u) { if (u.includes("drive.google.com")) { const id = u.split('id=')[1] || u.split('/d/')[1].split('/')[0]; return `https://drive.google.com/uc?id=${id}`; } return u; }
         function toggleCategoria(id) { document.getElementById(`wrapper-${id}`).classList.toggle('recolhido'); }
-        function filtrarBanners() { const t = document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('.card-wrapper').forEach(w => { const n = w.querySelector('.card-info').textContent.toLowerCase(); w.classList.toggle('hidden', !n.includes(t)); }); }
         function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
