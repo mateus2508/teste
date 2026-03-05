@@ -3,192 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetLinks Arcade - Cloud Library</title>
-    <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
+    <title>NetLinks Arcade</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #E50914; --bg: #141414; --accent: #f1c40f; }
-        body { 
-            background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); 
-            background-attachment: fixed; 
-            color: #fff; 
-            font-family: 'Helvetica Neue', Arial, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            overflow-x: hidden; 
-        }
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 15px 4%; 
-            border-bottom: 1px solid #333; 
-            background: rgba(0,0,0,0.8); 
-            backdrop-filter: blur(10px); 
-        }
-        .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; }
-        .container { max-width: 1000px; margin: 10px auto; padding: 15px; flex: 1; text-align: center; padding-bottom: 100px; }
-        
-        /* BIBLIOTECA DE JOGOS */
-        .game-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
-            gap: 15px; 
-            margin-bottom: 30px; 
-        }
-        .game-item { 
-            background: #222; 
-            border: 2px solid #444; 
-            padding: 15px; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-        }
-        .game-item:hover { 
-            border-color: var(--primary); 
-            transform: translateY(-5px); 
-            background: #2b0505; 
-        }
-        .game-item i { font-size: 2rem; color: var(--primary); display: block; margin-bottom: 10px; }
-        .game-item span { font-weight: bold; font-size: 13px; text-transform: uppercase; }
-
-        #emu-wrap { 
-            width: 100%; 
-            max-width: 800px; 
-            height: 500px; 
-            margin: 0 auto; 
-            border: 8px solid #333; 
-            border-radius: 15px; 
-            background: #000; 
-            position: relative; 
-            overflow: hidden; 
-        }
-        #emulator { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #555; }
-        
-        .loading-overlay { 
-            position: absolute; 
-            top:0; left:0; 
-            width:100%; 
-            height:100%; 
-            background: rgba(0,0,0,0.9); 
-            display:none; 
-            flex-direction:column; 
-            align-items:center; 
-            justify-content:center; 
-            z-index: 10; 
-        }
-
-        .footer { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            width: 100%; 
-            background: rgba(0,0,0,0.95); 
-            padding: 12px 4%; 
-            border-top: 1px solid #333; 
-            color: #666; 
-            font-size: 12px; 
-            z-index: 100; 
-            box-sizing: border-box; 
-        }
+        :root { --primary: #E50914; --bg: #141414; }
+        body { background: #141414; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding-bottom: 50px; }
+        .game-grid { display: flex; justify-content: center; gap: 20px; padding: 20px; flex-wrap: wrap; }
+        .game-item { background: #222; padding: 15px; border-radius: 10px; cursor: pointer; border: 2px solid #444; width: 150px; transition: 0.3s; }
+        .game-item:hover { border-color: var(--primary); background: #333; }
+        .game-item i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; display: block; }
+        #emu-wrap { width: 95%; max-width: 800px; height: 500px; margin: 20px auto; border: 5px solid #333; border-radius: 15px; background: #000; overflow: hidden; }
+        #emulator { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #444; }
     </style>
 </head>
 <body>
-    <header class="header">
-        <a href="index.html" class="logo-small">NetLinks Arcade</a>
-        <div id="clock" style="font-weight: bold;">00:00:00</div>
-    </header>
+    <h1 style="margin-top:20px; color:var(--primary);">NetLinks Arcade</h1>
+    <p>Selecione um jogo da sua biblioteca local:</p>
 
-    <div class="container">
-        <h2 style="color: var(--accent)"><i class="fas fa-cloud-download-alt"></i> Minha Biblioteca na Nuvem</h2>
-        <p>Selecione um jogo para carregar diretamente do Drive:</p>
-        
-        <div class="game-grid" id="gameLibrary">
-            </div>
+    <div class="game-grid" id="gameLibrary"></div>
 
-        <div id="emu-wrap">
-            <div id="loading" class="loading-overlay">
-                <i class="fas fa-spinner fa-spin" style="font-size:3rem; color:var(--primary)"></i>
-                <p id="loadingText">Conectando ao Drive...</p>
-            </div>
-            <div id="emulator">
-                <p><i class="fas fa-arrow-up"></i> ESCOLHA UM JOGO ACIMA PARA COMEÇAR <i class="fas fa-arrow-up"></i></p>
-            </div>
-        </div>
+    <div id="emu-wrap">
+        <div id="emulator">Aguardando seleção de jogo...</div>
     </div>
 
-    <footer class="footer"><span>&copy; 2024 <b>NetLinks Cloud System</b> - Mateus Arcade</span></footer>
-
     <script>
-        // LISTA DE JOGOS CONFIGURADA COM SEUS LINKS
+        /**
+         * ATENÇÃO: Verifique se os nomes abaixo são EXATAMENTE iguais 
+         * aos nomes dos arquivos que você subiu na pasta 'roms'
+         */
         const games = [
-            { 
-                name: "Pac-Man", 
-                id: "1zSg7cougRYQjFaW98BYav5kVlcUZ9mxc", 
-                system: "nes" 
-            },
-            { 
-                name: "Super Mario World", 
-                id: "1dOYT-Jsw3oGPsywmqGfsBhSiL-IvqgmP", 
-                system: "snes" 
-            },
-            { 
-                name: "Top Gear (USA)", 
-                id: "1i_UARbfNQSYWXezNeLkKkvtgW6xBoQ-m", 
-                system: "snes" 
-            }
+            { name: "Pac-Man", file: "pacman.nes", system: "nes" },
+            { name: "Super Mario World", file: "mario.smc", system: "snes" },
+            { name: "Top Gear", file: "topgear.sfc", system: "snes" }
         ];
 
-        // Carregar a grade de jogos na tela
         const lib = document.getElementById('gameLibrary');
+        
         games.forEach(game => {
             const div = document.createElement('div');
             div.className = 'game-item';
-            div.onclick = () => loadCloudGame(game);
-            div.innerHTML = `
-                <i class="fas ${game.system === 'snes' ? 'fa-gamepad' : 'fa-ghost'}"></i>
-                <span>${game.name}</span>
-                <small style="display:block; font-size:10px; opacity:0.6">${game.system.toUpperCase()}</small>
-            `;
+            div.innerHTML = `<i class="fas fa-gamepad"></i><strong>${game.name}</strong><br><small>${game.system.toUpperCase()}</small>`;
+            div.onclick = () => loadGame(`roms/${game.file}`, game.system);
             lib.appendChild(div);
         });
 
-        async function loadCloudGame(game) {
-            const loader = document.getElementById('loading');
-            const loadingText = document.getElementById('loadingText');
+        function loadGame(url, system) {
+            const container = document.getElementById('emulator');
+            container.innerHTML = "Carregando sistema...";
             
-            loader.style.display = 'flex';
-            loadingText.innerText = `Baixando ${game.name}...`;
-
-            // Link de download direto do Google Drive
-            const downloadUrl = `https://docs.google.com/uc?export=download&id=${game.id}`;
-
-            // Limpa o container do emulador
-            document.getElementById('emulator').innerHTML = "";
-
-            // Configurações do EmulatorJS
             window.EJS_player = '#emulator';
-            window.EJS_core = game.system;
-            window.EJS_gameUrl = downloadUrl; 
+            window.EJS_core = system;
+            window.EJS_gameUrl = url; 
             window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
             window.EJS_startOnLoaded = true;
 
-            // Carrega o script do emulador
             const script = document.createElement('script');
             script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
-            script.onload = () => { 
-                setTimeout(() => { loader.style.display = 'none'; }, 2000);
-            };
             document.head.appendChild(script);
         }
-
-        // Relógio
-        setInterval(() => { 
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString(); 
-        }, 1000);
     </script>
 </body>
 </html>
