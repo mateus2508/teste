@@ -13,14 +13,17 @@
         .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; }
         .user-badge { display: flex; align-items: center; gap: 10px; background: #222; padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; }
         .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px 20px 100px 20px; }
         .home-btn { display: block; width: 100%; padding: 15px; background: #333; color: white; text-align: center; text-decoration: none; border-radius: 15px; margin-bottom: 20px; font-weight: bold; border: 2px solid #444; box-sizing: border-box; }
         .accordion-btn { width: 100%; padding: 20px; margin-bottom: 10px; border-radius: 15px; border: 3px solid #000; font-size: 18px; font-weight: bold; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 15px; transition: 0.3s; color: white; }
         .btn-verde { background-color: var(--green); }
+        .btn-azul { background-color: #2980b9; } /* Nova cor para personalizar */
         .btn-vermelho { background-color: var(--primary); }
         .content { display: none; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 0 0 15px 15px; margin-top: -15px; margin-bottom: 20px; border: 1px solid #333; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #222; color: white; box-sizing: border-box; }
-        .save-btn { width: 100%; padding: 15px; background: var(--green); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #222; color: white; box-sizing: border-box; font-size: 16px; }
+        input[type="color"] { height: 50px; cursor: pointer; padding: 5px; }
+        .save-btn { width: 100%; padding: 15px; background: var(--green); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; text-transform: uppercase; }
+        .save-btn:disabled { background: #555; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -34,6 +37,8 @@
         <button class="accordion-btn btn-verde" onclick="toggle('form-cat')"><i class="fas fa-folder-plus"></i> Nova Categoria</button>
         <div id="form-cat" class="content">
             <input type="text" id="cat-nome" placeholder="Nome da Nova Categoria">
+            <p style="margin: 10px 0 5px 0; color: #aaa; font-size: 14px;">Cor de destaque da categoria:</p>
+            <input type="color" id="cat-cor" value="#E50914">
             <button class="save-btn" onclick="salvarCategoria(this)">CRIAR CATEGORIA</button>
         </div>
 
@@ -43,6 +48,15 @@
             <input type="text" id="link-url" placeholder="URL (https://...)">
             <select id="link-cat"><option value="">Selecione a Categoria</option></select>
             <button class="save-btn" onclick="salvarLink(this)">SALVAR ATALHO</button>
+        </div>
+
+        <button class="accordion-btn btn-azul" onclick="toggle('form-color')"><i class="fas fa-palette"></i> Personalizar Cores</button>
+        <div id="form-color" class="content">
+            <p style="margin: 0 0 5px 0; color: #aaa; font-size: 14px;">Selecione a Categoria:</p>
+            <select id="color-cat" onchange="carregarCorAtual()"><option value="">Carregando...</option></select>
+            <p style="margin: 10px 0 5px 0; color: #aaa; font-size: 14px;">Nova cor de destaque:</p>
+            <input type="color" id="color-hex" value="#E50914">
+            <button class="save-btn" style="background: #2980b9;" onclick="salvarNovaCor(this)">ATUALIZAR COR</button>
         </div>
 
         <button class="accordion-btn btn-vermelho" onclick="toggle('form-del')"><i class="fas fa-trash-alt"></i> Excluir Atalhos/Categorias</button>
@@ -60,6 +74,7 @@
         const urlApp = "https://script.google.com/macros/s/AKfycbxyp6Fw6RM8R73KsWjEKj1eHF4djr5HbLja_NwV4-9055TvL1QOPK-PhOtqce10mHHBag/exec";
         const dono = localStorage.getItem("netlinks_user");
         let cacheBanners = [];
+        let cacheCategorias = []; // Guardará objetos {nome, cor}
 
         function toggle(id) {
             const el = document.getElementById(id);
@@ -79,17 +94,34 @@
                 const r = await fetch(`${urlApp}?dono=${encodeURIComponent(dono)}`);
                 const d = await r.json();
                 cacheBanners = d.banners;
-                const opsCat = '<option value="">Selecione a Categoria...</option>' + d.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
+                cacheCategorias = d.categorias; // d.categorias agora é array de objetos
+
+                // Preencher selects de Categoria
+                const opsCat = '<option value="">Selecione a Categoria...</option>' + d.categorias.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
                 document.getElementById('link-cat').innerHTML = opsCat;
                 document.getElementById('del-cat').innerHTML = opsCat;
+                document.getElementById('color-cat').innerHTML = opsCat; // Select da nova aba
+
+                // Preencher select de Atalhos para excluir
                 const opsLink = '<option value="">Selecione o Atalho para remover...</option>' + d.banners.map((b, idx) => `<option value="${idx}">${b.nome} (${b.categoria})</option>`).join('');
                 document.getElementById('del-link').innerHTML = opsLink;
             } catch (e) { console.error("Erro", e); }
         }
 
+        // Nova função para mostrar a cor atual ao selecionar a categoria na aba de cores
+        function carregarCorAtual() {
+            const nomeCat = document.getElementById('color-cat').value;
+            if(!nomeCat) return;
+            const catObj = cacheCategorias.find(c => c.nome === nomeCat);
+            if(catObj) {
+                document.getElementById('color-hex').value = catObj.cor;
+            }
+        }
+
         async function enviar(payload, btn, msg) {
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+            const textoOriginal = btn.innerText;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             try {
                 const r = await fetch(urlApp, { method: "POST", body: JSON.stringify(payload) });
                 const res = await r.json();
@@ -98,9 +130,9 @@
                     location.reload();
                 } else { throw new Error(); }
             } catch (e) {
-                alert("Erro na operação. Tente novamente.");
+                alert("Erro. Tente novamente.");
                 btn.disabled = false;
-                btn.innerHTML = "TENTAR NOVAMENTE";
+                btn.innerText = textoOriginal;
             }
         }
 
@@ -109,13 +141,22 @@
             const link = document.getElementById('link-url').value;
             const cat = document.getElementById('link-cat').value;
             if(!nome || !link || !cat) return alert("Preencha tudo!");
-            enviar({ action: "addLink", dono: dono, nome: nome, link: link, categoria: cat }, btn, "Atalho salvo com sucesso!");
+            enviar({ action: "addLink", dono: dono, nome: nome, link: link, categoria: cat }, btn, "Atalho salvo!");
         }
 
         function salvarCategoria(btn) {
             const cat = document.getElementById('cat-nome').value;
+            const cor = document.getElementById('cat-cor').value; // Pega cor do seletor
             if(!cat) return alert("Digite o nome!");
-            enviar({ action: "addCat", dono: dono, categoria: cat }, btn, "Categoria criada com sucesso!");
+            enviar({ action: "addCat", dono: dono, categoria: cat, cor: cor }, btn, "Categoria criada!");
+        }
+
+        // Nova função para salvar apenas a alteração de cor
+        function salvarNovaCor(btn) {
+            const cat = document.getElementById('color-cat').value;
+            const cor = document.getElementById('color-hex').value;
+            if(!cat) return alert("Selecione a categoria!");
+            enviar({ action: "updateCatColor", dono: dono, categoria: cat, cor: cor }, btn, "Cor atualizada!");
         }
 
         function deletarLink(btn) {
