@@ -27,19 +27,23 @@
         .btn-icon:hover { color: var(--primary); transform: scale(1.1); }
         .hidden { display: none !important; }
 
-        /* MODO GRADE (DEFAULT) */
+        /* MODO GRADE */
         .fileira { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; }
         .card-wrapper { position: relative; flex: 1 1 220px; max-width: 350px; }
         .card { display: block; height: 140px; background-color: var(--card); background-size: cover; background-position: center; border-radius: 8px; text-decoration: none; color: white; transition: 0.4s; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); }
         .card-info { background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 15px; box-sizing: border-box; text-transform: uppercase; font-size: 1.1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+        
+        /* AJUSTE DO LÁPIS DENTRO DO BANNER */
+        .edit-banner-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: none; z-index: 10; font-size: 11px; align-items: center; justify-content: center; }
+        .card-wrapper:hover .edit-banner-btn { display: flex; }
 
-        /* MODO LISTA (CLEAN) */
+        /* MODO LISTA */
         .view-list .fileira { display: flex; flex-direction: column; gap: 8px; padding-left: 40px; }
-        .view-list .card-wrapper { max-width: 100%; flex: none; }
+        .view-list .card-wrapper { max-width: 100%; flex: none; height: auto; }
         .view-list .card { height: auto; background: none !important; border: none !important; border-radius: 0; }
         .view-list .card-info { background: none; justify-content: flex-start; padding: 5px 0; text-shadow: none; font-size: 1rem; color: #ccc; }
         .view-list .card:hover .card-info { color: var(--primary); text-decoration: underline; }
-        .view-list .edit-banner-btn { display: none !important; } /* Esconde lápis no modo lista */
+        .view-list .edit-banner-btn { display: none !important; } 
 
         .recolhido .fileira { display: none; }
         .seta-icon { margin-right: 10px; transition: 0.3s; color: #555; }
@@ -57,7 +61,7 @@
             <div style="display: flex; align-items: center; gap: 20px;"><a href="index.html" class="logo-small">NetLinks</a></div>
             <div class="search-container"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Pesquisar atalho..." onkeyup="filtrarBanners()"></div>
             <div style="display: flex; align-items: center; gap: 12px;">
-                <button onclick="toggleView()" class="btn-icon" id="viewToggleBtn" title="Alternar Visualização"><i class="fas fa-list"></i></button>
+                <button onclick="toggleView()" class="btn-icon" id="viewToggleBtn" title="Alternar Visão"><i class="fas fa-list"></i></button>
                 <button onclick="mudarFundo()" class="btn-icon" title="Mudar Fundo"><i class="fas fa-image"></i></button>
                 <div id="userBadge" class="user-badge"></div>
                 <a href="settings.html" class="btn-icon" title="Configurações"><i class="fas fa-cog"></i></a>
@@ -71,12 +75,9 @@
         const urlApp = "https://script.google.com/macros/s/AKfycbxyp6Fw6RM8R73KsWjEKj1eHF4djr5HbLja_NwV4-9055TvL1QOPK-PhOtqce10mHHBag/exec";
 
         function toggleView() {
-            const c = document.getElementById('categorias-container');
-            const b = document.getElementById('viewToggleBtn');
-            const isList = c.classList.toggle('view-list');
-            b.innerHTML = isList ? '<i class="fas fa-th"></i>' : '<i class="fas fa-list"></i>';
+            const isList = document.getElementById('categorias-container').classList.toggle('view-list');
             localStorage.setItem("netlinks_view", isList ? "list" : "grid");
-            location.reload(); // Recarrega para aplicar o estado "recolhido" corretamente
+            location.reload();
         }
 
         window.onload = function () {
@@ -114,7 +115,6 @@
             c.innerHTML = "";
             d.categorias.forEach(cat => {
                 const id = cat.toLowerCase().replace(/\s+/g, '-');
-                // Adiciona classe "recolhido" se for modo lista
                 const classeRecolhido = isList ? "recolhido" : "";
                 c.innerHTML += `<div class="categoria-wrapper ${classeRecolhido}" id="wrapper-${id}"><div class="categoria-header" onclick="toggleCategoria('${id}')"><i class="fas fa-chevron-down seta-icon"></i><h2 class="categoria-titulo">${cat}</h2></div><div class="fileira" id="container-${id}"></div></div>`;
             });
