@@ -44,17 +44,89 @@
         .seta-icon { margin-right: 10px; transition: 0.3s; color: #555; }
         .recolhido .seta-icon { transform: rotate(-90deg); }
         .footer { background: rgba(0,0,0,0.9); padding: 20px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; margin-top: auto; backdrop-filter: blur(10px); }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
-        .modal-content { background: #1f1f1f; margin: 5% auto; padding: 35px; border-radius: 15px; width: 85%; max-width: 650px; color: #ddd; border: 1px solid #444; max-height: 80vh; overflow-y: auto; }
+        
+        /* MODAL DE AJUDA ESTILIZADO */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); }
+        .modal-content { background: #1f1f1f; margin: 2% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 800px; color: #ddd; border: 1px solid #444; max-height: 90vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
         .close-btn { color: #888; font-size: 28px; cursor: pointer; }
+        .help-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .help-table th, .help-table td { padding: 15px; border-bottom: 1px solid #333; text-align: left; }
+        .help-table th { color: var(--primary); text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        .help-icon-box { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: #333; border-radius: 8px; color: #fff; font-size: 18px; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
     <div class="bg-overlay" id="bgOverlay"></div>
-    <div id="guideModal" class="modal"><div class="modal-content"><div class="modal-header"><h2 style="color:var(--primary); margin:0;"><i class="fas fa-rocket"></i> Guia NetLinks</h2><span class="close-btn" onclick="toggleModal()">&times;</span></div><p>Organize seus atalhos.</p></div></div>
-    <div id="login-container"><h1 class="hero-title">NetLinks</h1><div id="buttonDiv"></div></div>
+
+    <div id="guideModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="color:var(--primary); margin:0;"><i class="fas fa-info-circle"></i> Central de Ajuda NetLinks</h2>
+                <span class="close-btn" onclick="toggleModal()">&times;</span>
+            </div>
+            
+            <p>Conheça as funcionalidades e ícones do seu painel:</p>
+
+            <table class="help-table">
+                <thead>
+                    <tr>
+                        <th>Ícone</th>
+                        <th>Botão / Recurso</th>
+                        <th>O que faz?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="help-icon-box"><i class="fas fa-list"></i></div></td>
+                        <td><b>Modo Lista</b></td>
+                        <td>Altera a visualização para nomes simples, um embaixo do outro, para um visual mais limpo.</td>
+                    </tr>
+                    <tr>
+                        <td><div class="help-icon-box"><i class="fas fa-th"></i></div></td>
+                        <td><b>Modo Grade</b></td>
+                        <td>Volta para a visualização de banners coloridos (estilo Netflix).</td>
+                    </tr>
+                    <tr>
+                        <td><div class="help-icon-box"><i class="fas fa-image"></i></div></td>
+                        <td><b>Mudar Fundo</b></td>
+                        <td>Permite colar o link de uma imagem para ser o papel de parede do seu painel.</td>
+                    </tr>
+                    <tr>
+                        <td><div class="help-icon-box"><i class="fas fa-pen"></i></div></td>
+                        <td><b>Editar Banner</b></td>
+                        <td>Aparece ao passar o mouse sobre um banner na grade. Serve para trocar a imagem daquele atalho.</td>
+                    </tr>
+                    <tr>
+                        <td><div class="help-icon-box"><i class="fas fa-cog"></i></div></td>
+                        <td><b>Configurações</b></td>
+                        <td>Leva para a página onde você cria categorias, adiciona links e personaliza cores.</td>
+                    </tr>
+                    <tr>
+                        <td><div class="help-icon-box"><i class="fas fa-chevron-down"></i></div></td>
+                        <td><b>Expandir/Recolher</b></td>
+                        <td>Clique no título de uma categoria para esconder ou mostrar os links dela.</td>
+                    </tr>
+                    <tr>
+                        <td><div class="help-icon-box"><i class="fas fa-sign-out-alt"></i></div></td>
+                        <td><b>Sair</b></td>
+                        <td>Faz o logout da sua conta Google e limpa os dados da sessão.</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div style="margin-top:30px; padding:20px; background:rgba(229, 9, 20, 0.1); border-radius:10px; border:1px solid var(--primary);">
+                <small><b>DICA:</b> No modo lista, as categorias sempre começam fechadas para facilitar a navegação em dispositivos móveis.</small>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-container">
+        <h1 class="hero-title">NetLinks</h1>
+        <div id="buttonDiv"></div>
+    </div>
+
     <div id="painel-principal">
         <header class="header">
             <div style="display: flex; align-items: center; gap: 20px;">
@@ -72,15 +144,17 @@
         </header>
         <main id="categorias-container"></main>
     </div>
+
     <footer class="footer">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
             <span>&copy; 2026 <b>NetLinks</b>.</span>
             <div style="display: flex; gap: 20px; align-items: center;">
-                <button onclick="toggleModal()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:8px;"><i class="fas fa-question-circle"></i> AJUDA</button>
+                <button onclick="toggleModal()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:8px;"><i class="fas fa-question-circle" style="font-size:18px;"></i> AJUDA</button>
                 <a href="sobre.html" style="color:#888; text-decoration:none;"><i class="fas fa-user-code"></i> Sobre</a>
             </div>
         </div>
     </footer>
+
     <script>
         const CLIENT_ID = "399274567375-39135ou0sevgli2g6ctv7shgt8g1eppl.apps.googleusercontent.com";
         const urlApp = "https://script.google.com/macros/s/AKfycbxyp6Fw6RM8R73KsWjEKj1eHF4djr5HbLja_NwV4-9055TvL1QOPK-PhOtqce10mHHBag/exec";
