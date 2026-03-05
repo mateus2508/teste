@@ -8,32 +8,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; --accent: #f1c40f; }
-        body { background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); background-attachment: fixed; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
-        
+        body { background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); background-attachment: fixed; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 4%; border-bottom: 1px solid #333; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
         .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; }
-        
-        .container { max-width: 900px; margin: 20px auto; padding: 20px; flex: 1; text-align: center; padding-bottom: 120px; }
-        
-        /* MENU */
-        .tab-menu { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
+        .container { max-width: 900px; margin: 10px auto; padding: 10px; flex: 1; text-align: center; padding-bottom: 100px; }
+        .tab-menu { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn { padding: 10px 18px; background: #222; border: 1px solid #444; color: #888; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 13px; }
         .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-
-        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content { display: none; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* CANVAS GERAL */
-        canvas { background: #000; border: 4px solid #333; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.5); cursor: crosshair; }
-        .stats { margin: 10px 0; font-size: 1.1rem; color: var(--accent); font-weight: bold; }
-
-        /* CAMPO MINADO */
-        #minesweeper { display: grid; grid-template-columns: repeat(10, 30px); gap: 2px; justify-content: center; margin-top: 10px; }
-        .cell { width: 30px; height: 30px; background: #444; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; border-radius: 2px; }
-        .cell.revealed { background: #666; cursor: default; }
-        .cell.mine { background: var(--primary); }
-
+        canvas { background: #000; border: 4px solid #333; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .stats { margin: 10px 0; font-size: 1.1rem; color: var(--accent); font-weight: bold; text-transform: uppercase; }
         .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.95); padding: 12px 4%; border-top: 1px solid #333; color: #666; font-size: 12px; z-index: 100; box-sizing: border-box; }
     </style>
 </head>
@@ -46,52 +31,49 @@
     <div class="container">
         <div class="tab-menu">
             <button class="tab-btn active" onclick="openTab('snake-tab')"><i class="fas fa-snake"></i> SNAKE</button>
-            <button class="tab-btn" onclick="openTab('mines-tab')"><i class="fas fa-bomb"></i> CAMPO MINADO</button>
-            <button class="tab-btn" onclick="openTab('race-tab')"><i class="fas fa-car"></i> BARATINHA</button>
+            <button class="tab-btn" onclick="openTab('race-tab')"><i class="fas fa-car"></i> CORRIDA</button>
             <button class="tab-btn" onclick="openTab('horo-tab')"><i class="fas fa-bolt"></i> JOÃO BIDU</button>
         </div>
 
         <div id="snake-tab" class="tab-content active">
             <div class="stats">SCORE: <span id="s-score">0</span> | NÍVEL: <span id="s-level">1</span></div>
             <canvas id="snakeGame" width="360" height="360"></canvas>
-            <p style="font-size: 12px; color: #777; margin-top: 10px;">Use SETAS ou W,A,S,D</p>
-        </div>
-
-        <div id="mines-tab" class="tab-content">
-            <div class="stats">CUIDADO COM AS MINAS!</div>
-            <div id="minesweeper"></div>
-            <button class="tab-btn" style="margin-top:20px;" onclick="initMines()">REINICIAR</button>
         </div>
 
         <div id="race-tab" class="tab-content">
             <div class="stats">SCORE: <span id="r-score">0</span></div>
-            <canvas id="raceGame" width="300" height="400"></canvas>
-            <p style="font-size: 12px; color: #777; margin-top: 10px;">Use SETAS ou A/D para desviar</p>
+            <canvas id="raceGame" width="320" height="400"></canvas>
         </div>
 
         <div id="horo-tab" class="tab-content">
             <h3>Horóscopo João Bidu</h3>
-            <p>Selecione seu signo para ver Trabalho e Amor.</p>
-            <button class="tab-btn" onclick="alert('Áries: Trabalho em alta!')">♈ Áries</button>
-            <button class="tab-btn" onclick="alert('Touro: Cuidado com gastos.')">♉ Touro</button>
+            <p style="color: #aaa;">Selecione seu signo para previsão real.</p>
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                <button class="tab-btn" onclick="window.open('https://www.joaobidu.com.br/horoscopo/', '_blank')">♈ Áries</button>
+                <button class="tab-btn" onclick="window.open('https://www.joaobidu.com.br/horoscopo/', '_blank')">♉ Touro</button>
+                <button class="tab-btn" onclick="window.open('https://www.joaobidu.com.br/horoscopo/', '_blank')">♊ Gêmeos</button>
             </div>
+        </div>
     </div>
 
-    <footer class="footer">
-        <span>&copy; 2026 NetLinks Games</span>
-    </footer>
+    <footer class="footer"><span>&copy; 2026 NetLinks Games</span></footer>
 
     <script>
         function openTab(id) {
             document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             event.currentTarget.classList.add('active');
+            stopAllGames();
             if(id === 'snake-tab') startSnake();
-            if(id === 'mines-tab') initMines();
             if(id === 'race-tab') startRace();
         }
 
-        // --- SNAKE GAME (CORRIGIDO) ---
+        function stopAllGames() {
+            clearInterval(sInt);
+            clearInterval(rInt);
+        }
+
+        // --- SNAKE GAME ---
         const sCanvas = document.getElementById("snakeGame");
         const sCtx = sCanvas.getContext("2d");
         let sBox = 20, snake, food, sScore, sLevel, sD, sInt, sSpeed;
@@ -109,9 +91,9 @@
         document.addEventListener("keydown", e => {
             const k = e.key.toLowerCase();
             if((k=="arrowleft" || k=="a") && sD != "RIGHT") sD = "LEFT";
-            if((k=="arrowup" || k=="w") && sD != "DOWN") sD = "UP";
-            if((k=="arrowright" || k=="d") && sD != "LEFT") sD = "RIGHT";
-            if((k=="arrowdown" || k=="s") && sD != "UP") sD = "DOWN";
+            else if((k=="arrowup" || k=="w") && sD != "DOWN") sD = "UP";
+            else if((k=="arrowright" || k=="d") && sD != "LEFT") sD = "RIGHT";
+            else if((k=="arrowdown" || k=="s") && sD != "UP") sD = "DOWN";
         });
 
         function drawSnake() {
@@ -135,64 +117,54 @@
                 food = {x: Math.floor(Math.random()*17+1)*sBox, y: Math.floor(Math.random()*17+1)*sBox};
             } else { snake.pop(); }
 
-            let head = {x: nX, y: nY};
             if(nX<0 || nX>=360 || nY<0 || nY>=360 || snake.some(s => s.x==nX && s.y==nY)){
-                clearInterval(sInt); alert("GAME OVER! Score: "+sScore); startSnake();
+                clearInterval(sInt);
+                alert("GAME OVER! Pontos: " + sScore);
+                startSnake();
+                return;
             }
-            snake.unshift(head);
+            snake.unshift({x: nX, y: nY});
         }
 
-        // --- CAMPO MINADO ---
-        function initMines() {
-            const grid = document.getElementById("minesweeper");
-            grid.innerHTML = "";
-            for(let i=0; i<100; i++){
-                let c = document.createElement("div");
-                c.className = "cell";
-                c.dataset.mine = Math.random() < 0.15;
-                c.onclick = function() {
-                    if(this.dataset.mine == "true"){
-                        this.className = "cell mine"; alert("BOOM! Fim de jogo."); initMines();
-                    } else {
-                        this.className = "cell revealed"; this.innerText = "ok";
-                    }
-                };
-                grid.appendChild(c);
-            }
-        }
-
-        // --- CORRIDA DA BARATINHA ---
+        // --- CORRIDA ---
         const rCanvas = document.getElementById("raceGame");
         const rCtx = rCanvas.getContext("2d");
-        let rX = 135, obstacles = [], rScore = 0, rInt;
+        let rX, rObs, rScore, rInt;
 
         function startRace() {
-            clearInterval(rInt); rX = 135; obstacles = []; rScore = 0;
+            clearInterval(rInt);
+            rX = 145; rObs = []; rScore = 0;
             rInt = setInterval(drawRace, 30);
         }
 
         document.addEventListener("keydown", e => {
-            if(e.key == "ArrowLeft" || e.key == "a") rX -= 25;
-            if(e.key == "ArrowRight" || e.key == "d") rX += 25;
+            const k = e.key.toLowerCase();
+            if(k=="arrowleft" || k=="a") rX = Math.max(10, rX - 25);
+            if(k=="arrowright" || k=="d") rX = Math.min(280, rX + 25);
         });
 
         function drawRace() {
-            rCtx.fillStyle = "#222"; rCtx.fillRect(0,0,300,400);
-            rCtx.fillStyle = "#brown"; rCtx.fillRect(rX, 350, 30, 40); // Jogador
-            
-            if(Math.random() < 0.05) obstacles.push({x: Math.random()*270, y: 0});
+            rCtx.fillStyle = "#222"; rCtx.fillRect(0,0,320,400);
+            // Desenha Carro
+            rCtx.fillStyle = "#3498db"; rCtx.fillRect(rX, 340, 30, 50); 
+            rCtx.fillStyle = "#000"; rCtx.fillRect(rX-5, 345, 5, 10); rCtx.fillRect(rX+30, 345, 5, 10); // Rodas
+
+            if(Math.random() < 0.04) rObs.push({x: Math.random()*280, y: -50});
             
             rCtx.fillStyle = "#E50914";
-            obstacles.forEach((o, i) => {
-                o.y += 5;
-                rCtx.fillRect(o.x, o.y, 30, 30);
-                if(o.y > 400) { obstacles.splice(i, 1); rScore++; }
-                if(o.y > 350 && o.x < rX+30 && o.x+30 > rX) {
-                    clearInterval(rInt); alert("BATIDA! Score: "+rScore); startRace();
+            for(let i=0; i<rObs.length; i++) {
+                rObs[i].y += 6;
+                rCtx.fillRect(rObs[i].x, rObs[i].y, 35, 35);
+                // Colisão
+                if(rObs[i].y > 310 && rObs[i].y < 390 && rObs[i].x < rX+30 && rObs[i].x+35 > rX) {
+                    clearInterval(rInt);
+                    alert("BATIDA! Score: " + rScore);
+                    startRace();
+                    return;
                 }
-            });
+                if(rObs[i].y > 400) { rObs.splice(i, 1); rScore++; i--; }
+            }
             document.getElementById("r-score").innerText = rScore;
-            if(rX < 0) rX = 0; if(rX > 270) rX = 270;
         }
 
         setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
