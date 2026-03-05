@@ -76,7 +76,7 @@
     </div>
     <footer class="footer">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-            <div class="weather-container" id="weather"><i class="fas fa-circle-notch fa-spin"></i><span> Carregando clima...</span></div>
+            <div class="weather-container" id="weather"><i class="fas fa-circle-notch fa-spin"></i><span> Localizando...</span></div>
             <div style="display: flex; gap: 25px; align-items: center;">
                 <button onclick="toggleModal()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:8px;"><i class="fas fa-question-circle"></i> AJUDA</button>
                 <a href="sobre.html" style="color:#888; text-decoration:none;"><i class="fas fa-user-code"></i> Sobre</a>
@@ -97,19 +97,36 @@
 
         async function getClima() {
             const wDiv = document.getElementById('weather');
+            
+            // Tenta GPS nativo primeiro
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    fetchClima(pos.coords.latitude, pos.coords.longitude, "Sua Localização");
+                }, async () => {
+                    // Se falhar GPS, usa IP como backup
+                    const res = await fetch('https://ipapi.co/json/');
+                    const d = await res.json();
+                    fetchClima(d.latitude, d.longitude, d.city);
+                });
+            } else {
+                wDiv.innerHTML = `<span>GPS não suportado</span>`;
+            }
+        }
+
+        async function fetchClima(lat, lon, label) {
+            const wDiv = document.getElementById('weather');
             try {
-                const locRes = await fetch('https://ipapi.co/json/');
-                const locData = await locRes.json();
-                const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${locData.latitude}&longitude=${locData.longitude}&current_weather=true`);
-                const weatherData = await weatherRes.json();
-                const temp = Math.round(weatherData.current_weather.temperature);
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                const data = await res.json();
+                const temp = Math.round(data.current_weather.temperature);
                 const icons = { 0: 'fa-sun', 1: 'fa-cloud-sun', 2: 'fa-cloud-sun', 3: 'fa-cloud', 45: 'fa-smog', 95: 'fa-bolt' };
-                wDiv.innerHTML = `<i class="fas ${icons[weatherData.current_weather.weathercode] || 'fa-cloud-rain'}" style="color: #f1c40f"></i> <span>${locData.city}: <span class="weather-temp">${temp}°C</span></span>`;
-            } catch (e) { wDiv.innerHTML = `<span>Clima indisponível</span>`; }
+                wDiv.innerHTML = `<i class="fas ${icons[data.current_weather.weathercode] || 'fa-cloud-rain'}" style="color: #f1c40f"></i> <span>${label}: <span class="weather-temp">${temp}°C</span></span>`;
+            } catch (e) { wDiv.innerHTML = `<span>Erro ao carregar clima</span>`; }
         }
 
         function toggleModal() { const m = document.getElementById('guideModal'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; }
         function toggleView() { const isList = document.getElementById('categorias-container').classList.toggle('view-list'); localStorage.setItem("netlinks_view", isList ? "list" : "grid"); location.reload(); }
+        
         window.onload = function () {
             updateClock(); getClima();
             const e = localStorage.getItem("netlinks_user");
