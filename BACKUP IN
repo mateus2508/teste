@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetLinks - Seu Organizador de Links</title>
+    <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; }
+        body { background-color: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; background-size: cover; background-position: center; background-attachment: fixed; transition: background 0.5s ease-in-out; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; display: none; }
+        #login-container { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); }
+        .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); color: var(--primary); margin: 0; text-transform: uppercase; letter-spacing: 5px; font-weight: 900; }
+        #painel-principal { display: none; padding: 20px 4% 140px 4%; flex: 1; position: relative; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; gap: 20px; }
+        .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; flex-shrink: 0; }
+        .datetime-container { text-align: right; line-height: 1.2; min-width: 120px; }
+        #clock { font-size: 1.4rem; font-weight: bold; color: #fff; display: block; }
+        #date { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+        .search-container { flex: 1; max-width: 400px; position: relative; }
+        .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
+        #searchInput { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: 1px solid #444; background: rgba(34, 34, 34, 0.8); color: white; outline: none; transition: 0.3s; font-size: 16px; box-sizing: border-box; backdrop-filter: blur(5px); }
+        .user-badge { display: flex; align-items: center; gap: 10px; background: rgba(34, 34, 34, 0.8); padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; backdrop-filter: blur(5px); }
+        .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
+        .categoria-header { display: flex; align-items: center; cursor: pointer; margin: 40px 0 20px 0; border-left: 5px solid var(--primary); padding-left: 15px; user-select: none; }
+        .categoria-titulo { font-size: 1.2rem; text-transform: uppercase; font-weight: bold; margin: 0; flex: 1; }
+        .seta-icon { transition: transform 0.3s ease; color: #555; margin-right: 10px; }
+        .recolhido .seta-icon { transform: rotate(-90deg); }
+        .recolhido .fileira { display: none; }
+        .fileira { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; }
+        .card-wrapper { position: relative; flex: 1 1 220px; max-width: 350px; }
+        .card { display: block; height: 140px; background-color: var(--card); background-size: cover; background-position: center; border-radius: 8px; text-decoration: none; color: white; transition: 0.4s; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); }
+        .card:hover { transform: scale(1.05); border-color: #fff; z-index: 5; }
+        .edit-banner-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: #fff; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: none; z-index: 10; font-size: 12px; transition: 0.3s; }
+        .card-wrapper:hover .edit-banner-btn { display: flex; align-items: center; justify-content: center; }
+        .card-info { background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 15px; box-sizing: border-box; text-transform: uppercase; font-size: 1.1rem; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 2px 2px 4px rgba(0,0,0,0.8); }
+        .btn-icon { color: white; text-decoration: none; font-size: 20px; background: none; border: none; cursor: pointer; transition: 0.3s; padding: 5px; }
+        .btn-icon:hover { color: var(--primary); transform: scale(1.1); }
+        .footer { background: rgba(0,0,0,0.9); padding: 20px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; margin-top: auto; backdrop-filter: blur(10px); }
+        .hidden { display: none !important; }
+        .cat-hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay" id="bgOverlay"></div>
+    <div id="login-container">
+        <h1 class="hero-title">NetLinks</h1>
+        <div id="buttonDiv"></div>
+    </div>
+    <div id="painel-principal">
+        <header class="header">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <a href="index.html" class="logo-small">NetLinks</a>
+                <div class="datetime-container"><span id="clock">00:00:00</span><span id="date">Carregando...</span></div>
+            </div>
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Pesquisar link..." onkeyup="filtrarBanners()">
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button onclick="mudarFundo()" class="btn-icon" title="Mudar Fundo"><i class="fas fa-image"></i></button>
+                <div id="userBadge" class="user-badge"></div>
+                <a href="settings.html" class="btn-icon" title="Configurações"><i class="fas fa-cog"></i></a>
+                <button onclick="logout()" class="btn-icon" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </header>
+        <main id="categorias-container"></main>
+    </div>
+    <script>
+        const CLIENT_ID = "399274567375-39135ou0sevgli2g6ctv7shgt8g1eppl.apps.googleusercontent.com";
+        const urlApp = "https://script.google.com/macros/s/AKfycbxyp6Fw6RM8R73KsWjEKj1eHF4djr5HbLja_NwV4-9055TvL1QOPK-PhOtqce10mHHBag/exec";
+
+        function updateClock() {
+            const n = new Date();
+            document.getElementById('clock').textContent = n.toLocaleTimeString('pt-BR', { hour12: false });
+            document.getElementById('date').textContent = n.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
+        }
+        setInterval(updateClock, 1000);
+
+        function handleCredentialResponse(r) {
+            const d = JSON.parse(atob(r.credential.split('.')[1]));
+            localStorage.setItem("netlinks_user", d.email);
+            localStorage.setItem("netlinks_name", d.name);
+            localStorage.setItem("netlinks_pic", d.picture);
+            location.reload();
+        }
+
+        window.onload = function () {
+            updateClock();
+            const e = localStorage.getItem("netlinks_user");
+            if (e) {
+                document.getElementById('painel-principal').style.display = 'block';
+                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
+                carregarDados(e);
+            } else {
+                document.getElementById('login-container').style.display = 'flex';
+                google.accounts.id.initialize({ client_id: CLIENT_ID, callback: handleCredentialResponse });
+                google.accounts.id.renderButton(document.getElementById("buttonDiv"), { theme: "outline", size: "large", shape: "pill" });
+            }
+        };
+
+        async function carregarDados(e) {
+            try {
+                const r = await fetch(`${urlApp}?dono=${encodeURIComponent(e)}`);
+                const d = await r.json();
+                if(d.bg) { document.body.style.backgroundImage = `url('${d.bg}')`; document.getElementById('bgOverlay').style.display = 'block'; }
+                renderizar(d);
+            } catch (err) { console.error(err); }
+        }
+
+        function renderizar(d) {
+            const c = document.getElementById('categorias-container');
+            c.innerHTML = "";
+            d.categorias.forEach(cat => {
+                const id = cat.toLowerCase().replace(/\s+/g, '-');
+                c.innerHTML += `<div class="categoria-wrapper" id="wrapper-${id}"><div class="categoria-header" onclick="toggleCategoria('${id}')"><i class="fas fa-chevron-down seta-icon"></i><h2 class="categoria-titulo">${cat}</h2></div><div class="fileira" id="container-${id}"></div></div>`;
+            });
+            d.banners.forEach((i, idx) => {
+                const id = i.categoria.toLowerCase().replace(/\s+/g, '-');
+                const f = document.getElementById(`container-${id}`);
+                if (f) {
+                    let img = i.imagem || "https://drive.google.com/thumbnail?id=1OyRgCJqj0SASvlxkbPBWxh8SYRYJJc2N&sz=w1000";
+                    f.innerHTML += `<div class="card-wrapper"><button class="edit-banner-btn" onclick="mudarImagemBanner('card-${idx}', '${i.nome}', '${i.link}')"><i class="fas fa-pen"></i></button><a href="${i.link}" target="_blank" class="card" id="card-${idx}" style="background-image: url('${img}');"><div class="card-info">${i.nome}</div></a></div>`;
+                }
+            });
+        }
+
+        async function mudarFundo() {
+            const u = prompt("Link da imagem de fundo:");
+            if (u) {
+                let f = formatarUrlDrive(u.trim());
+                document.body.style.backgroundImage = `url('${f}')`;
+                document.getElementById('bgOverlay').style.display = 'block';
+                await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "updateBg", dono: localStorage.getItem("netlinks_user"), imagem: f }) });
+            }
+        }
+
+        async function mudarImagemBanner(id, nome, link) {
+            const u = prompt("Link da nova capa:");
+            if (u) {
+                const f = formatarUrlDrive(u.trim());
+                document.getElementById(id).style.backgroundImage = `url('${f}')`;
+                await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "updateBannerImg", dono: localStorage.getItem("netlinks_user"), nome: nome, link: link, imagem: f }) });
+            }
+        }
+
+        function formatarUrlDrive(u) {
+            if (u.includes("drive.google.com")) {
+                const id = u.split('id=')[1] || u.split('/d/')[1].split('/')[0];
+                return `https://drive.google.com/uc?id=${id}`;
+            }
+            return u;
+        }
+        function toggleCategoria(id) { document.getElementById(`wrapper-${id}`).classList.toggle('recolhido'); }
+        function filtrarBanners() {
+            const t = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.card-wrapper').forEach(w => {
+                const n = w.querySelector('.card-info').textContent.toLowerCase();
+                w.classList.toggle('hidden', !n.includes(t));
+            });
+        }
+        function logout() { localStorage.clear(); location.reload(); }
+    </script>
+</body>
+</html>
