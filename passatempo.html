@@ -3,39 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetLinks Arcade - Nintendo Edition</title>
+    <title>NetLinks Arcade - Edição Definitiva</title>
     <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://unpkg.com/jsnes/dist/jsnes.min.js"></script>
     <style>
         :root { --primary: #E50914; --bg: #141414; --p1: #3498db; --p2: #27ae60; --accent: #f1c40f; }
-        body { background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); background-attachment: fixed; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+        body { background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); background-attachment: fixed; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 4%; border-bottom: 1px solid #333; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 4%; border-bottom: 1px solid #333; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; }
         .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; }
         
-        .container { max-width: 900px; margin: 20px auto; padding: 20px; flex: 1; text-align: center; padding-bottom: 120px; }
+        .container { max-width: 1000px; margin: 10px auto; padding: 15px; flex: 1; text-align: center; padding-bottom: 100px; width: 100%; box-sizing: border-box; }
         
-        .tab-menu { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
-        .tab-btn { padding: 10px 18px; background: #222; border: 1px solid #444; color: #888; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .tab-menu { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .tab-btn { padding: 10px 18px; background: #222; border: 1px solid #444; color: #888; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 13px; border: none; }
+        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 0 10px var(--primary); }
 
-        .tab-content { display: none; }
+        .tab-content { display: none; height: 100%; }
         .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* ESTILO DO EMULADOR */
-        #nes-container { background: #000; padding: 20px; border: 10px solid #333; border-radius: 20px; display: inline-block; box-shadow: 0 0 30px rgba(0,0,0,1); }
-        canvas { background: #000; width: 512px; height: 480px; image-rendering: pixelated; }
-        .nes-controls { margin-top: 15px; font-size: 12px; color: #888; display: flex; justify-content: center; gap: 20px; }
+        /* AREA DO EMULADOR */
+        #emu-wrap { width: 100%; max-width: 800px; height: 500px; margin: 0 auto; border: 6px solid #333; border-radius: 15px; background: #000; position: relative; overflow: hidden; }
+        #emulator { width: 100%; height: 100%; }
         
+        .drop-area { padding: 60px 20px; border: 2px dashed #444; margin: 20px; border-radius: 15px; cursor: pointer; }
+        .drop-area:hover { border-color: var(--primary); background: rgba(255,255,255,0.02); }
+
         /* CAMPO MINADO 2P */
-        .scoreboard { display: flex; justify-content: center; gap: 30px; margin-bottom: 15px; font-weight: bold; }
-        #minesweeper { display: grid; grid-template-columns: repeat(10, 32px); gap: 3px; justify-content: center; }
+        #minesweeper { display: grid; grid-template-columns: repeat(10, 32px); gap: 3px; justify-content: center; margin-top: 15px; }
         .cell { width: 32px; height: 32px; background: #333; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 4px; border: 1px solid #444; }
         .cell.p1-mark { background: var(--p1) !important; color: white; }
         .cell.p2-mark { background: var(--p2) !important; color: white; }
-        .cell.mine { background: var(--primary) !important; color: white; }
+        .cell.mine { background: var(--primary) !important; }
 
         .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.95); padding: 12px 4%; border-top: 1px solid #333; color: #666; font-size: 12px; z-index: 100; backdrop-filter: blur(10px); box-sizing: border-box; }
     </style>
@@ -48,49 +48,38 @@
 
     <div class="container">
         <div class="tab-menu">
-            <button class="tab-btn active" onclick="openTab('nes-tab')"><i class="fas fa-gamepad"></i> NINTENDO</button>
+            <button class="tab-btn active" onclick="openTab('emu-tab')"><i class="fas fa-gamepad"></i> CONSOLE RETRÔ</button>
             <button class="tab-btn" onclick="openTab('mines-tab')"><i class="fas fa-user-friends"></i> MINADO 2P</button>
             <button class="tab-btn" onclick="openTab('snake-tab')"><i class="fas fa-snake"></i> SNAKE</button>
-            <button class="tab-btn" onclick="openTab('horo-tab')"><i class="fas fa-moon"></i> HORÓSCOPO</button>
+            <button class="tab-btn" onclick="openTab('horo-tab')"><i class="fas fa-star"></i> HORÓSCOPO</button>
         </div>
 
-        <div id="nes-tab" class="tab-content active">
-            <h3>Retro Console (NES)</h3>
-            <div id="nes-container">
-                <canvas id="nes-canvas" width="256" height="240"></canvas>
+        <div id="emu-tab" class="tab-content active">
+            <div id="emu-wrap">
+                <div id="drop-zone" class="drop-area">
+                    <i class="fas fa-file-download" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+                    <h3>Carregar Jogo (.smc, .sfc, .nes)</h3>
+                    <p style="color: #666; font-size: 0.8rem;">Arraste o arquivo aqui ou clique no botão</p>
+                    <input type="file" id="file-input" accept=".nes,.smc,.sfc" style="margin-top:20px;">
+                </div>
+                <div id="emulator"></div>
             </div>
-            <div class="nes-controls">
-                <span><b>Setas:</b> Movimento</span>
-                <span><b>X/Z:</b> A / B</span>
-                <span><b>Enter:</b> Start</span>
-                <span><b>Shift:</b> Select</span>
-            </div>
-            <p style="margin-top:15px; color:var(--primary); font-size: 0.8rem;">Carregue um arquivo .nes para jogar!</p>
-            <input type="file" id="rom-upload" accept=".nes" style="margin-top:10px; background:#222; padding:10px; border-radius:10px;">
+            <p style="margin-top:10px; font-size: 0.75rem; color: #888;">DICA: Clique na tela do jogo para ativar o som e os controles.</p>
         </div>
 
         <div id="mines-tab" class="tab-content">
-            <div class="scoreboard">
-                <div id="score1" style="color:var(--p1)">JOGADOR 1: 0</div>
-                <div id="score2" style="color:var(--p2)">JOGADOR 2: 0</div>
-            </div>
             <div id="minesweeper"></div>
-            <button class="tab-btn" style="margin-top:20px;" onclick="initMines()">RESET</button>
+            <button class="tab-btn" style="margin-top:15px;" onclick="initMines()">RESET PARTIDA</button>
         </div>
-
         <div id="snake-tab" class="tab-content">
-            <div style="margin-bottom:10px;">PONTOS: <span id="s-score">0</span></div>
-            <canvas id="snakeGame" width="360" height="360"></canvas>
+            <canvas id="snakeGame" width="340" height="340"></canvas>
         </div>
-
         <div id="horo-tab" class="tab-content">
-            <h3>Horóscopo Real</h3>
-            <p>Selecione um signo para abrir o site João Bidu.</p>
-            <button class="tab-btn" onclick="window.open('https://www.joaobidu.com.br/horoscopo/', '_blank')">ÁRIES</button>
-            </div>
+            <button class="tab-btn" onclick="window.open('https://www.joaobidu.com.br/horoscopo/', '_blank')">ABRIR HORÓSCOPO REAL</button>
+        </div>
     </div>
 
-    <footer class="footer"><span>&copy; 2026 <b>NetLinks Arcade & Emulation</b></span></footer>
+    <footer class="footer"><span>&copy; 2026 <b>NetLinks Arcade Pro</b></span></footer>
 
     <script>
         function openTab(id) {
@@ -101,34 +90,37 @@
             if(id === 'snake-tab') startSnake();
         }
 
-        // --- LÓGICA DO EMULADOR NES ---
-        var nes = new jsnes.NES({
-            onFrame: function(frameBuffer) {
-                var canvas = document.getElementById('nes-canvas');
-                var ctx = canvas.getContext('2d');
-                var imageData = ctx.getImageData(0, 0, 256, 240);
-                var buf = new Uint32Array(imageData.data.buffer);
-                for (var i = 0; i < 256 * 240; i++) buf[i] = 0xFF000000 | frameBuffer[i];
-                ctx.putImageData(imageData, 0, 0);
-            }
+        // --- LÓGICA DO NOVO EMULADOR ---
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const romData = event.target.result;
+                const extension = file.name.split('.').pop().toLowerCase();
+                let system = (extension === 'nes') ? 'nes' : 'snes';
+
+                document.getElementById('drop-zone').style.display = 'none';
+
+                // Configuração do EmulatorJS
+                window.EJS_player = '#emulator';
+                window.EJS_core = system;
+                window.EJS_gameUrl = romData; // Carrega o arquivo local direto na memória
+                window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/'; // Arquivos do motor
+                window.EJS_startOnLoaded = true;
+                window.EJS_mouse = true; // Habilita o MOUSE
+                window.EJS_multitap = true;
+
+                // Carrega o script do motor de forma dinâmica
+                const script = document.createElement('script');
+                script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+                document.head.appendChild(script);
+            };
+            reader.readAsDataURL(file);
         });
 
-        document.getElementById('rom-upload').onchange = function(e) {
-            var file = e.target.files[0];
-            var reader = new FileReader();
-            reader.onload = function() {
-                nes.loadROM(reader.result);
-                setInterval(nes.frame, 16);
-            };
-            reader.readAsBinaryString(file);
-        };
-
-        // Mapeamento de Teclas
-        const nesKeys = { 38: 0, 40: 1, 37: 2, 39: 3, 13: 4, 16: 5, 88: 6, 90: 7 };
-        document.onkeydown = (e) => { if (nesKeys[e.keyCode] !== undefined) nes.buttonDown(1, nesKeys[e.keyCode]); };
-        document.onkeyup = (e) => { if (nesKeys[e.keyCode] !== undefined) nes.buttonUp(1, nesKeys[e.keyCode]); };
-
-        // --- CAMPO MINADO 2P ---
+        // --- CAMPO MINADO 2P (ESTÁVEL) ---
         let p1S = 0, p2S = 0, turn = 1;
         function initMines() {
             const grid = document.getElementById("minesweeper"); grid.innerHTML = "";
@@ -140,14 +132,12 @@
                     cell.classList.add('revealed');
                     if(mines[i]) {
                         cell.classList.add('mine'); cell.innerHTML = "💣";
-                        if(turn === 1) { p2S++; alert("P1 Explodiu!"); } else { p1S++; alert("P2 Explodiu!"); }
+                        if(turn === 1) { p2S++; alert("P1 Explodiu! Ponto P2"); } else { p1S++; alert("P2 Explodiu! Ponto P1"); }
                         initMines();
                     } else {
                         cell.classList.add(turn === 1 ? 'p1-mark' : 'p2-mark');
-                        turn = turn === 1 ? 2 : 1;
+                        cell.innerHTML = "✔"; turn = turn === 1 ? 2 : 1;
                     }
-                    document.getElementById("score1").innerText = "JOGADOR 1: " + p1S;
-                    document.getElementById("score2").innerText = "JOGADOR 2: " + p2S;
                 };
                 grid.appendChild(cell);
             }
