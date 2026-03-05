@@ -34,7 +34,7 @@
         <button class="accordion-btn btn-verde" onclick="toggle('form-cat')"><i class="fas fa-folder-plus"></i> Nova Categoria</button>
         <div id="form-cat" class="content">
             <input type="text" id="cat-nome" placeholder="Nome da Nova Categoria">
-            <button class="save-btn" onclick="salvarCategoria()">CRIAR CATEGORIA</button>
+            <button class="save-btn" onclick="salvarCategoria(this)">CRIAR CATEGORIA</button>
         </div>
 
         <button class="accordion-btn btn-verde" onclick="toggle('form-link')"><i class="fas fa-plus"></i> Novo Atalho</button>
@@ -42,20 +42,18 @@
             <input type="text" id="link-nome" placeholder="Nome do Atalho">
             <input type="text" id="link-url" placeholder="URL (https://...)">
             <select id="link-cat"><option value="">Selecione a Categoria</option></select>
-            <button class="save-btn" onclick="salvarLink()">SALVAR ATALHO</button>
+            <button class="save-btn" onclick="salvarLink(this)">SALVAR ATALHO</button>
         </div>
 
         <button class="accordion-btn btn-vermelho" onclick="toggle('form-del')"><i class="fas fa-trash-alt"></i> Excluir Atalhos/Categorias</button>
         <div id="form-del" class="content">
             <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 5px;">Excluir um Atalho específico:</p>
             <select id="del-link"><option value="">Carregando atalhos...</option></select>
-            <button class="save-btn" style="background: #888; margin-bottom: 20px;" onclick="deletarLink()">EXCLUIR ATALHO SELECIONADO</button>
-            
+            <button class="save-btn" style="background: #888; margin-bottom: 20px;" onclick="deletarLink(this)">EXCLUIR ATALHO SELECIONADO</button>
             <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
-            
             <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 5px;">Excluir Categoria Inteira:</p>
             <select id="del-cat"><option value="">Selecione a Categoria...</option></select>
-            <button class="save-btn" style="background: var(--primary);" onclick="deletarCategoria()">EXCLUIR CATEGORIA INTEIRA</button>
+            <button class="save-btn" style="background: var(--primary);" onclick="deletarCategoria(this)">EXCLUIR CATEGORIA INTEIRA</button>
         </div>
     </div>
     <script>
@@ -67,7 +65,7 @@
             const el = document.getElementById(id);
             const isVisible = (el.style.display === "block");
             document.querySelectorAll('.content').forEach(c => c.style.display = "none");
-            if (!isVisible) { el.style.display = "block"; carregarDadosConfig(); }
+            if (!isVisible) { el.style.display = "block"; }
         }
 
         window.onload = function() {
@@ -81,50 +79,56 @@
                 const r = await fetch(`${urlApp}?dono=${encodeURIComponent(dono)}`);
                 const d = await r.json();
                 cacheBanners = d.banners;
-
-                // Preencher selects de Categoria
                 const opsCat = '<option value="">Selecione a Categoria...</option>' + d.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
                 document.getElementById('link-cat').innerHTML = opsCat;
                 document.getElementById('del-cat').innerHTML = opsCat;
-
-                // Preencher select de Atalhos para excluir
                 const opsLink = '<option value="">Selecione o Atalho para remover...</option>' + d.banners.map((b, idx) => `<option value="${idx}">${b.nome} (${b.categoria})</option>`).join('');
                 document.getElementById('del-link').innerHTML = opsLink;
-            } catch (e) { console.error("Erro ao carregar dados", e); }
+            } catch (e) { console.error("Erro", e); }
         }
 
-        async function salvarLink() {
+        async function enviar(payload, btn, msg) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+            try {
+                const r = await fetch(urlApp, { method: "POST", body: JSON.stringify(payload) });
+                const res = await r.json();
+                if(res.result === "success") {
+                    alert(msg);
+                    location.reload();
+                } else { throw new Error(); }
+            } catch (e) {
+                alert("Erro na operação. Tente novamente.");
+                btn.disabled = false;
+                btn.innerHTML = "TENTAR NOVAMENTE";
+            }
+        }
+
+        function salvarLink(btn) {
             const nome = document.getElementById('link-nome').value;
             const link = document.getElementById('link-url').value;
             const cat = document.getElementById('link-cat').value;
-            if(!nome || !link || !cat) return alert("Preencha todos os campos!");
-            
-            await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "addLink", dono: dono, nome: nome, link: link, categoria: cat }) });
-            alert("Atalho salvo!"); location.reload();
+            if(!nome || !link || !cat) return alert("Preencha tudo!");
+            enviar({ action: "addLink", dono: dono, nome: nome, link: link, categoria: cat }, btn, "Atalho salvo com sucesso!");
         }
 
-        async function salvarCategoria() {
+        function salvarCategoria(btn) {
             const cat = document.getElementById('cat-nome').value;
-            if(!cat) return alert("Digite o nome da categoria!");
-            
-            await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "addCat", dono: dono, categoria: cat }) });
-            alert("Categoria criada!"); location.reload();
+            if(!cat) return alert("Digite o nome!");
+            enviar({ action: "addCat", dono: dono, categoria: cat }, btn, "Categoria criada com sucesso!");
         }
 
-        async function deletarLink() {
+        function deletarLink(btn) {
             const idx = document.getElementById('del-link').value;
-            if(idx === "" || !confirm("Deseja realmente excluir este atalho?")) return;
-            
+            if(idx === "" || !confirm("Excluir atalho?")) return;
             const atalho = cacheBanners[idx];
-            await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "delLink", dono: dono, nome: atalho.nome, link: atalho.link }) });
-            alert("Atalho excluído!"); location.reload();
+            enviar({ action: "delLink", dono: dono, nome: atalho.nome, link: atalho.link }, btn, "Atalho removido!");
         }
 
-        async function deletarCategoria() {
+        function deletarCategoria(btn) {
             const cat = document.getElementById('del-cat').value;
-            if(cat && confirm("ATENÇÃO: Isso excluirá a categoria e todos os atalhos dentro dela. Confirmar?")) {
-                await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "delCat", dono: dono, categoria: cat }) });
-                alert("Categoria excluída!"); location.reload();
+            if(cat && confirm("Excluir categoria e tudo dentro dela?")) {
+                enviar({ action: "delCat", dono: dono, categoria: cat }, btn, "Categoria removida!");
             }
         }
     </script>
