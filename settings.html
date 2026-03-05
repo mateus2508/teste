@@ -7,129 +7,125 @@
     <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; --green: #27ae60; --text: #ffffff; }
-        
-        body { 
-            background: radial-gradient(circle at center, #2b0505 0%, #141414 100%);
-            background-attachment: fixed;
-            color: var(--text); 
-            font-family: 'Helvetica Neue', Arial, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            min-height: 100vh; 
-        }
-        
+        :root { --primary: #E50914; --bg: #141414; --green: #27ae60; --text: #ffffff; }
+        body { background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); background-attachment: fixed; color: var(--text); font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding: 10px 4% 20px 4%; background: rgba(0,0,0,0.5); }
         .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; }
         .user-badge { display: flex; align-items: center; gap: 10px; background: #222; padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; }
         .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
-
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-
         .home-btn { display: block; width: 100%; padding: 15px; background: #333; color: white; text-align: center; text-decoration: none; border-radius: 15px; margin-bottom: 20px; font-weight: bold; border: 2px solid #444; box-sizing: border-box; }
-
-        .accordion-btn {
-            width: 100%; padding: 20px; margin-bottom: 10px; border-radius: 15px; border: 3px solid #000;
-            font-size: 18px; font-weight: bold; text-transform: uppercase; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 15px; transition: 0.3s; color: white;
-        }
+        .accordion-btn { width: 100%; padding: 20px; margin-bottom: 10px; border-radius: 15px; border: 3px solid #000; font-size: 18px; font-weight: bold; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 15px; transition: 0.3s; color: white; }
         .btn-verde { background-color: var(--green); }
         .btn-vermelho { background-color: var(--primary); }
-        .accordion-btn:hover { opacity: 0.9; transform: scale(1.01); }
-
         .content { display: none; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 0 0 15px 15px; margin-top: -15px; margin-bottom: 20px; border: 1px solid #333; }
         input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #222; color: white; box-sizing: border-box; }
         .save-btn { width: 100%; padding: 15px; background: var(--green); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
-
     <header class="header">
         <a href="index.html" class="logo-small">NetLinks</a>
         <div id="userBadge" class="user-badge"></div>
     </header>
-
     <div class="container">
         <a href="index.html" class="home-btn"><i class="fas fa-home"></i> VOLTAR AO PAINEL</a>
-
-        <button class="accordion-btn btn-verde" onclick="toggle('form-cat')">
-            <i class="fas fa-folder-plus"></i> Novo Grupo
-        </button>
+        
+        <button class="accordion-btn btn-verde" onclick="toggle('form-cat')"><i class="fas fa-folder-plus"></i> Nova Categoria</button>
         <div id="form-cat" class="content">
-            <input type="text" id="cat-nome" placeholder="Nome do Novo Grupo">
-            <button class="save-btn" onclick="salvarCategoria()">CRIAR GRUPO</button>
+            <input type="text" id="cat-nome" placeholder="Nome da Nova Categoria">
+            <button class="save-btn" onclick="salvarCategoria()">CRIAR CATEGORIA</button>
         </div>
 
-        <button class="accordion-btn btn-verde" onclick="toggle('form-link')">
-            <i class="fas fa-plus"></i> Novo Link
-        </button>
+        <button class="accordion-btn btn-verde" onclick="toggle('form-link')"><i class="fas fa-plus"></i> Novo Atalho</button>
         <div id="form-link" class="content">
-            <input type="text" id="link-nome" placeholder="Nome do Site">
+            <input type="text" id="link-nome" placeholder="Nome do Atalho">
             <input type="text" id="link-url" placeholder="URL (https://...)">
-            <select id="link-cat"><option value="">Selecione o Grupo</option></select>
-            <button class="save-btn" onclick="salvarLink()">SALVAR LINK</button>
+            <select id="link-cat"><option value="">Selecione a Categoria</option></select>
+            <button class="save-btn" onclick="salvarLink()">SALVAR ATALHO</button>
         </div>
 
-        <button class="accordion-btn btn-vermelho" onclick="toggle('form-del')">
-            <i class="fas fa-trash-alt"></i> Excluir Dados
-        </button>
+        <button class="accordion-btn btn-vermelho" onclick="toggle('form-del')"><i class="fas fa-trash-alt"></i> Excluir Atalhos/Categorias</button>
         <div id="form-del" class="content">
-            <select id="del-cat"><option value="">Selecione o Grupo para excluir...</option></select>
-            <button class="save-btn" style="background: var(--primary);" onclick="deletarCategoria()">EXCLUIR GRUPO INTEIRO</button>
+            <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 5px;">Excluir um Atalho específico:</p>
+            <select id="del-link"><option value="">Carregando atalhos...</option></select>
+            <button class="save-btn" style="background: #888; margin-bottom: 20px;" onclick="deletarLink()">EXCLUIR ATALHO SELECIONADO</button>
+            
+            <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
+            
+            <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 5px;">Excluir Categoria Inteira:</p>
+            <select id="del-cat"><option value="">Selecione a Categoria...</option></select>
+            <button class="save-btn" style="background: var(--primary);" onclick="deletarCategoria()">EXCLUIR CATEGORIA INTEIRA</button>
         </div>
     </div>
-
     <script>
         const urlApp = "https://script.google.com/macros/s/AKfycbxyp6Fw6RM8R73KsWjEKj1eHF4djr5HbLja_NwV4-9055TvL1QOPK-PhOtqce10mHHBag/exec";
         const dono = localStorage.getItem("netlinks_user");
+        let cacheBanners = [];
 
         function toggle(id) {
             const el = document.getElementById(id);
             const isVisible = (el.style.display === "block");
             document.querySelectorAll('.content').forEach(c => c.style.display = "none");
-            if (!isVisible) {
-                el.style.display = "block";
-                carregarCategorias();
-            }
+            if (!isVisible) { el.style.display = "block"; carregarDadosConfig(); }
         }
 
         window.onload = function() {
             if(!dono) window.location.href = "index.html";
             document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
-            carregarCategorias();
+            carregarDadosConfig();
         };
 
-        async function carregarCategorias() {
+        async function carregarDadosConfig() {
             try {
                 const r = await fetch(`${urlApp}?dono=${encodeURIComponent(dono)}`);
                 const d = await r.json();
-                const opcoes = '<option value="">Selecione o Grupo...</option>' + 
-                               d.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
-                document.getElementById('link-cat').innerHTML = opcoes;
-                document.getElementById('del-cat').innerHTML = opcoes;
-            } catch (e) { console.error("Erro"); }
+                cacheBanners = d.banners;
+
+                // Preencher selects de Categoria
+                const opsCat = '<option value="">Selecione a Categoria...</option>' + d.categorias.map(c => `<option value="${c}">${c}</option>`).join('');
+                document.getElementById('link-cat').innerHTML = opsCat;
+                document.getElementById('del-cat').innerHTML = opsCat;
+
+                // Preencher select de Atalhos para excluir
+                const opsLink = '<option value="">Selecione o Atalho para remover...</option>' + d.banners.map((b, idx) => `<option value="${idx}">${b.nome} (${b.categoria})</option>`).join('');
+                document.getElementById('del-link').innerHTML = opsLink;
+            } catch (e) { console.error("Erro ao carregar dados", e); }
         }
 
         async function salvarLink() {
-            const p = { action: "addLink", dono: dono, nome: document.getElementById('link-nome').value, link: document.getElementById('link-url').value, categoria: document.getElementById('link-cat').value };
-            enviar(p);
+            const nome = document.getElementById('link-nome').value;
+            const link = document.getElementById('link-url').value;
+            const cat = document.getElementById('link-cat').value;
+            if(!nome || !link || !cat) return alert("Preencha todos os campos!");
+            
+            await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "addLink", dono: dono, nome: nome, link: link, categoria: cat }) });
+            alert("Atalho salvo!"); location.reload();
         }
 
         async function salvarCategoria() {
-            const p = { action: "addCat", dono: dono, categoria: document.getElementById('cat-nome').value };
-            enviar(p);
+            const cat = document.getElementById('cat-nome').value;
+            if(!cat) return alert("Digite o nome da categoria!");
+            
+            await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "addCat", dono: dono, categoria: cat }) });
+            alert("Categoria criada!"); location.reload();
+        }
+
+        async function deletarLink() {
+            const idx = document.getElementById('del-link').value;
+            if(idx === "" || !confirm("Deseja realmente excluir este atalho?")) return;
+            
+            const atalho = cacheBanners[idx];
+            await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "delLink", dono: dono, nome: atalho.nome, link: atalho.link }) });
+            alert("Atalho excluído!"); location.reload();
         }
 
         async function deletarCategoria() {
             const cat = document.getElementById('del-cat').value;
-            if(!cat) return alert("Selecione");
-            if(confirm("Excluir?")) enviar({ action: "delCat", dono: dono, categoria: cat });
-        }
-
-        async function enviar(p) {
-            await fetch(urlApp, { method: "POST", body: JSON.stringify(p) });
-            alert("Sucesso!");
-            location.reload();
+            if(cat && confirm("ATENÇÃO: Isso excluirá a categoria e todos os atalhos dentro dela. Confirmar?")) {
+                await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "delCat", dono: dono, categoria: cat }) });
+                alert("Categoria excluída!"); location.reload();
+            }
         }
     </script>
 </body>
