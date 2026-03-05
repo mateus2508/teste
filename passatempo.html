@@ -25,25 +25,28 @@
 
         /* CAMPO MINADO 2 PLAYERS */
         .scoreboard { display: flex; justify-content: center; gap: 30px; margin-bottom: 15px; font-weight: bold; font-size: 1.2rem; }
-        .p1-score { color: var(--p1); padding: 5px 15px; border: 2px solid transparent; border-radius: 10px; }
-        .p2-score { color: var(--p2); padding: 5px 15px; border: 2px solid transparent; border-radius: 10px; }
-        .active-p1 { border-color: var(--p1); background: rgba(52, 152, 219, 0.1); }
-        .active-p2 { border-color: var(--p2); background: rgba(39, 174, 96, 0.1); }
+        .p1-score { color: var(--p1); padding: 5px 15px; border: 2px solid transparent; border-radius: 10px; transition: 0.3s; }
+        .p2-score { color: var(--p2); padding: 5px 15px; border: 2px solid transparent; border-radius: 10px; transition: 0.3s; }
+        .active-p1 { border-color: var(--p1); background: rgba(52, 152, 219, 0.1); box-shadow: 0 0 10px rgba(52, 152, 219, 0.2); }
+        .active-p2 { border-color: var(--p2); background: rgba(39, 174, 96, 0.1); box-shadow: 0 0 10px rgba(39, 174, 96, 0.2); }
 
         #minesweeper { display: grid; grid-template-columns: repeat(10, 32px); gap: 3px; justify-content: center; margin-top: 15px; }
-        .cell { width: 32px; height: 32px; background: #333; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 4px; border: 1px solid #444; transition: 0.2s; }
+        .cell { width: 32px; height: 32px; background: #333; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 4px; border: 1px solid #444; }
         .cell.p1-mark { background: var(--p1) !important; color: white; border-color: #fff; }
         .cell.p2-mark { background: var(--p2) !important; color: white; border-color: #fff; }
-        .cell.mine { background: var(--primary) !important; color: white; animation: shake 0.2s; }
-        @keyframes shake { 0% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        .cell.mine { background: var(--primary) !important; color: white; }
 
-        /* HORÓSCOPO */
-        .horo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 20px; }
-        .horo-btn { background: #222; border: 1px solid #444; padding: 15px; border-radius: 12px; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
-        .horo-btn:hover { border-color: var(--primary); background: #2b0505; transform: scale(1.05); }
+        /* HORÓSCOPO REAL */
+        .horo-grid-btns { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin: 20px 0; }
+        .horo-dot { padding: 12px; background: #222; border: 1px solid #444; border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
+        .horo-dot:hover, .horo-dot.selected { background: var(--primary); border-color: #fff; }
+        .horo-display { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; text-align: left; }
+        .horo-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; border-left: 4px solid var(--primary); min-height: 100px; }
+        .horo-card h4 { margin: 0 0 10px 0; color: var(--accent); text-transform: uppercase; font-size: 0.85rem; }
+        .horo-card p { font-size: 0.9rem; line-height: 1.5; color: #ddd; }
 
         canvas { background: #000; border: 4px solid #333; border-radius: 8px; }
-        .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.95); padding: 12px 4%; border-top: 1px solid #333; color: #666; font-size: 12px; z-index: 100; box-sizing: border-box; }
+        .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.95); padding: 12px 4%; border-top: 1px solid #333; color: #666; font-size: 12px; z-index: 100; backdrop-filter: blur(10px); box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -57,7 +60,7 @@
             <button class="tab-btn active" onclick="openTab('mines-tab')"><i class="fas fa-user-friends"></i> MINADO 2P</button>
             <button class="tab-btn" onclick="openTab('snake-tab')"><i class="fas fa-snake"></i> SNAKE</button>
             <button class="tab-btn" onclick="openTab('race-tab')"><i class="fas fa-car-side"></i> F1 RACE</button>
-            <button class="tab-btn" onclick="openTab('horo-tab')"><i class="fas fa-star"></i> HORÓSCOPO REAL</button>
+            <button class="tab-btn" onclick="openTab('horo-tab')"><i class="fas fa-moon"></i> HORÓSCOPO REAL</button>
         </div>
 
         <div id="mines-tab" class="tab-content active">
@@ -65,9 +68,9 @@
                 <div id="score1" class="p1-score active-p1">JOGADOR 1: 0</div>
                 <div id="score2" class="p2-score">JOGADOR 2: 0</div>
             </div>
-            <div id="turn-indicator" style="margin-bottom: 10px; color: #aaa;">Vez do Jogador 1 (Azul)</div>
+            <p id="turn-indicator" style="color: #aaa; margin-bottom: 10px;">Vez do Jogador 1 (Azul)</p>
             <div id="minesweeper"></div>
-            <button class="tab-btn" style="margin-top:20px;" onclick="initMines()">REINICIAR PARTIDA</button>
+            <button class="tab-btn" style="margin-top:20px; background:#444;" onclick="initMines()">REINICIAR TABULEIRO</button>
         </div>
 
         <div id="snake-tab" class="tab-content">
@@ -81,21 +84,25 @@
         </div>
 
         <div id="horo-tab" class="tab-content">
-            <h2>Horóscopo do Dia (Real)</h2>
-            <p style="color: #888;">Selecione seu signo para ler a previsão completa no <b>João Bidu</b>.</p>
-            <div class="horo-grid">
-                <div class="horo-btn" onclick="irParaHoro('aries')">♈ Áries</div>
-                <div class="horo-btn" onclick="irParaHoro('touro')">♉ Touro</div>
-                <div class="horo-btn" onclick="irParaHoro('gemeos')">♊ Gêmeos</div>
-                <div class="horo-btn" onclick="irParaHoro('cancer')">♋ Câncer</div>
-                <div class="horo-btn" onclick="irParaHoro('leao')">♌ Leão</div>
-                <div class="horo-btn" onclick="irParaHoro('virgem')">♍ Virgem</div>
-                <div class="horo-btn" onclick="irParaHoro('libra')">♎ Libra</div>
-                <div class="horo-btn" onclick="irParaHoro('escorpiao')">♏ Escorpião</div>
-                <div class="horo-btn" onclick="irParaHoro('sagitario')">♐ Sagitário</div>
-                <div class="horo-btn" onclick="irParaHoro('capricornio')">♑ Capricórnio</div>
-                <div class="horo-btn" onclick="irParaHoro('aquario')">♒ Aquário</div>
-                <div class="horo-btn" onclick="irParaHoro('peixes')">♓ Peixes</div>
+            <h3>Previsão do Dia</h3>
+            <p style="color: #888; font-size: 0.9rem;">Dados reais obtidos da internet para hoje.</p>
+            <div class="horo-grid-btns">
+                <div class="horo-dot" onclick="fetchHoroscopo('aries', this)">♈ Áries</div>
+                <div class="horo-dot" onclick="fetchHoroscopo('touro', this)">♉ Touro</div>
+                <div class="horo-dot" onclick="fetchHoroscopo('gemeos', this)">♊ Gêmeos</div>
+                <div class="horo-dot" onclick="fetchHoroscopo('cancer', this)">♋ Câncer</div>
+                <div class="horo-dot" onclick="fetchHoroscopo('leao', this)">♌ Leão</div>
+                <div class="horo-dot" onclick="fetchHoroscopo('virgem', this)">♍ Virgem</div>
+                <div class="horo-dot" onclick="fetchHoroscopo('libra', this)">♎ Libra</div>
+                <div class="horo-dot" onclick="fetchHoroscopo('escorpiao', this)">♏ Escorpião</div>
+                <div class="horo-dot" onclick="fetchHoroscopo('sagitario', this)">♐ Sagitário</div>
+                <div class="horo-dot" onclick="fetchHoroscopo('capricornio', this)">♑ Capricórnio</div>
+                <div class="horo-dot" onclick="fetchHoroscopo('aquario', this)">♒ Aquário</div>
+                <div class="horo-dot" onclick="fetchHoroscopo('peixes', this)">♓ Peixes</div>
+            </div>
+            <div id="horo-display" class="horo-display" style="display:none;">
+                <div class="horo-card"><h4><i class="fas fa-briefcase"></i> TRABALHO & SORTE</h4><p id="txt-trab">Carregando...</p></div>
+                <div class="horo-card" style="border-left-color: #e74c3c;"><h4><i class="fas fa-heart"></i> AMOR & SOCIAL</h4><p id="txt-amor">Carregando...</p></div>
             </div>
         </div>
     </div>
@@ -112,55 +119,60 @@
             if(id === 'snake-tab') startSnake();
             if(id === 'race-tab') startRace();
         }
-
         function stopGames() { clearInterval(sInt); clearInterval(rInt); }
 
-        // --- HORÓSCOPO REAL (LINK DIRETO) ---
-        function irParaHoro(signo) {
-            const url = `https://www.joaobidu.com.br/horoscopo/signos/previsao-${signo}`;
-            window.open(url, '_blank');
+        // --- HORÓSCOPO REAL (VIA API) ---
+        async function fetchHoroscopo(signo, el) {
+            document.querySelectorAll('.horo-dot').forEach(d => d.classList.remove('selected'));
+            el.classList.add('selected');
+            const display = document.getElementById('horo-display');
+            const txtTrab = document.getElementById('txt-trab');
+            const txtAmor = document.getElementById('txt-amor');
+            
+            display.style.display = 'grid';
+            txtTrab.innerText = "Consultando astros...";
+            txtAmor.innerText = "Consultando astros...";
+
+            try {
+                // Usando API do Aztro (gratuita e real) via Proxy para evitar bloqueio
+                const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://aztro.sameerkumar.website/?sign=' + signo + '&day=today')}&method=POST`);
+                const data = await res.json();
+                const json = JSON.parse(data.contents);
+
+                // Tradução simples e mapeamento de campos reais da API
+                txtTrab.innerText = `Clima para hoje: ${json.description}. Sua cor da sorte é ${json.color} e seu número é ${json.lucky_number}.`;
+                txtAmor.innerText = `Compatibilidade com: ${json.compatibility}. Humor do dia: ${json.mood}. Aproveite as vibrações positivas!`;
+            } catch (e) {
+                txtTrab.innerText = "Erro ao conectar. Verifique sua internet.";
+                txtAmor.innerText = "Não foi possível buscar os dados agora.";
+            }
         }
 
         // --- CAMPO MINADO 2 PLAYERS ---
-        let currentPlayer = 1;
-        let p1Score = 0, p2Score = 0;
-        let gameOverMines = false;
-
+        let currentPlayer = 1, p1Score = 0, p2Score = 0, gameOverMines = false;
         function initMines() {
             const grid = document.getElementById("minesweeper");
-            grid.innerHTML = "";
-            currentPlayer = 1;
-            gameOverMines = false;
-            updateMinesUI();
-            
-            let minePositions = [];
-            for(let i=0; i<100; i++) minePositions.push(Math.random() < 0.15);
-
+            grid.innerHTML = ""; currentPlayer = 1; gameOverMines = false; updateMinesUI();
+            let mines = []; for(let i=0; i<100; i++) mines.push(Math.random() < 0.15);
             for(let i=0; i<100; i++) {
                 const cell = document.createElement("div");
                 cell.className = "cell";
                 cell.onclick = function() {
                     if(gameOverMines || cell.classList.contains('revealed')) return;
-                    
                     cell.classList.add('revealed');
-                    if(minePositions[i]) {
-                        cell.classList.add('mine');
-                        cell.innerHTML = "💣";
-                        gameOverMines = true;
-                        if(currentPlayer === 1) { p2Score++; alert("JOGADOR 1 ACERTOU UMA BOMBA! Ponto para o JOGADOR 2."); }
-                        else { p1Score++; alert("JOGADOR 2 ACERTOU UMA BOMBA! Ponto para o JOGADOR 1."); }
+                    if(mines[i]) {
+                        cell.classList.add('mine'); cell.innerHTML = "💣"; gameOverMines = true;
+                        if(currentPlayer === 1) { p2Score++; alert("P1 explodiu! Ponto para o Jogador 2."); }
+                        else { p1Score++; alert("P2 explodiu! Ponto para o Jogador 1."); }
                         initMines();
                     } else {
                         cell.classList.add(currentPlayer === 1 ? 'p1-mark' : 'p2-mark');
-                        cell.innerHTML = "✔";
-                        currentPlayer = currentPlayer === 1 ? 2 : 1;
-                        updateMinesUI();
+                        cell.innerHTML = "✔"; currentPlayer = currentPlayer === 1 ? 2 : 1; updateMinesUI();
                     }
                 };
                 grid.appendChild(cell);
             }
         }
-
         function updateMinesUI() {
             document.getElementById("score1").innerText = `JOGADOR 1: ${p1Score}`;
             document.getElementById("score2").innerText = `JOGADOR 2: ${p2Score}`;
@@ -173,66 +185,42 @@
         const sCanvas = document.getElementById("snakeGame");
         const sCtx = sCanvas.getContext("2d");
         let sBox = 20, snake, food, sScore, sLevel, sD, sInt, sSpeed;
-
         function startSnake() {
-            clearInterval(sInt);
-            snake = [{x: 8*sBox, y: 8*sBox}];
+            clearInterval(sInt); snake = [{x: 8*sBox, y: 8*sBox}];
             food = {x: Math.floor(Math.random()*17+1)*sBox, y: Math.floor(Math.random()*17+1)*sBox};
-            sScore = 0; sLevel = 1; sSpeed = 160; sD = null;
-            sInt = setInterval(drawSnake, sSpeed);
+            sScore = 0; sLevel = 1; sSpeed = 160; sD = null; sInt = setInterval(drawSnake, sSpeed);
         }
-
         function drawSnake() {
             sCtx.fillStyle = "#000"; sCtx.fillRect(0,0,360,360);
             for(let i=0; i<snake.length; i++) {
-                sCtx.fillStyle = (i==0) ? "#E50914" : "#fff";
-                sCtx.fillRect(snake[i].x, snake[i].y, sBox, sBox);
+                sCtx.fillStyle = (i==0) ? "#E50914" : "#fff"; sCtx.fillRect(snake[i].x, snake[i].y, sBox, sBox);
             }
             sCtx.fillStyle = "#f1c40f"; sCtx.fillRect(food.x, food.y, sBox, sBox);
             let nX = snake[0].x, nY = snake[0].y;
             if(sD=="LEFT") nX -= sBox; if(sD=="UP") nY -= sBox;
             if(sD=="RIGHT") nX += sBox; if(sD=="DOWN") nY += sBox;
-
             if(nX == food.x && nY == food.y) {
-                sScore++;
-                if(sScore % 4 == 0) {
-                    sLevel++; clearInterval(sInt); sSpeed = Math.max(50, sSpeed - 20);
-                    sInt = setInterval(drawSnake, sSpeed);
-                }
+                sScore++; if(sScore % 4 == 0) { sLevel++; clearInterval(sInt); sSpeed = Math.max(50, sSpeed - 20); sInt = setInterval(drawSnake, sSpeed); }
                 food = {x: Math.floor(Math.random()*17+1)*sBox, y: Math.floor(Math.random()*17+1)*sBox};
             } else { snake.pop(); }
-
-            if(nX<0 || nX>=360 || nY<0 || nY>=360 || snake.some(s => s.x==nX && s.y==nY)) {
-                clearInterval(sInt); alert("GAME OVER! Score: " + sScore); startSnake(); return;
-            }
+            if(nX<0 || nX>=360 || nY<0 || nY>=360 || snake.some(s => s.x==nX && s.y==nY)) { clearInterval(sInt); alert("GAME OVER!"); startSnake(); return; }
             snake.unshift({x: nX, y: nY});
-            document.getElementById("s-score").innerText = sScore;
-            document.getElementById("s-level").innerText = sLevel;
+            document.getElementById("s-score").innerText = sScore; document.getElementById("s-level").innerText = sLevel;
         }
 
         // --- F1 RACE ---
         const rCanvas = document.getElementById("raceGame");
         const rCtx = rCanvas.getContext("2d");
         let rX, rObs, rScore, rInt;
-
-        function startRace() {
-            clearInterval(rInt); rX = 145; rObs = []; rScore = 0;
-            rInt = setInterval(drawRace, 30);
-        }
-
+        function startRace() { clearInterval(rInt); rX = 145; rObs = []; rScore = 0; rInt = setInterval(drawRace, 30); }
         function drawRace() {
             rCtx.fillStyle = "#111"; rCtx.fillRect(0,0,320,420);
-            rCtx.fillStyle = "#E50914"; rCtx.fillRect(rX+10, 340, 10, 50); // Carro F1
-            rCtx.fillRect(rX, 380, 30, 10); rCtx.fillStyle = "#000";
-            rCtx.fillRect(rX-5, 345, 8, 12); rCtx.fillRect(rX+27, 345, 8, 12);
-            
+            rCtx.fillStyle = "#E50914"; rCtx.fillRect(rX+10, 340, 10, 50); rCtx.fillRect(rX, 380, 30, 10);
+            rCtx.fillStyle = "#000"; rCtx.fillRect(rX-5, 345, 8, 12); rCtx.fillRect(rX+27, 345, 8, 12);
             if(Math.random() < 0.05) rObs.push({x: Math.random()*280, y: -50});
             for(let i=0; i<rObs.length; i++) {
-                rObs[i].y += 7;
-                rCtx.fillStyle = "#555"; rCtx.beginPath(); rCtx.arc(rObs[i].x+15, rObs[i].y+15, 15, 0, Math.PI*2); rCtx.fill();
-                if(rObs[i].y > 330 && rObs[i].y < 390 && rObs[i].x < rX+30 && rObs[i].x+30 > rX) {
-                    clearInterval(rInt); alert("BATIDA! Score: " + rScore); startRace(); return;
-                }
+                rObs[i].y += 7; rCtx.fillStyle = "#555"; rCtx.beginPath(); rCtx.arc(rObs[i].x+15, rObs[i].y+15, 15, 0, Math.PI*2); rCtx.fill();
+                if(rObs[i].y > 330 && rObs[i].y < 390 && rObs[i].x < rX+30 && rObs[i].x+30 > rX) { clearInterval(rInt); alert("BATIDA!"); startRace(); return; }
                 if(rObs[i].y > 420) { rObs.splice(i, 1); rScore++; i--; }
             }
             document.getElementById("r-score").innerText = rScore;
@@ -240,12 +228,10 @@
 
         document.addEventListener("keydown", e => {
             const k = e.key.toLowerCase();
-            // Snake
             if((k=="arrowleft" || k=="a") && sD != "RIGHT") sD = "LEFT";
             if((k=="arrowup" || k=="w") && sD != "DOWN") sD = "UP";
             if((k=="arrowright" || k=="d") && sD != "LEFT") sD = "RIGHT";
             if((k=="arrowdown" || k=="s") && sD != "UP") sD = "DOWN";
-            // Race
             if(k=="arrowleft" || k=="a") rX = Math.max(10, rX - 25);
             if(k=="arrowright" || k=="d") rX = Math.min(280, rX + 25);
         });
