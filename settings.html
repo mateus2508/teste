@@ -3,171 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetLinks - Seu Organizador de Links</title>
+    <title>Configurações - NetLinks</title>
     <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1cO-WX4ggWohctGmLcMQseL5gDF_Qfv2_&sz=w32">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #E50914; --bg: #141414; --card: #2f2f2f; }
-        body { background-color: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; background-size: cover; background-position: center; background-attachment: fixed; transition: background 0.5s ease-in-out; }
-        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: -1; display: none; }
-        #login-container { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); }
-        .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); color: var(--primary); margin: 0; text-transform: uppercase; letter-spacing: 5px; font-weight: 900; }
-        #painel-principal { display: none; padding: 20px 4% 140px 4%; flex: 1; position: relative; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; gap: 20px; }
-        .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; flex-shrink: 0; }
-        .datetime-container { text-align: right; line-height: 1.2; min-width: 120px; }
-        #clock { font-size: 1.4rem; font-weight: bold; color: #fff; display: block; }
-        #date { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
-        .search-container { flex: 1; max-width: 400px; position: relative; }
-        .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
-        #searchInput { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: 1px solid #444; background: rgba(34, 34, 34, 0.8); color: white; outline: none; transition: 0.3s; font-size: 16px; box-sizing: border-box; backdrop-filter: blur(5px); }
-        .user-badge { display: flex; align-items: center; gap: 10px; background: rgba(34, 34, 34, 0.8); padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; backdrop-filter: blur(5px); }
+        :root { --primary: #E50914; --bg: #141414; --green: #27ae60; --text: #ffffff; }
+        body { background: radial-gradient(circle at center, #2b0505 0%, #141414 100%); background-attachment: fixed; color: var(--text); font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding: 10px 4% 20px 4%; background: rgba(0,0,0,0.5); }
+        .logo-small { color: var(--primary); text-decoration: none; font-size: 1.8rem; font-weight: bold; }
+        .user-badge { display: flex; align-items: center; gap: 10px; background: #222; padding: 5px 15px; border-radius: 20px; font-size: 13px; border: 1px solid #444; }
         .user-badge img { width: 28px; border-radius: 50%; border: 1px solid var(--primary); }
-        .categoria-header { display: flex; align-items: center; cursor: pointer; margin: 30px 0 10px 0; border-left: 5px solid var(--primary); padding-left: 15px; user-select: none; }
-        .categoria-titulo { font-size: 1.2rem; text-transform: uppercase; font-weight: bold; margin: 0; flex: 1; }
-        .btn-icon { color: white; text-decoration: none; font-size: 20px; background: none; border: none; cursor: pointer; transition: 0.3s; padding: 5px; }
-        .btn-icon:hover { color: var(--primary); transform: scale(1.1); }
-        .fileira { display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start; }
-        .card-wrapper { position: relative; flex: 1 1 220px; max-width: 350px; }
-        .card { display: block; height: 140px; background-color: var(--card); background-size: cover; background-position: center; border-radius: 8px; text-decoration: none; color: white; transition: 0.4s; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); }
-        .card-info { background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: bold; text-align: center; padding: 15px; box-sizing: border-box; text-transform: uppercase; font-size: 1.1rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
-        .edit-banner-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: none; z-index: 10; font-size: 11px; align-items: center; justify-content: center; }
-        .card-wrapper:hover .edit-banner-btn { display: flex; }
-        .view-list .fileira { display: flex; flex-direction: column; gap: 8px; padding-left: 40px; }
-        .view-list .card-wrapper { max-width: 100%; flex: none; height: auto; }
-        .view-list .card { height: auto; background: none !important; border: none !important; border-radius: 0; pointer-events: auto; }
-        .view-list .card-info { background: none; justify-content: flex-start; padding: 5px 0; text-shadow: none; font-size: 1rem; color: #ccc; cursor: pointer; }
-        .view-list .card:hover .card-info { color: var(--primary); text-decoration: underline; }
-        .view-list .edit-banner-btn { display: none !important; } 
-        .recolhido .fileira { display: none; }
-        .seta-icon { margin-right: 10px; transition: 0.3s; color: #555; }
-        .recolhido .seta-icon { transform: rotate(-90deg); }
-
-        /* RODAPÉ FIXO */
-        .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.95); padding: 15px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; z-index: 100; backdrop-filter: blur(10px); box-sizing: border-box; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px 20px 120px 20px; flex: 1; width: 100%; box-sizing: border-box; }
+        .home-btn { display: block; width: 100%; padding: 15px; background: #333; color: white; text-align: center; text-decoration: none; border-radius: 15px; margin-bottom: 20px; font-weight: bold; border: 2px solid #444; box-sizing: border-box; }
+        .accordion-btn { width: 100%; padding: 18px; margin-bottom: 10px; border-radius: 15px; border: 3px solid #000; font-size: 16px; font-weight: bold; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 15px; transition: 0.3s; color: white; }
+        .btn-verde { background-color: var(--green); }
+        .btn-azul { background-color: #2980b9; }
+        .btn-vermelho { background-color: var(--primary); }
+        .content { display: none; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 0 0 15px 15px; margin-top: -15px; margin-bottom: 20px; border: 1px solid #333; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #222; color: white; box-sizing: border-box; }
+        input[type="color"] { height: 50px; cursor: pointer; padding: 5px; }
+        .save-btn { width: 100%; padding: 15px; background: var(--green); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        /* MODAL DE AJUDA */
+        /* RODAPÉ E MODAL */
+        .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.95); padding: 15px 4%; border-top: 1px solid #333; color: #666; font-size: 13px; z-index: 100; backdrop-filter: blur(10px); box-sizing: border-box; }
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); }
-        .modal-content { background: #1f1f1f; margin: 2% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 800px; color: #ddd; border: 1px solid #444; max-height: 90vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
-        .close-btn { color: #888; font-size: 28px; cursor: pointer; }
-        .help-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .help-table th, .help-table td { padding: 12px; border-bottom: 1px solid #333; text-align: left; }
-        .help-table th { color: var(--primary); text-transform: uppercase; font-size: 11px; }
-        .help-icon-box { display: flex; align-items: center; justify-content: center; width: 35px; height: 35px; background: #333; border-radius: 8px; color: #fff; }
-        .hidden { display: none !important; }
+        .modal-content { background: #1f1f1f; margin: 5% auto; padding: 30px; border-radius: 15px; width: 90%; max-width: 600px; color: #ddd; border: 1px solid #444; }
+        .close-btn { float: right; color: #888; font-size: 28px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="bg-overlay" id="bgOverlay"></div>
+    <header class="header">
+        <a href="index.html" class="logo-small">NetLinks</a>
+        <div id="userBadge" class="user-badge"></div>
+    </header>
 
     <div id="guideModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 style="color:var(--primary); margin:0;"><i class="fas fa-info-circle"></i> Central de Ajuda NetLinks</h2>
-                <span class="close-btn" onclick="toggleModal()">&times;</span>
-            </div>
-            <table class="help-table">
-                <thead><tr><th>Ícone</th><th>Recurso</th><th>Função</th></tr></thead>
-                <tbody>
-                    <tr><td><div class="help-icon-box"><i class="fas fa-list"></i></div></td><td><b>Modo Lista</b></td><td>Visualização clean, apenas texto.</td></tr>
-                    <tr><td><div class="help-icon-box"><i class="fas fa-th"></i></div></td><td><b>Modo Grade</b></td><td>Visualização clássica por banners.</td></tr>
-                    <tr><td><div class="help-icon-box"><i class="fas fa-image"></i></div></td><td><b>Fundo</b></td><td>Personaliza o papel de parede.</td></tr>
-                    <tr><td><div class="help-icon-box"><i class="fas fa-pen"></i></div></td><td><b>Lápis</b></td><td>Troca a imagem de um banner específico.</td></tr>
-                    <tr><td><div class="help-icon-box"><i class="fas fa-cog"></i></div></td><td><b>Ajustes</b></td><td>Criação, edição e exclusão de links/cores.</td></tr>
-                </tbody>
-            </table>
+            <span class="close-btn" onclick="toggleModal()">&times;</span>
+            <h2 style="color:var(--primary);"><i class="fas fa-info-circle"></i> Ajuda de Configurações</h2>
+            <p>• <b>Nova Categoria:</b> Crie grupos e defina a cor da barra lateral.</p>
+            <p>• <b>Novo Atalho:</b> Adicione links escolhendo a categoria.</p>
+            <p>• <b>Personalizar Cores:</b> Altere a cor de categorias já existentes.</p>
+            <p>• <b>Excluir:</b> Remova atalhos ou categorias inteiras.</p>
         </div>
     </div>
 
-    <div id="login-container">
-        <h1 class="hero-title">NetLinks</h1>
-        <div id="buttonDiv"></div>
-    </div>
+    <div class="container">
+        <a href="index.html" class="home-btn"><i class="fas fa-home"></i> VOLTAR AO PAINEL</a>
+        
+        <button class="accordion-btn btn-verde" onclick="toggle('form-cat')"><i class="fas fa-folder-plus"></i> Nova Categoria</button>
+        <div id="form-cat" class="content">
+            <input type="text" id="cat-nome" placeholder="Nome da Categoria">
+            <input type="color" id="cat-cor" value="#E50914">
+            <button class="save-btn" onclick="salvarCategoria(this)">CRIAR</button>
+        </div>
 
-    <div id="painel-principal">
-        <header class="header">
-            <div style="display: flex; align-items: center; gap: 20px;">
-                <a href="index.html" class="logo-small">NetLinks</a>
-                <div class="datetime-container"><span id="clock">00:00:00</span><span id="date">Carregando...</span></div>
-            </div>
-            <div class="search-container"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Pesquisar atalho..." onkeyup="filtrarBanners()"></div>
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <button onclick="toggleView()" class="btn-icon" id="viewToggleBtn" title="Alternar Visão"><i class="fas fa-list"></i></button>
-                <button onclick="mudarFundo()" class="btn-icon" title="Mudar Fundo"><i class="fas fa-image"></i></button>
-                <div id="userBadge" class="user-badge"></div>
-                <a href="settings.html" class="btn-icon" title="Configurações"><i class="fas fa-cog"></i></a>
-                <button onclick="logout()" class="btn-icon" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
-            </div>
-        </header>
-        <main id="categorias-container"></main>
+        <button class="accordion-btn btn-verde" onclick="toggle('form-link')"><i class="fas fa-plus"></i> Novo Atalho</button>
+        <div id="form-link" class="content">
+            <input type="text" id="link-nome" placeholder="Nome">
+            <input type="text" id="link-url" placeholder="URL">
+            <select id="link-cat"><option value="">Selecione...</option></select>
+            <button class="save-btn" onclick="salvarLink(this)">SALVAR</button>
+        </div>
+
+        <button class="accordion-btn btn-azul" onclick="toggle('form-color')"><i class="fas fa-palette"></i> Personalizar Cores</button>
+        <div id="form-color" class="content">
+            <select id="color-cat" onchange="carregarCorAtual()"></select>
+            <input type="color" id="color-hex" value="#E50914">
+            <button class="save-btn" style="background: #2980b9;" onclick="salvarNovaCor(this)">ATUALIZAR</button>
+        </div>
+
+        <button class="accordion-btn btn-vermelho" onclick="toggle('form-del')"><i class="fas fa-trash-alt"></i> Excluir</button>
+        <div id="form-del" class="content">
+            <select id="del-link"></select>
+            <button class="save-btn" style="background: #888; margin-bottom: 20px;" onclick="deletarLink(this)">EXCLUIR ATALHO</button>
+            <hr style="border:0; border-top:1px solid #444;">
+            <select id="del-cat"></select>
+            <button class="save-btn" style="background: var(--primary);" onclick="deletarCategoria(this)">EXCLUIR CATEGORIA</button>
+        </div>
     </div>
 
     <footer class="footer">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
             <span>&copy; 2026 <b>NetLinks</b>.</span>
-            <div style="display: flex; gap: 20px; align-items: center;">
-                <button onclick="toggleModal()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold; display:flex; align-items:center; gap:8px;"><i class="fas fa-question-circle"></i> AJUDA</button>
-                <a href="sobre.html" style="color:#888; text-decoration:none;"><i class="fas fa-user-code"></i> Sobre</a>
+            <div style="display: flex; gap: 20px;">
+                <button onclick="toggleModal()" style="background:none; border:none; color:var(--primary); cursor:pointer; font-weight:bold;"><i class="fas fa-question-circle"></i> AJUDA</button>
+                <a href="sobre.html" style="color:#888; text-decoration:none;">Sobre</a>
             </div>
         </div>
     </footer>
 
     <script>
-        const CLIENT_ID = "399274567375-39135ou0sevgli2g6ctv7shgt8g1eppl.apps.googleusercontent.com";
         const urlApp = "https://script.google.com/macros/s/AKfycbxyp6Fw6RM8R73KsWjEKj1eHF4djr5HbLja_NwV4-9055TvL1QOPK-PhOtqce10mHHBag/exec";
-
-        function updateClock() {
-            const n = new Date();
-            document.getElementById('clock').textContent = n.toLocaleTimeString('pt-BR', { hour12: false });
-            document.getElementById('date').textContent = n.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
-        }
-        setInterval(updateClock, 1000);
+        const dono = localStorage.getItem("netlinks_user");
+        let cacheBanners = []; let cacheCategorias = [];
 
         function toggleModal() { const m = document.getElementById('guideModal'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; }
-        function toggleView() { const isList = document.getElementById('categorias-container').classList.toggle('view-list'); localStorage.setItem("netlinks_view", isList ? "list" : "grid"); location.reload(); }
-        
-        window.onload = function () {
-            updateClock();
-            const e = localStorage.getItem("netlinks_user");
-            if (e) {
-                document.getElementById('painel-principal').style.display = 'block';
-                document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
-                if (localStorage.getItem("netlinks_view") === "list") document.getElementById('categorias-container').classList.add('view-list');
-                carregarDados(e);
-            } else {
-                document.getElementById('login-container').style.display = 'flex';
-                google.accounts.id.initialize({ client_id: CLIENT_ID, callback: r => {
-                    const d = JSON.parse(atob(r.credential.split('.')[1]));
-                    localStorage.setItem("netlinks_user", d.email); localStorage.setItem("netlinks_name", d.name); localStorage.setItem("netlinks_pic", d.picture); location.reload();
-                }});
-                google.accounts.id.renderButton(document.getElementById("buttonDiv"), { theme: "outline", size: "large", shape: "pill" });
-            }
+        function toggle(id) { document.querySelectorAll('.content').forEach(c => c.style.display = "none"); document.getElementById(id).style.display = "block"; }
+
+        window.onload = function() {
+            if(!dono) window.location.href = "index.html";
+            document.getElementById('userBadge').innerHTML = `<img src="${localStorage.getItem('netlinks_pic')}"> <span>${localStorage.getItem('netlinks_name')}</span>`;
+            carregarDadosConfig();
         };
 
-        async function carregarDados(e) { try { const r = await fetch(`${urlApp}?dono=${encodeURIComponent(e)}`); const d = await r.json(); if(d.bg) { document.body.style.backgroundImage = `url('${d.bg}')`; document.getElementById('bgOverlay').style.display = 'block'; } renderizar(d); } catch (err) {} }
-        function renderizar(d) {
-            const c = document.getElementById('categorias-container'); const isList = c.classList.contains('view-list'); c.innerHTML = "";
-            d.categorias.forEach(cat => {
-                const id = cat.nome.toLowerCase().replace(/\s+/g, '-');
-                c.innerHTML += `<div class="categoria-wrapper ${isList ? "recolhido" : ""}" id="wrapper-${id}"><div class="categoria-header" onclick="toggleCategoria('${id}')" style="border-left-color: ${cat.cor}"><i class="fas fa-chevron-down seta-icon"></i><h2 class="categoria-titulo">${cat.nome}</h2></div><div class="fileira" id="container-${id}"></div></div>`;
-            });
-            d.banners.forEach((i, idx) => {
-                const id = i.categoria.toLowerCase().replace(/\s+/g, '-'); const f = document.getElementById(`container-${id}`);
-                if (f) {
-                    let img = i.imagem || "https://drive.google.com/thumbnail?id=1OyRgCJqj0SASvlxkbPBWxh8SYRYJJc2N&sz=w1000";
-                    let urlDestino = i.link.startsWith('http') ? i.link : 'https://' + i.link;
-                    f.innerHTML += `<div class="card-wrapper"><button class="edit-banner-btn" onclick="mudarImagemBanner('card-${idx}', '${i.nome}', '${i.link}')"><i class="fas fa-pen"></i></button><a href="${urlDestino}" target="_blank" class="card" id="card-${idx}" style="background-image: url('${img}');"><div class="card-info">${i.nome}</div></a></div>`;
-                }
-            });
+        async function carregarDadosConfig() {
+            try {
+                const r = await fetch(`${urlApp}?dono=${encodeURIComponent(dono)}`);
+                const d = await r.json(); cacheBanners = d.banners; cacheCategorias = d.categorias;
+                const opsCat = '<option value="">Selecione...</option>' + d.categorias.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
+                document.getElementById('link-cat').innerHTML = opsCat; document.getElementById('del-cat').innerHTML = opsCat; document.getElementById('color-cat').innerHTML = opsCat;
+                const opsLink = '<option value="">Selecione...</option>' + d.banners.map((b, idx) => `<option value="${idx}">${b.nome} (${b.categoria})</option>`).join('');
+                document.getElementById('del-link').innerHTML = opsLink;
+            } catch (e) {}
         }
-        function toggleCategoria(id) { document.getElementById(`wrapper-${id}`).classList.toggle('recolhido'); }
-        function filtrarBanners() { const t = document.getElementById('searchInput').value.toLowerCase(); document.querySelectorAll('.card-wrapper').forEach(w => { const n = w.querySelector('.card-info').innerText.toLowerCase(); w.classList.toggle('hidden', !n.includes(t)); }); }
-        async function mudarFundo() { const u = prompt("Link da imagem de fundo:"); if (u) { let f = formatarUrlDrive(u.trim()); document.body.style.backgroundImage = `url('${f}')`; document.getElementById('bgOverlay').style.display = 'block'; await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "updateBg", dono: localStorage.getItem("netlinks_user"), imagem: f }) }); } }
-        async function mudarImagemBanner(id, nome, link) { const u = prompt("Link da nova capa:"); if (u) { const f = formatarUrlDrive(u.trim()); document.getElementById(id).style.backgroundImage = `url('${f}')`; await fetch(urlApp, { method: "POST", body: JSON.stringify({ action: "updateBannerImg", dono: localStorage.getItem("netlinks_user"), nome: nome, link: link, imagem: f }) }); } }
-        function formatarUrlDrive(u) { if (u.includes("drive.google.com")) { const id = u.split('id=')[1] || u.split('/d/')[1].split('/')[0]; return `https://drive.google.com/uc?id=${id}`; } return u; }
-        function logout() { localStorage.clear(); location.reload(); }
+        function carregarCorAtual() { const cat = cacheCategorias.find(c => c.nome === document.getElementById('color-cat').value); if(cat) document.getElementById('color-hex').value = cat.cor; }
+        async function enviar(payload, btn, msg) {
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            const r = await fetch(urlApp, { method: "POST", body: JSON.stringify(payload) });
+            const res = await r.json(); if(res.result === "success") { alert(msg); location.reload(); }
+        }
+        function salvarLink(btn) { enviar({ action: "addLink", dono: dono, nome: document.getElementById('link-nome').value, link: document.getElementById('link-url').value, categoria: document.getElementById('link-cat').value }, btn, "Salvo!"); }
+        function salvarCategoria(btn) { enviar({ action: "addCat", dono: dono, categoria: document.getElementById('cat-nome').value, cor: document.getElementById('cat-cor').value }, btn, "Criada!"); }
+        function salvarNovaCor(btn) { enviar({ action: "updateCatColor", dono: dono, categoria: document.getElementById('color-cat').value, cor: document.getElementById('color-hex').value }, btn, "Cor atualizada!"); }
+        function deletarLink(btn) { const a = cacheBanners[document.getElementById('del-link').value]; enviar({ action: "delLink", dono: dono, nome: a.nome, link: a.link }, btn, "Removido!"); }
+        function deletarCategoria(btn) { enviar({ action: "delCat", dono: dono, categoria: document.getElementById('del-cat').value }, btn, "Categoria removida!"); }
     </script>
 </body>
 </html>
