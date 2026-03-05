@@ -9,31 +9,29 @@
         :root { --primary: #E50914; --bg: #141414; }
         body { background: #141414; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding-bottom: 50px; }
         .game-grid { display: flex; justify-content: center; gap: 20px; padding: 20px; flex-wrap: wrap; }
-        .game-item { background: #222; padding: 15px; border-radius: 10px; cursor: pointer; border: 2px solid #444; width: 150px; transition: 0.3s; }
-        .game-item:hover { border-color: var(--primary); background: #333; }
+        .game-item { background: #222; padding: 15px; border-radius: 10px; cursor: pointer; border: 2px solid #444; width: 140px; transition: 0.3s; }
+        .game-item:hover { border-color: var(--primary); background: #333; transform: translateY(-5px); }
         .game-item i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; display: block; }
-        #emu-wrap { width: 95%; max-width: 800px; height: 500px; margin: 20px auto; border: 5px solid #333; border-radius: 15px; background: #000; overflow: hidden; }
-        #emulator { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #444; }
+        #emu-wrap { width: 95%; max-width: 800px; height: 500px; margin: 20px auto; border: 5px solid #333; border-radius: 15px; background: #000; overflow: hidden; position: relative; }
+        #emulator { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #666; }
+        #status { color: #f1c40f; margin: 10px; font-weight: bold; min-height: 1.2em; }
     </style>
 </head>
 <body>
     <h1 style="margin-top:20px; color:var(--primary);">NetLinks Arcade</h1>
-    <p>Selecione um jogo da sua biblioteca local:</p>
+    <div id="status">Escolha um jogo para carregar</div>
 
     <div class="game-grid" id="gameLibrary"></div>
 
     <div id="emu-wrap">
-        <div id="emulator">Aguardando seleção de jogo...</div>
+        <div id="emulator">Aguardando seleção...</div>
     </div>
 
     <script>
-        /**
-         * ATENÇÃO: Verifique se os nomes abaixo são EXATAMENTE iguais 
-         * aos nomes dos arquivos que você subiu na pasta 'roms'
-         */
+        // Nomes configurados exatamente como na sua imagem da pasta 'roms'
         const games = [
             { name: "Pac-Man", file: "pacman.nes", system: "nes" },
-            { name: "Super Mario World", file: "mario.smc", system: "snes" },
+            { name: "Super Mario", file: "smario.smc", system: "snes" },
             { name: "Top Gear", file: "topgear.sfc", system: "snes" }
         ];
 
@@ -43,13 +41,17 @@
             const div = document.createElement('div');
             div.className = 'game-item';
             div.innerHTML = `<i class="fas fa-gamepad"></i><strong>${game.name}</strong><br><small>${game.system.toUpperCase()}</small>`;
-            div.onclick = () => loadGame(`roms/${game.file}`, game.system);
+            
+            div.onclick = () => {
+                // O caminho 'roms/' busca a pasta que você criou
+                loadGame(`roms/${game.file}`, game.system, game.name);
+            };
             lib.appendChild(div);
         });
 
-        function loadGame(url, system) {
-            const container = document.getElementById('emulator');
-            container.innerHTML = "Carregando sistema...";
+        function loadGame(url, system, name) {
+            document.getElementById('status').innerText = "Carregando " + name + "...";
+            document.getElementById('emulator').innerHTML = "";
             
             window.EJS_player = '#emulator';
             window.EJS_core = system;
